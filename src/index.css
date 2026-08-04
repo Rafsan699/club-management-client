@@ -1,0 +1,6 @@
+@import "tailwindcss";
+/* Admin সম্পর্কিত লিঙ্ক বা বাটন হাইড করার জন্য */
+a[href*="admin"], 
+button:has(a[href*="admin"]) {
+  display: none !important;
+}
