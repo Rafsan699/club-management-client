@@ -222,13 +222,13 @@ const Navbar = ({ content, user, darkMode, setDarkMode, handleLogout }) => {
       </div>
 
       {/* Mobile/Responsive Navigation Links Row */}
-      <div className={`lg:hidden flex items-center justify-center gap-4 py-1.5 px-4 text-[11px] font-black tracking-wider uppercase border-t ${darkMode ? 'bg-slate-950/80 border-slate-800 text-slate-300' : 'bg-slate-900 border-slate-800 text-slate-300'}`}>
-        <Link to="/" className="hover:text-emerald-400 transition">Home</Link>
-        <Link to="/about-us" className="hover:text-emerald-400 transition">About</Link>
-        <Link to="/team" className="hover:text-emerald-400 transition">Team</Link>
-        <Link to="/events" className="hover:text-emerald-400 transition">Events</Link>
-        <Link to="/contact" className="hover:text-emerald-400 transition">Contact</Link>
-        <Link to="/news" className="hover:text-emerald-400 transition">News</Link>
+      <div className={`lg:hidden flex items-center justify-center gap-4 py-1.5 px-4 text-[11px] font-black tracking-wider uppercase border-t ${darkMode ? 'bg-slate-900/90 border-slate-800 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
+        <Link to="/" className="hover:text-emerald-600 transition">Home</Link>
+        <Link to="/about-us" className="hover:text-emerald-600 transition">About</Link>
+        <Link to="/team" className="hover:text-emerald-600 transition">Team</Link>
+        <Link to="/events" className="hover:text-emerald-600 transition">Events</Link>
+        <Link to="/contact" className="hover:text-emerald-600 transition">Contact</Link>
+        <Link to="/news" className="hover:text-emerald-600 transition">News</Link>
       </div>
     </header>
   );

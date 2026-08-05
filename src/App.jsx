@@ -13,34 +13,9 @@ import Contact from './pages/Contact';
 import Newsfeed from './pages/Newsfeed';
 
 // কমন লেআউট কম্পোনেন্ট
-const Layout = () => {
-  const [content, setContent] = useState(null);
-  const [user, setUser] = useState(null);
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    // লোকালস্টোরেজ থেকে লগইন করা ইউজারের ডাটা চেক করা
-    const savedUser = localStorage.getItem('clubUser');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-
-    // ব্যাকএন্ড রাউটের সাথে মিল রেখে /api/content থেকে পরিবর্তন করে /api/club/content করা হয়েছে
-    axios.get('/api/club/content')
-      .then(res => {
-        if (res.data) setContent(res.data);
-      })
-      .catch(err => console.error("Error fetching content:", err));
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('clubUser');
-    setUser(null);
-    window.location.href = '/login';
-  };
-
+const Layout = ({ darkMode, setDarkMode, user, content, handleLogout }) => {
   return (
-    <div className={darkMode ? 'dark bg-slate-950 text-slate-100 min-h-screen' : 'bg-[#f8fafc] text-slate-800 min-h-screen'}>
+    <div className={darkMode ? 'dark bg-slate-950 text-slate-100 min-h-screen transition-colors duration-300' : 'bg-[#f8fafc] text-slate-800 min-h-screen transition-colors duration-300'}>
       {/* কমন হেডার/নেভবার */}
       <Navbar 
         content={content} 
@@ -59,11 +34,59 @@ const Layout = () => {
 };
 
 function App() {
+  const [content, setContent] = useState(null);
+  const [user, setUser] = useState(null);
+
+  // লোকালস্টোরেজ থেকে ডার্ক মোড স্টেট ইনিশিয়ালাইজ করা যাতে সব পেজে কাজ করে
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  // ডার্ক মোড পরিবর্তন হলে এইচটিএমএল ক্লাসে অ্যাড করা এবং লোকালস্টোরেজে সেভ করা
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
+
+  useEffect(() => {
+    // লোকালস্টোরেজ থেকে লগইন করা ইউজারের ডাটা চেক করা
+    const savedUser = localStorage.getItem('clubUser');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+
+    // ব্যাকএন্ড রাউটের সাথে মিল রেখে /api/content থেকে পরিবর্তন করে /api/club/content করা হয়েছে
+    axios.get('/api/club/content')
+      .then(res => {
+        if (res.data) setContent(res.data);
+      })
+      .catch(err => console.error("Error fetching content:", err));
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('clubUser');
+    setUser(null);
+    window.location.href = '/login';
+  };
+
   return (
     <Router>
       <Routes>
         {/* এই রাউটগুলোর ভেতরে সব পেজে একই হেডার দেখাবে */}
-        <Route element={<Layout />}>
+        <Route element={
+          <Layout 
+            darkMode={darkMode} 
+            setDarkMode={setDarkMode} 
+            user={user} 
+            content={content} 
+            handleLogout={handleLogout} 
+          />
+        }>
           <Route path="/" element={<Home />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/team" element={<Team />} />

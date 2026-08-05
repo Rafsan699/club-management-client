@@ -151,7 +151,7 @@ const Events = () => {
               <h1 className={`text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] ${
                 darkMode ? 'text-white' : 'text-slate-900'
               }`}>
-                Upcoming Events
+                BRIU Sports Club Events
               </h1>
               <p className="text-slate-500 dark:text-slate-400 font-normal text-sm sm:text-base leading-relaxed max-w-lg mx-auto">
                 Explore championships, workshops, and sports tournaments hosted by BRIU Sports Club.

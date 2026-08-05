@@ -12,18 +12,28 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      // URL পরিবর্তন করা হলো: /api/auth/login এর বদলে /api/login
-      const res = await API.post('/api/login', formData);
+      // ব্যাকএন্ডে লগইন রিকোয়েস্ট পাঠানো
+      const res = await API.post('/api/auth/login', formData);
+      
+      const userData = res.data.user;
+
+      // 🛑 ফ্রন্টএন্ডে অতিরিক্ত সিকিউরিটি চেক: ইউজার অ্যাডমিন না হলে এবং স্ট্যাটাস approved না হলে ব্লক করবে
+      if (userData.role !== 'admin' && userData.status !== 'approved') {
+        alert('Your account is pending approval by the admin. Please wait for approval.');
+        setLoading(false);
+        return; // এখানেই প্রসেস থামিয়ে দেওয়া হলো, ড্যাশবোর্ডে বা হোমপেজে যাবে না
+      }
       
       alert(res.data.message || 'Login successful!');
       
       // লোকাল স্টোরেজে ইউজার ডাটা সেভ করা
-      localStorage.setItem('clubUser', JSON.stringify(res.data.user));
+      localStorage.setItem('clubUser', JSON.stringify(userData));
       
       // হোম পেজে নিয়ে যাওয়া
       navigate('/');
     } catch (err) {
       console.error('Login Error details:', err);
+      // ব্যাকএন্ড থেকে আসা 403 বা অন্য যেকোনো এরর মেসেজ এখানে অ্যালার্টে দেখাবে
       alert(err.response?.data?.message || 'Login failed!');
     } finally {
       setLoading(false);

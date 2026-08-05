@@ -3,7 +3,7 @@ import API from '../services/api'; // আপনার প্রজেক্ট �
 import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import DepartmentsSection from '../components/DepartmentsSection';
-import Footer from '../components/Footer'; 
+import Footer from '../components/Footer';
 import { exploreMenuTree } from '../data/exploreMenuData';
 import { 
   Trophy, Lock, LogIn, UserPlus, User, LogOut, ChevronDown, Compass, ChevronRight, X, Sparkles, Target, Activity, Flame, Shield, Calendar, Award, Globe, Zap, ArrowRight, Sun, Moon, MapPin, Phone, Mail 
@@ -439,7 +439,7 @@ const Home = () => {
 
         {/* DEPARTMENTS SECTION */}
         <div className={`rounded-3xl overflow-x-hidden`}>
-          <div onClick={() => navigate('/departments')} className="cursor-pointer transition hover:opacity-95">
+          <div>
             <DepartmentsSection departments={content?.departments} />
           </div>
         </div>

@@ -63,7 +63,7 @@ export default function Register() {
     };
 
     try {
-      const res = await API.post('/api/register', submissionPayload);
+      const res = await API.post('/api/auth/register', submissionPayload);
       alert(res.data?.message || 'Registration Successful!');
       navigate('/login');
     } catch (err) {
@@ -133,7 +133,7 @@ export default function Register() {
             <input 
               type="email" 
               required
-              placeholder="e.g., abcd1230126@bscse.uiu.ac.bd"
+              placeholder="e.g., abcd1230126@gmail.com"
               value={formData.email}
               onChange={(e) => setFormData({...formData, email: e.target.value})}
               className="w-full p-3 bg-slate-50 text-slate-800 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-500 text-sm font-medium"
