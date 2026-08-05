@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import API from '../services/api';
 import { UserPlus, User, Mail, BookOpen, Layers, Lock, Phone, Award, Image as ImageIcon, CheckSquare } from 'lucide-react';
 
 export default function Register() {
@@ -40,7 +40,7 @@ export default function Register() {
     uploadData.append('image', file);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/upload', uploadData, {
+      const res = await API.post('/api/upload', uploadData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       if (res.data && res.data.imageUrl) {
@@ -63,7 +63,7 @@ export default function Register() {
     };
 
     try {
-      const res = await axios.post('http://localhost:5000/api/register', submissionPayload);
+      const res = await API.post('/api/register', submissionPayload);
       alert(res.data?.message || 'Registration Successful!');
       navigate('/login');
     } catch (err) {

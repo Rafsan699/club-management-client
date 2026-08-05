@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import API from '../services/api';
 import { Mail, Send, User, FileText, CheckCircle2 } from 'lucide-react';
 
 const Contact = () => {
@@ -18,7 +18,7 @@ const Contact = () => {
     setSuccessMsg('');
     
     try {
-      const res = await axios.post('http://localhost:5000/api/contact', contactForm);
+      const res = await API.post('/api/contact', contactForm);
       if (res.data.success) {
         setSuccessMsg('Your message has been sent successfully!');
         setContactForm({ name: '', email: '', subject: '', message: '' });

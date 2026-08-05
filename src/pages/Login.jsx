@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import API from '../services/api';
 import { LogIn, Lock, Mail } from 'lucide-react';
 
 export default function Login() {
@@ -13,7 +13,7 @@ export default function Login() {
     setLoading(true);
     try {
       // URL পরিবর্তন করা হলো: /api/auth/login এর বদলে /api/login
-      const res = await axios.post('/api/login', formData);
+      const res = await API.post('/api/login', formData);
       
       alert(res.data.message || 'Login successful!');
       

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../services/api';
 import { Heart, MessageCircle, Send, Pin, Trash2, X, ArrowLeft, Sun, Moon, Search, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,7 +28,7 @@ const Newsfeed = () => {
 
   const fetchPosts = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/posts');
+      const res = await API.get('/api/posts');
       setPosts(res.data);
     } catch (err) {
       console.error("Error fetching newsfeed", err);
@@ -59,7 +59,7 @@ const Newsfeed = () => {
       return;
     }
     try {
-      const res = await axios.put(`http://localhost:5000/api/posts/${postId}/like`, {
+      const res = await API.put(`/api/posts/${postId}/like`, {
         userId: currentUser._id || currentUser.id
       });
       setPosts(posts.map(p => p._id === postId ? res.data : p));
@@ -82,7 +82,7 @@ const Newsfeed = () => {
     if (!text || !text.trim()) return;
 
     try {
-      const res = await axios.post(`http://localhost:5000/api/posts/${postId}/comment`, {
+      const res = await API.post(`/api/posts/${postId}/comment`, {
         userId: currentUser._id || currentUser.id,
         name: currentUser.name || 'Anonymous User',
         text
@@ -101,7 +101,7 @@ const Newsfeed = () => {
   const handleDeleteComment = async (postId, commentId) => {
     if (!window.confirm("Are you sure you want to delete this comment?")) return;
     try {
-      const res = await axios.put(`http://localhost:5000/api/posts/${postId}/comment/${commentId}`, {
+      const res = await API.put(`/api/posts/${postId}/comment/${commentId}`, {
         userId: currentUser ? (currentUser._id || currentUser.id) : null,
         isAdmin: !!adminToken 
       });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../services/api'; // আপনার প্রজেক্ট স্ট্রাকচার অনুযায়ী পাথ ঠিক করে নিন (যেমন: './api' বা '../services/api')
 import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import DepartmentsSection from '../components/DepartmentsSection';
@@ -31,7 +31,7 @@ const Home = () => {
     }
 
     // পোর্টের ঝামেলা এড়াতে এবং ব্যাকএন্ড থেকে ডেটা ফেচ নিশ্চিত করতে ফুল URL ব্যবহার করা হয়েছে[cite: 5]
-    axios.get('http://localhost:5000/api/club/content')
+    API.get('/api/club/content')
       .then(res => {
         if (res.data) {
           setContent(res.data);

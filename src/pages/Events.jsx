@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../services/api';
 import { Calendar, MapPin, RefreshCw, Image as ImageIcon, Search, ArrowLeft, ChevronLeft, ChevronRight, Mail, ArrowRight } from 'lucide-react';
 
 const Events = () => {
@@ -19,7 +19,7 @@ const Events = () => {
     try {
       setLoading(true);
       // API.js বা axios কল দিয়ে ডাটা ফেচ করুন
-      const res = await axios.get('http://localhost:5000/api/events');
+      const res = await API.get('/api/events');
       setEvents(res.data);
     } catch (err) {
       console.error('Failed to fetch events:', err);
