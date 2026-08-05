@@ -22,7 +22,26 @@ const Home = () => {
   // New state for handling Upcoming Event Details Modal on the same page
   const [showEventModal, setShowEventModal] = useState(false);
   
+  // States for header scroll hide/show
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        setShowNavbar(false); // Hide on scroll down
+      } else {
+        setShowNavbar(true); // Show on scroll up
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('clubUser');
@@ -30,7 +49,7 @@ const Home = () => {
       setUser(JSON.parse(savedUser));
     }
 
-    // পোর্টের ঝামেলা এড়াতে এবং ব্যাকএন্ড থেকে ডেটা ফেচ নিশ্চিত করতে ফুল URL ব্যবহার করা হয়েছে[cite: 5]
+    // পোর্টের ঝামেলা এড়াতে এবং ব্যাকএন্ড থেকে ডেটা ফেচ নিশ্চিত করতে ফুল URL ব্যবহার করা হয়েছে
     API.get('/api/club/content')
       .then(res => {
         if (res.data) {
@@ -87,231 +106,107 @@ const Home = () => {
   return (
     <div className={`${darkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-[#f8fafc] text-slate-900'} min-h-screen font-sans pb-32 selection:bg-purple-500 selection:text-white relative overflow-x-hidden transition-colors duration-300`}>
       
-      {/* Background Ambient Glow Effects */}
-      <div className="absolute top-0 left-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-purple-500/10 rounded-full blur-[140px] pointer-events-none"></div>
-      <div className="absolute top-1/3 right-10 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-indigo-500/10 rounded-full blur-[160px] pointer-events-none"></div>
-
-      {/* HEADER SECTION */}
-      <header className={`${darkMode ? 'bg-slate-900/80 border-slate-800/80' : 'bg-white/80 border-slate-200/80'} backdrop-blur-xl border-b fixed top-0 inset-x-0 z-50 transition-all shadow-sm`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
+      {/* HEADER PANEL SECTION */}
+      <header className={`fixed top-0 inset-x-0 z-40 transition-transform duration-300 ${showNavbar ? 'translate-y-0' : '-translate-y-full'} ${darkMode ? 'bg-slate-950/90 border-slate-800 text-slate-100' : 'bg-white/90 border-slate-200 text-slate-900'} backdrop-blur-md border-b`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
           
-          <div className="flex items-center justify-between w-full md:w-auto gap-3 sm:gap-4">
-            <div className="flex items-center gap-3 sm:gap-4 lg:gap-6 min-w-0">
-              <div className="relative shrink-0">
-                <button 
-                  onClick={() => setShowExploreMenu(!showExploreMenu)}
-                  className="px-3.5 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm shadow-md shadow-purple-600/20 flex items-center gap-2 transition-all duration-200 focus:outline-none hover:scale-[1.02] active:scale-95"
-                >
-                  <Compass className={`w-4 h-4 sm:w-4.5 sm:h-4.5 text-white ${showExploreMenu ? 'rotate-90' : ''} transition-transform duration-300 shrink-0`} />
-                  <span className="tracking-wide">Explore All</span>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showExploreMenu ? 'rotate-180' : ''} shrink-0`} />
-                </button>
-
-                {showExploreMenu && (
-                  <div className={`fixed sm:absolute top-20 sm:top-16 left-3 right-3 sm:left-auto sm:right-auto sm:-left-6 w-auto sm:w-[95vw] max-w-[960px] ${darkMode ? 'bg-slate-900/95 border-slate-800 text-slate-100' : 'bg-white/95 border-slate-200/90 text-slate-900'} backdrop-blur-2xl border rounded-2xl sm:rounded-3xl shadow-2xl p-5 sm:p-8 z-50 animate-in fade-in slide-in-from-top-4 max-h-[82vh] overflow-y-auto custom-scrollbar`}>
-                    
-                    <div className={`flex items-center justify-between pb-4 sm:pb-6 mb-4 sm:mb-6 border-b ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
-                      <div className="flex items-center gap-3.5 min-w-0">
-                        <div className={`p-3 ${darkMode ? 'bg-purple-500/10 border-purple-500/20' : 'bg-purple-50 border-purple-100'} rounded-2xl border shadow-inner shrink-0`}>
-                          <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
-                        </div>
-                        <div className="min-w-0">
-                          <h3 className={`font-black ${darkMode ? 'text-white' : 'text-slate-900'} text-base sm:text-xl uppercase tracking-wider truncate`}>
-                            Club Directory & Navigation
-                          </h3>
-                          <p className={`text-xs sm:text-sm font-semibold ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5 truncate`}>Browse all club resources, committees and portals instantly</p>
-                        </div>
-                      </div>
-                      <button 
-                        onClick={() => setShowExploreMenu(false)}
-                        className={`p-2.5 ${darkMode ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'} rounded-2xl transition shrink-0`}
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-
-                    <div className="mb-5">
-                      <Link 
-                        to="/"
-                        onClick={() => setShowExploreMenu(false)}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-black text-xs sm:text-sm shadow-md shadow-purple-600/20 transition-all duration-200 hover:scale-[1.02]"
-                      >
-                        <ChevronRight className="w-4 h-4" /> Home Page Dashboard
-                      </Link>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
-                      {exploreMenuTree.map((cat, idx) => {
-                        const isOpen = expandedCategory === cat.title;
-
-                        return (
-                          <div 
-                            key={idx} 
-                            className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
-                              isOpen 
-                                ? `${darkMode ? 'bg-slate-900 border-purple-500 ring-purple-500/10' : 'bg-white border-purple-500 ring-purple-500/10'} shadow-xl ring-4 col-span-1 md:col-span-2 lg:col-span-3` 
-                                : `${darkMode ? 'bg-slate-900/60 border-slate-800 hover:bg-slate-900 hover:border-purple-500/40' : 'bg-slate-50/80 border-slate-200/80 hover:bg-white hover:border-purple-500/40'} shadow-sm`
-                            }`}
-                          >
-                            <button
-                              onClick={() => toggleCategory(cat.title)}
-                              className={`w-full text-left p-4 sm:p-4.5 flex items-center justify-between font-black ${darkMode ? 'text-white' : 'text-slate-900'} text-xs sm:text-base uppercase tracking-wide transition-all`}
-                            >
-                              <span className="flex items-center gap-3 min-w-0">
-                                <span className={`w-3 h-3 rounded-full transition-all duration-300 shrink-0 ${isOpen ? 'bg-purple-600 shadow-md shadow-purple-600/40 scale-110' : `${darkMode ? 'bg-slate-700' : 'bg-slate-300'}`}`}></span>
-                                <span className={`truncate ${isOpen ? 'text-purple-600' : ''}`}>{cat.title}</span>
-                              </span>
-                              
-                              <ChevronDown className={`w-4 h-4 ${darkMode ? 'text-slate-500' : 'text-slate-400'} transition-transform duration-300 ${isOpen ? 'rotate-180 text-purple-600' : ''} shrink-0`} />
-                            </button>
-                            
-                            {isOpen && (
-                              <div className={`p-4 pt-0 border-t ${darkMode ? 'border-slate-800 bg-slate-900/40' : 'border-slate-100 bg-slate-50/50'} animate-in fade-in duration-300`}>
-                                <p className={`text-[10px] sm:text-xs font-black ${darkMode ? 'text-slate-500' : 'text-slate-400'} mb-3 uppercase tracking-wider`}>Sub Categories:</p>
-                                
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
-                                  {cat.subItems.map((sub, sIdx) => (
-                                    <Link 
-                                      key={sIdx}
-                                      to={sub.path}
-                                      onClick={() => setShowExploreMenu(false)}
-                                      className={`flex items-center gap-2.5 p-2.5 rounded-xl ${darkMode ? 'bg-slate-800/80 border-slate-700/80 text-slate-200 hover:border-purple-500 hover:text-purple-400' : 'bg-white border-slate-200/80 text-slate-700 hover:border-purple-500 hover:text-purple-600'} font-bold text-xs shadow-sm transition-all duration-200 hover:scale-[1.02]`}
-                                    >
-                                      <span className="text-purple-600 font-black text-sm shrink-0">›</span>
-                                      <span className="truncate">{sub.name}</span>
-                                    </Link>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                  </div>
-                )}
-              </div>
-
-              <Link to="/" className="flex items-center gap-3 group cursor-pointer focus:outline-none min-w-0">
-                {content.logoUrl ? (
-                  <img src={content.logoUrl} alt="University Logo" className="h-10 sm:h-12 w-auto object-contain drop-shadow-sm group-hover:scale-105 transition-transform shrink-0" />
-                ) : (
-                  <img 
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" 
-                    alt="BRIU Sports Club Logo" 
-                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl object-cover shadow-sm border ${darkMode ? 'border-slate-800' : 'border-slate-200'} group-hover:scale-105 transition-transform shrink-0`} 
-                  />
-                )}
-                <div className="min-w-0">
-                  <h1 className={`text-[9px] sm:text-[10px] font-black ${darkMode ? 'text-slate-400' : 'text-slate-500'} uppercase tracking-wider leading-tight truncate`}>
-                    {content.universityName || 'Brahmaputra International University'}
-                  </h1>
-                  <p className={`text-xs sm:text-sm font-black ${darkMode ? 'text-white' : 'text-slate-900'} tracking-wide mt-0.5 group-hover:text-purple-600 transition-colors truncate`}>
-                    {content.clubTitle || 'BRIU SPORTS CLUB'}
-                  </p>
-                </div>
-              </Link>
-            </div>
+          {/* Menu / Explore Button */}
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setShowExploreMenu(!showExploreMenu)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${darkMode ? 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800' : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200'}`}
+            >
+              <Compass className="w-3.5 h-3.5 text-purple-500" /> Menu <ChevronDown className="w-3 h-3 opacity-60" />
+            </button>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto justify-end">
-            <button 
-              onClick={() => setDarkMode(!darkMode)}
-              className={`p-2.5 rounded-2xl border ${darkMode ? 'bg-slate-800/80 border-slate-700 text-amber-400 hover:bg-slate-700' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'} transition shadow-sm focus:outline-none flex items-center justify-center shrink-0`}
-              title="Toggle Theme"
-            >
-              {darkMode ? <Sun className="w-4 h-4 sm:w-4.5 sm:h-4.5" /> : <Moon className="w-4 h-4 sm:w-4.5 sm:h-4.5" />}
-            </button>
+          {/* Nav Options in One Line */}
+          <nav className="hidden md:flex items-center gap-6 text-xs font-bold uppercase tracking-wider">
+            <a href="#" className="hover:text-purple-600 transition">Home</a>
+            <a href="#about" className="hover:text-purple-600 transition">About</a>
+            <a href="#committee" className="hover:text-purple-600 transition">Club</a>
+            <a href="#committee" className="hover:text-purple-600 transition">Team</a>
+            <a href="#activities" className="hover:text-purple-600 transition">Events</a>
+            <a href="#contact" className="hover:text-purple-600 transition">Contact</a>
+            <Link to="/news" className="hover:text-purple-600 transition">Newsfeed</Link>
+          </nav>
 
+          {/* Right side: Login / Register & Dark Mode Toggle */}
+          <div className="flex items-center gap-2">
             {user ? (
               <div className="relative">
                 <button 
                   onClick={() => setShowDropdown(!showDropdown)}
-                  className={`flex items-center gap-2.5 ${darkMode ? 'bg-slate-800/80 border-slate-700 hover:bg-slate-700 text-white' : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-800'} p-1.5 sm:pr-4 rounded-full border transition focus:outline-none shadow-sm`}
+                  className={`flex items-center gap-2 px-2.5 py-1 rounded-lg text-xs font-bold ${darkMode ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'} border`}
                 >
-                  <div className="w-8 h-8 sm:w-8.5 sm:h-8.5 bg-gradient-to-tr from-purple-600 to-indigo-500 text-white rounded-full flex items-center justify-center font-black text-xs sm:text-sm shadow-sm shrink-0">
-                    {user.name ? user.name.charAt(0).toUpperCase() : <User className="w-3.5 h-3.5" />}
-                  </div>
-
-                  <span className={`font-extrabold ${darkMode ? 'text-slate-200' : 'text-slate-800'} text-xs hidden sm:inline truncate max-w-[120px]`}>
-                    {user.name}
-                  </span>
-
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <User className="w-3.5 h-3.5 text-purple-500" />
+                  <span className="max-w-[80px] truncate">{user.name || 'User'}</span>
                 </button>
-
                 {showDropdown && (
-                  <div className={`absolute right-0 mt-3 w-64 sm:w-72 ${darkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'} border rounded-3xl shadow-2xl py-4 px-5 z-50 animate-in fade-in`}>
-                    <div className={`pb-3.5 border-b ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
-                      <p className={`font-black ${darkMode ? 'text-white' : 'text-slate-900'} text-sm truncate`}>{user.name}</p>
-                      <p className="text-xs text-purple-600 font-bold truncate mt-0.5">{user.email}</p>
-                      <div className="flex gap-2 text-[11px] font-semibold text-slate-500 mt-2.5 flex-wrap">
-                        <span className={`${darkMode ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-600'} px-2.5 py-1 rounded-xl border`}>Dept: {user.dept || 'N/A'}</span>
-                        <span className={`${darkMode ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-600'} px-2.5 py-1 rounded-xl border`}>Batch: {user.batch || 'N/A'}</span>
-                      </div>
-                    </div>
-
-                    <div className="pt-3">
-                      <button 
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-2.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 p-2.5 rounded-2xl text-xs font-black transition"
-                      >
-                        <LogOut className="w-4 h-4" /> Logout Account
-                      </button>
-                    </div>
+                  <div className={`absolute right-0 mt-2 w-40 rounded-xl shadow-xl border py-1 z-50 ${darkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'}`}>
+                    <button onClick={handleLogout} className="w-full text-left px-3 py-1.5 text-xs font-bold hover:bg-purple-500 hover:text-white flex items-center gap-2">
+                      <LogOut className="w-3.5 h-3.5" /> Logout
+                    </button>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap justify-end">
-                <Link 
-                  to="/admin" 
-                  className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] sm:text-xs font-black px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl shadow-md shadow-purple-600/20 flex items-center gap-1.5 transition hover:scale-105 active:scale-95 shrink-0"
-                >
-                  <Lock className="w-3.5 h-3.5" /> <span className="hidden xs:inline">Admin Panel</span><span className="xs:hidden">Admin</span>
+              <div className="flex items-center gap-1.5">
+                <Link to="/login" className="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white shadow-sm transition">
+                  Login
                 </Link>
-
-                <Link 
-                  to="/login" 
-                  className={`${darkMode ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700' : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200'} text-[11px] sm:text-xs font-black px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl border flex items-center gap-1.5 transition hover:scale-105 active:scale-95 shadow-sm shrink-0`}
-                >
-                  <LogIn className="w-3.5 h-3.5 text-purple-600" /> Log in
-                </Link>
-
-                <Link 
-                  to="/register" 
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-[11px] sm:text-xs font-black px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl shadow-md shadow-blue-600/20 flex items-center gap-1.5 transition hover:scale-105 active:scale-95 shrink-0"
-                >
-                  <UserPlus className="w-3.5 h-3.5" /> <span className="hidden xs:inline">Registration</span><span className="xs:hidden">Register</span>
+                <Link to="/register" className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition ${darkMode ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200' : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-800'}`}>
+                  Register
                 </Link>
               </div>
             )}
+
+            <button 
+              onClick={() => setDarkMode(!darkMode)}
+              className={`p-1.5 rounded-lg border transition ${darkMode ? 'bg-slate-900 border-slate-800 text-amber-400' : 'bg-slate-100 border-slate-200 text-slate-700'}`}
+            >
+              {darkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+            </button>
           </div>
 
         </div>
-
-        {/* SUB NAVIGATION BAR */}
-        <nav className={`${darkMode ? 'bg-slate-950 text-slate-300 border-slate-800' : 'bg-slate-900 text-slate-300 border-slate-800'} border-t overflow-x-auto custom-scrollbar`}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-6 sm:gap-8 py-2.5 text-xs font-black tracking-widest uppercase whitespace-nowrap">
-            <Link to="/" className="hover:text-purple-400 transition flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-purple-400"></span>Home</Link>
-            <Link to="/about-us" className="hover:text-purple-400 transition">About Club</Link>
-            <Link to="/team" className="hover:text-purple-400 transition">team</Link>
-            <Link to="/events" className="hover:text-purple-400 transition">Events</Link>
-            <Link to="/contact" className="hover:text-purple-400 transition">Contact</Link>
-          </div>
-        </nav>
       </header>
 
+      {/* Explore Menu Dropdown/Modal */}
+      {showExploreMenu && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-start justify-start pt-16 px-4">
+          <div className={`w-full max-w-sm rounded-2xl shadow-2xl border p-4 ${darkMode ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'}`}>
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800 mb-3">
+              <span className="text-xs font-black uppercase tracking-wider">Explore Menu</span>
+              <button onClick={() => setShowExploreMenu(false)} className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-1 text-xs font-bold">
+              <a href="#" onClick={() => setShowExploreMenu(false)} className="block px-3 py-2 rounded-lg hover:bg-purple-500 hover:text-white transition">Home</a>
+              <a href="#about" onClick={() => setShowExploreMenu(false)} className="block px-3 py-2 rounded-lg hover:bg-purple-500 hover:text-white transition">About</a>
+              <a href="#committee" onClick={() => setShowExploreMenu(false)} className="block px-3 py-2 rounded-lg hover:bg-purple-500 hover:text-white transition">Club & Team</a>
+              <a href="#activities" onClick={() => setShowExploreMenu(false)} className="block px-3 py-2 rounded-lg hover:bg-purple-500 hover:text-white transition">Events</a>
+              <a href="#contact" onClick={() => setShowExploreMenu(false)} className="block px-3 py-2 rounded-lg hover:bg-purple-500 hover:text-white transition">Contact</a>
+              <Link to="/news" onClick={() => setShowExploreMenu(false)} className="block px-3 py-2 rounded-lg hover:bg-purple-500 hover:text-white transition">Newsfeed</Link>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Background Ambient Glow Effects */}
+      <div className="absolute top-0 left-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-purple-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+      <div className="absolute top-1/3 right-10 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-indigo-500/10 rounded-full blur-[160px] pointer-events-none"></div>
+
       {/* HERO BANNER SECTION */}
-      <section className={`relative overflow-hidden ${darkMode ? 'bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-slate-800' : 'bg-gradient-to-b from-white via-slate-50/50 to-white border-slate-200/80'} border-b pt-36 sm:pt-48 lg:pt-56 pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6 lg:px-8 text-center`}>
+      <section className={`relative overflow-hidden ${darkMode ? 'bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-slate-800' : 'bg-gradient-to-b from-white via-slate-50/50 to-white border-slate-200/80'} border-b pt-16 sm:pt-20 lg:pt-24 pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6 lg:px-8 text-center`}>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.05)_0,transparent_70%)] pointer-events-none"></div>
         
         {/* Decorative Grid Lines */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#cbd5e110_1px,transparent_1px),linear-gradient(to_bottom,#cbd5e110_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none"></div>
 
         <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 relative z-10">
-          <div className={`inline-flex items-center gap-2 px-4 sm:px-4.5 py-2 rounded-full ${darkMode ? 'bg-purple-500/10 border-purple-500/20 text-purple-300' : 'bg-purple-50 border-purple-200/80 text-purple-700'} text-xs font-black uppercase tracking-widest shadow-sm backdrop-blur-md`}>
+          <div className={`inline-flex items-center gap-2 px-4.5 py-2 rounded-full ${darkMode ? 'bg-purple-500/10 border-purple-500/20 text-purple-300' : 'bg-purple-50 border-purple-200/80 text-purple-700'} text-xs font-black uppercase tracking-widest shadow-sm backdrop-blur-md`}>
             <Sparkles className="w-3.5 h-3.5 text-purple-500 animate-spin shrink-0" /> Official Hub of Athletic Champions
           </div>
           
@@ -529,7 +424,6 @@ const Home = () => {
                   )}
                 </div>
 
-                {/* Modified button to open modal on the same page instead of redirecting or opening external window */}
                 <div className="pt-2">
                   <button 
                     onClick={() => setShowEventModal(true)}
@@ -613,7 +507,6 @@ const Home = () => {
       <div id="contact" className="w-full bg-slate-900 text-slate-100 py-12 sm:py-16 px-4 sm:px-8 lg:px-16 mt-20 sm:mt-32 shadow-2xl relative z-20 border-t border-slate-800">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-10">
           
-          {/* Column 1: Club Info */}
           <div className="space-y-3">
             <h3 className="text-sm font-black text-amber-400 tracking-wide uppercase">
               {content.contact?.companyName || content.clubTitle || "Club Info"}
@@ -623,7 +516,6 @@ const Home = () => {
             </p>
           </div>
 
-          {/* Column 2: Contact Us Details */}
           <div className="space-y-3">
             <h3 className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-2">
               <Phone size={15} /> Contact Us
@@ -644,7 +536,6 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Column 3: Follow Us & Social Apps Links from Admin Panel */}
           <div className="space-y-3 sm:col-span-2 md:col-span-1">
             <h3 className="text-xs font-black text-amber-400 uppercase tracking-widest">Follow Us</h3>
             <div className="flex flex-wrap gap-2.5 pt-1">
@@ -668,7 +559,6 @@ const Home = () => {
 
         </div>
 
-        {/* Bottom Copyright */}
         <div className="max-w-7xl mx-auto border-t border-slate-800 mt-10 pt-6 text-center text-xs text-slate-500 px-2">
           {content.contact?.copyright || `© ${new Date().getFullYear()} ${content.clubTitle || "Club"}. All rights reserved.`}
         </div>
