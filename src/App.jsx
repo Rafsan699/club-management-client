@@ -11,6 +11,7 @@ import Events from './pages/Events';
 import Team from './pages/Team';
 import Contact from './pages/Contact';
 import Newsfeed from './pages/Newsfeed';
+import MemberList from './pages/MemberList';
 
 // কমন লেআউট কম্পোনেন্ট
 const Layout = ({ darkMode, setDarkMode, user, content, handleLogout }) => {
@@ -100,6 +101,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/login" element={<Login />} />
         <Route path="/news" element={<Newsfeed />} />
+        <Route path="/members/list" element={<MemberList />} />
       </Routes>
     </Router>
   );
