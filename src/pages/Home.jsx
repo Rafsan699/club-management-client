@@ -207,7 +207,7 @@ const Home = () => {
 
         <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 relative z-10">
           <div className={`inline-flex items-center gap-2 px-4.5 py-2 rounded-full ${darkMode ? 'bg-purple-500/10 border-purple-500/20 text-purple-300' : 'bg-purple-50 border-purple-200/80 text-purple-700'} text-xs font-black uppercase tracking-widest shadow-sm backdrop-blur-md`}>
-            <Sparkles className="w-3.5 h-3.5 text-purple-500 animate-spin shrink-0" /> Official Hub of Athletic Champions
+            <Sparkles className="w-3.5 h-3.5 text-purple-500 animate-spin shrink-0" /> Brahmaputra International University Sports Club
           </div>
           
           <h1 className={`text-3xl sm:text-5xl lg:text-6xl font-black ${darkMode ? 'text-white' : 'text-slate-900'} uppercase tracking-tight leading-[1.15] px-2`}>
