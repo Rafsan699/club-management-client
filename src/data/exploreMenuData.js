@@ -13,12 +13,12 @@ export const exploreMenuTree = [
     subItems: [
       { name: 'Register', path: '/register' },
       { name: 'Member List', path: '/members/list' },
-      { name: 'Alumni', path: '/members/alumni' },
+      //{ name: 'Alumni', path: '/members/alumni' },
       
     ]
   },
-  {
-    title: 'Sports',
+  /*{
+   // title: 'Sports',
     subItems: [
       { name: 'Cricket', path: '/sports/cricket' },
       { name: 'Football', path: '/sports/football' },
@@ -29,15 +29,15 @@ export const exploreMenuTree = [
       { name: 'Athletics', path: '/sports/athletics' },
       { name: 'Badminton', path: '/sports/e-sports' },
     ]
-  },
-  {
+  },*/
+  /*{
     title: 'Activities',
     subItems: [
       { name: 'Events', path: '/activities/events' },   
       { name: 'Meetings', path: '/activities/meetings' },
     ]
-  },
-  {
+  },*/
+  /*{
     title: 'Tournaments',
     subItems: [
       { name: 'Upcoming', path: '/tournaments/upcoming' },
@@ -45,17 +45,17 @@ export const exploreMenuTree = [
       { name: 'Results', path: '/tournaments/results' },
       { name: 'Gallery', path: '/tournaments/gallery' },
     ]
-  },
+  },*/
   {
     title: 'Notice',
     subItems: [
       { name: 'General', path: '/notice/general' },
-      { name: 'Meeting', path: '/notice/meeting' },
-      { name: 'Registration', path: '/notice/registration' },
+     // { name: 'Meeting', path: '/notice/meeting' },
+      //{ name: 'Registration', path: '/notice/registration' },
     ]
   },
   
-  {
+  /*{
     title: 'Achievements',
     subItems: [
       { name: 'Club', path: '/achievements/club' },
@@ -63,7 +63,7 @@ export const exploreMenuTree = [
       { name: 'Players', path: '/achievements/players' },
       { name: 'Awards', path: '/achievements/awards' },
     ]
-  },
+  },*/
   
   {
     title: 'Account',
