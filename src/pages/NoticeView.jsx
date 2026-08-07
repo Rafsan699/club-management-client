@@ -17,7 +17,7 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
 
   const fetchNotices = async () => {
     try {
-      const res = await API.get('/notices'); // '/api/notices'-এর পরিবর্তে শুধু '/notices' দিন
+      const res = await API.get('/api/notices'); // ঠিক এখানে পরিবর্তন করুন
       setNotices(res.data);
     } catch (err) {
       console.error(err);
