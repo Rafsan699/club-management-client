@@ -23,8 +23,9 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-   await API.get('/api/content')
-      .then(res => {
+    const fetchContent = async () => {
+      try {
+        const res = await API.get('/api/content');
         if (res.data) {
           setContent(prev => ({
             ...initialContentState,
@@ -36,13 +37,14 @@ export default function Admin() {
             activities: res.data.activities || []
           }));
         }
-      })
-      .catch(err => {
+      } catch (err) {
         console.error("API Fetch Error:", err);
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchContent();
   }, []);
 
   const handleLogin = (e) => {
@@ -189,7 +191,7 @@ export default function Admin() {
             />
           </div>
 
-          {/* 📍 CONTACT & ADDRESS SECTION (এই সেকশনটি দিয়ে কন্টাক্ট ও এড্রেস এডিট হবে) */}
+          {/* CONTACT & ADDRESS SECTION */}
           <div className="bg-slate-800/40 p-8 rounded-2xl border border-emerald-500/30">
             <h2 className="text-2xl font-bold text-emerald-400 mb-6">📍 Contact & Address Information (Footer)</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
