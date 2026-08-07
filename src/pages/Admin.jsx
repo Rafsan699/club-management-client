@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../services/api';
 import { Trash2, Plus, Lock } from 'lucide-react';
 
 const initialContentState = {
@@ -23,7 +23,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/content')
+   await API.get('/api/content')
       .then(res => {
         if (res.data) {
           setContent(prev => ({
@@ -57,7 +57,7 @@ export default function Admin() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await axios.put('http://localhost:5000/api/content', content);
+      await API.put('/api/content', content);
       alert('Changes saved successfully to database!');
     } catch (err) {
       console.error(err);
