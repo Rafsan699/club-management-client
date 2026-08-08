@@ -199,7 +199,7 @@ const Home = () => {
       <div className="absolute top-1/3 right-10 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-indigo-500/10 rounded-full blur-[160px] pointer-events-none"></div>
 
       {/* HERO BANNER SECTION */}
-      <section className={`relative overflow-hidden ${darkMode ? 'bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-slate-800' : 'bg-gradient-to-b from-white via-slate-50/50 to-white border-slate-200/80'} border-b pt-16 sm:pt-20 lg:pt-24 pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6 lg:px-8 text-center`}>
+      <section className={`scroll-reveal relative overflow-hidden ${darkMode ? 'bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-slate-800' : 'bg-gradient-to-b from-white via-slate-50/50 to-white border-slate-200/80'} border-b pt-16 sm:pt-20 lg:pt-24 pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6 lg:px-8 text-center`}>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.05)_0,transparent_70%)] pointer-events-none"></div>
         
         {/* Decorative Grid Lines */}
@@ -233,7 +233,7 @@ const Home = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 space-y-16 sm:space-y-24">
         
         {/* ABOUT & OBJECTIVES SECTION */}
-        <section id="about" className={`rounded-3xl relative overflow-hidden border ${darkMode ? 'bg-slate-900/30 border-slate-800/60' : 'bg-white/70 border-slate-200/80'} shadow-sm backdrop-blur-xl`}>
+        <section id="about" className={`scroll-reveal rounded-3xl relative overflow-hidden border ${darkMode ? 'bg-slate-900/30 border-slate-800/60' : 'bg-white/70 border-slate-200/80'} shadow-sm backdrop-blur-xl`}>
           <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/5 rounded-full blur-[100px] pointer-events-none"></div>
 
           <div className={`px-6 sm:px-10 py-5 sm:py-6 font-black text-lg sm:text-xl flex items-center justify-between border-b ${darkMode ? 'border-slate-800/80 text-white' : 'border-slate-100 text-slate-900'}`}>
@@ -288,7 +288,7 @@ const Home = () => {
         </section>
 
         {/* COMMITTEE SECTION */}
-        <section id="committee" className={`rounded-3xl p-6 sm:p-12 lg:p-16 text-center relative overflow-hidden border ${darkMode ? 'bg-slate-900/20 border-slate-800/50' : 'bg-white/60 border-slate-200/80'} shadow-sm backdrop-blur-xl`}>
+        <section id="committee" className={`scroll-reveal rounded-3xl p-6 sm:p-12 lg:p-16 text-center relative overflow-hidden border ${darkMode ? 'bg-slate-900/20 border-slate-800/50' : 'bg-white/60 border-slate-200/80'} shadow-sm backdrop-blur-xl`}>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] bg-amber-500/5 rounded-full blur-[140px] pointer-events-none"></div>
 
           <div className="mb-12 sm:mb-16 space-y-2 sm:space-y-3 relative z-10 px-2">
@@ -325,7 +325,7 @@ const Home = () => {
                 {firstRow.map((member, idx) => (
                   <div 
                     key={idx} 
-                    className={`flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5 ${idx === 1 ? `sm:-translate-y-4 ring-4 ring-purple-500/10 shadow-xl ${darkMode ? 'border-purple-500/40 bg-slate-900/60' : 'border-purple-500/40 bg-white'}` : ''}`}
+                    className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5 ${idx === 1 ? `sm:-translate-y-4 ring-4 ring-purple-500/10 shadow-xl ${darkMode ? 'border-purple-500/40 bg-slate-900/60' : 'border-purple-500/40 bg-white'}` : ''}`}
                   >
                     <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600/30 to-indigo-500/30 shadow-sm">
                       <img 
@@ -345,7 +345,7 @@ const Home = () => {
             {secondRow.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {secondRow.map((member, idx) => (
-                  <div key={idx} className={`flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5`}>
+                  <div key={idx} className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5`}>
                     <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600/30 to-indigo-500/30 shadow-sm">
                       <img 
                         src={member.img || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"} 
@@ -364,7 +364,7 @@ const Home = () => {
             {thirdRow.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {thirdRow.map((member, idx) => (
-                  <div key={idx} className={`flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5`}>
+                  <div key={idx} className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5`}>
                     <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600/30 to-indigo-500/30 shadow-sm">
                       <img 
                         src={member.img || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"} 
@@ -384,7 +384,7 @@ const Home = () => {
 
         {/* UPCOMING EVENT BANNER SECTION */}
         {content.upcomingEvent && (content.upcomingEvent.title || content.upcomingEvent.bannerUrl) && (
-          <section className={`rounded-3xl border shadow-sm overflow-hidden relative ${darkMode ? 'bg-slate-900/30 border-slate-800/80' : 'bg-white/70 border-slate-200/85'} p-6 sm:p-10 backdrop-blur-xl`}>
+          <section className={`scroll-reveal rounded-3xl border shadow-sm overflow-hidden relative ${darkMode ? 'bg-slate-900/30 border-slate-800/80' : 'bg-white/70 border-slate-200/85'} p-6 sm:p-10 backdrop-blur-xl`}>
             <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/10 rounded-full blur-[120px] pointer-events-none"></div>
 
             <div className="flex flex-col lg:flex-row items-center gap-6 sm:gap-8 relative z-10">
@@ -393,7 +393,7 @@ const Home = () => {
                   <img 
                     src={content.upcomingEvent.bannerUrl} 
                     alt="Upcoming Event Banner" 
-                    className="w-full h-auto max-h-[350px] object-cover hover:scale-105 transition-transform duration-500" 
+                    className="scroll-image w-full h-auto max-h-[350px] object-cover hover:scale-105 transition-transform duration-500" 
                   />
                 </div>
               )}
@@ -438,7 +438,7 @@ const Home = () => {
         )}
 
         {/* DEPARTMENTS SECTION */}
-        <div className={`rounded-3xl overflow-x-hidden`}>
+        <div className={`scroll-reveal rounded-3xl overflow-x-hidden`}>
           <div>
             <DepartmentsSection departments={content?.departments} />
           </div>
@@ -579,31 +579,219 @@ const Home = () => {
       )}
 
       <style>{`
+        html { scroll-behavior: smooth; }
+        body { overflow-x: hidden; }
+
+        /* Scroll-linked cinematic motion. No JS/business logic added. */
+        @supports (animation-timeline: view()) {
+          .scroll-reveal {
+            animation: sectionReveal linear both;
+            animation-timeline: view();
+            animation-range: entry 0% cover 30%;
+            will-change: transform, opacity, filter;
+          }
+
+          .scroll-card {
+            animation: cardReveal linear both;
+            animation-timeline: view();
+            animation-range: entry 0% cover 25%;
+            will-change: transform, opacity;
+          }
+
+          .scroll-image {
+            animation: imageReveal linear both;
+            animation-timeline: view();
+            animation-range: entry 0% cover 38%;
+            will-change: transform;
+          }
+
+          @keyframes sectionReveal {
+            from {
+              opacity: 0;
+              transform: translate3d(0, 54px, 0) scale(.985);
+              filter: blur(7px);
+            }
+            55% {
+              opacity: .9;
+              transform: translate3d(0, 10px, 0) scale(.995);
+              filter: blur(1.5px);
+            }
+            to {
+              opacity: 1;
+              transform: translate3d(0, 0, 0) scale(1);
+              filter: blur(0);
+            }
+          }
+
+          @keyframes cardReveal {
+            from {
+              opacity: 0;
+              transform: translate3d(0, 34px, 0) scale(.97);
+            }
+            60% {
+              opacity: .92;
+              transform: translate3d(0, 6px, 0) scale(.995);
+            }
+            to {
+              opacity: 1;
+              transform: translate3d(0, 0, 0) scale(1);
+            }
+          }
+
+          @keyframes imageReveal {
+            from { transform: scale(1.08); }
+            to { transform: scale(1); }
+          }
+        }
+
+        /* Prevent any long backend content from creating horizontal overflow. */
+        img { max-width: 100%; }
+        p, span, h1, h2, h3, h4, h5, h6 { overflow-wrap: anywhere; }
+        main { width: 100%; min-width: 0; }
+        header { max-width: 100vw; }
+
+        /* Modal remains the same visually but becomes safe on short phones. */
+        .custom-scrollbar {
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 640px) {
+          html { scroll-padding-top: 4.5rem; }
+
+          main {
+            padding-left: 1rem;
+            padding-right: 1rem;
+          }
+
+          .fixed.inset-0.z-50 > div {
+            max-width: calc(100vw - 1.25rem);
+            max-height: min(90dvh, 760px);
+          }
+
+          @supports (animation-timeline: view()) {
+            .scroll-reveal {
+              animation-range: entry 0% cover 24%;
+            }
+
+            .scroll-card {
+              animation-range: entry 0% cover 21%;
+            }
+
+            @keyframes sectionReveal {
+              from {
+                opacity: 0;
+                transform: translate3d(0, 30px, 0) scale(.99);
+                filter: blur(4px);
+              }
+              60% {
+                opacity: .92;
+                transform: translate3d(0, 5px, 0) scale(.998);
+                filter: blur(1px);
+              }
+              to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(1);
+                filter: blur(0);
+              }
+            }
+
+            @keyframes cardReveal {
+              from {
+                opacity: 0;
+                transform: translate3d(0, 20px, 0) scale(.985);
+              }
+              to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(1);
+              }
+            }
+          }
+        }
+
+        @media (max-width: 374px) {
+          main {
+            padding-left: .75rem;
+            padding-right: .75rem;
+          }
+
+          header > div {
+            padding-left: .65rem !important;
+            padding-right: .65rem !important;
+            gap: .4rem !important;
+          }
+
+          header .flex.items-center.gap-2 {
+            gap: .25rem !important;
+          }
+
+          header .flex.items-center.gap-1\\.5 {
+            gap: .25rem !important;
+          }
+
+          header button,
+          header a {
+            flex-shrink: 1;
+          }
+        }
+
+        @media (max-height: 560px) and (max-width: 900px) {
+          .fixed.inset-0.z-50 > div {
+            max-height: 84dvh;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          html { scroll-behavior: auto; }
+
+          *,
+          *::before,
+          *::after {
+            animation-duration: .01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: .01ms !important;
+            scroll-behavior: auto !important;
+          }
+
+          .scroll-reveal,
+          .scroll-card,
+          .scroll-image {
+            animation: none !important;
+            transform: none !important;
+            filter: none !important;
+            opacity: 1 !important;
+          }
+        }
+
+        /* Existing ticker */
         @keyframes marquee {
           0% { transform: translateX(100%); }
           100% { transform: translateX(-100%); }
         }
+
         .animate-marquee {
           display: inline-block;
           animation: marquee 25s linear infinite;
+          will-change: transform;
         }
+
         .animate-marquee:hover {
           animation-play-state: paused;
         }
 
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
+        /* Existing modal scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(0, 0, 0, 0.05); 
+          background: rgba(0, 0, 0, 0.05);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(168, 85, 247, 0.4); 
+          background: rgba(168, 85, 247, 0.4);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(168, 85, 247, 0.7); 
+          background: rgba(168, 85, 247, 0.7);
         }
       `}</style>
 
