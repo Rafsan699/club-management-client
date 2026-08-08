@@ -115,13 +115,12 @@ const Newsfeed = () => {
     }
   };
 
-  // Filter posts based on search query (title, content, or formatted date like "4 january, 2026", month, year)
+  // Filter posts based on search query
   const filteredPosts = posts.filter(post => {
     const query = searchQuery.toLowerCase().trim();
     const titleMatch = post.title.toLowerCase().includes(query);
     const contentMatch = post.content.toLowerCase().includes(query);
     
-    // Generate date string representation for searching (e.g., "4 january, 2026", "january", "2026", etc.)
     const formattedDate = formatAnnouncementDate(post.createdAt).toLowerCase();
     const rawDateObject = new Date(post.createdAt);
     const monthNameFull = rawDateObject.toLocaleString('en-US', { month: 'long' }).toLowerCase();
@@ -235,9 +234,13 @@ const Newsfeed = () => {
               const latestComment = post.comments && post.comments.length > 0 ? post.comments[post.comments.length - 1] : null;
               const absoluteIndex = indexOfFirstPost + index;
 
-              // Character limit or length check to trigger "See Details" view
               const characterLimit = 180;
               const isContentLong = post.content && (post.content.length > characterLimit || post.content.split('\n').length > 4);
+
+              // Get all images array safely (supports both multi-image 'images' and legacy single 'image')
+              const postImages = post.images && post.images.length > 0 
+                ? post.images 
+                : (post.image ? [post.image] : []);
 
               return (
                 <article 
@@ -255,7 +258,7 @@ const Newsfeed = () => {
                     </div>
                   )}
 
-                  {/* Admin Header Info with Custom Date Format: "4 January, 2026" */}
+                  {/* Admin Header Info */}
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-600 text-white flex items-center justify-center font-black text-sm shadow-md shadow-indigo-500/20 shrink-0">
                       A
@@ -266,17 +269,15 @@ const Newsfeed = () => {
                     </div>
                   </div>
 
-                  {/* Post Title & Fixed-size Content Container */}
+                  {/* Post Title & Content */}
                   <div className="space-y-2">
                     <h2 className="font-extrabold text-sm sm:text-base leading-snug tracking-tight">{post.title}</h2>
                     
-                    {/* Fixed-size wrapper container to strictly limit height with line breaks */}
                     <div className={`relative ${isContentLong ? 'max-h-20 overflow-hidden' : ''}`}>
                       <p className={`text-xs sm:text-sm leading-relaxed whitespace-pre-line font-normal ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
                         {post.content}
                       </p>
                       
-                      {/* Gradient fade effect when content is clipped */}
                       {isContentLong && (
                         <div className={`absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t ${darkMode ? 'from-[#090C13]' : 'from-white'} to-transparent pointer-events-none`} />
                       )}
@@ -292,10 +293,64 @@ const Newsfeed = () => {
                     )}
                   </div>
 
-                  {/* Post Image - object-contain used for full picture view */}
-                  {post.image && (
-                    <div className={`rounded-2xl overflow-hidden border flex items-center justify-center transition-colors ${darkMode ? 'border-slate-800/80 bg-slate-950/60' : 'border-slate-100 bg-slate-50'}`}>
-                      <img src={post.image} alt="Announcement media" className="w-full h-auto max-h-[450px] object-contain" loading="lazy" />
+                  {/* Facebook style Multiple Images Grid Layout */}
+                  {postImages.length > 0 && (
+                    <div className="rounded-2xl overflow-hidden">
+                      {postImages.length === 1 && (
+                        <div 
+                          onClick={() => setActiveDetailsPost(post)}
+                          className={`rounded-2xl overflow-hidden border flex items-center justify-center cursor-pointer transition-colors ${darkMode ? 'border-slate-800/80 bg-slate-950/60' : 'border-slate-100 bg-slate-50'}`}
+                        >
+                          <img src={postImages[0]} alt="Announcement media" className="w-full h-auto max-h-[450px] object-contain" loading="lazy" />
+                        </div>
+                      )}
+
+                      {postImages.length === 2 && (
+                        <div className="grid grid-cols-2 gap-1.5 cursor-pointer" onClick={() => setActiveDetailsPost(post)}>
+                          {postImages.map((img, idx) => (
+                            <div key={idx} className={`h-52 overflow-hidden rounded-xl flex items-center justify-center ${darkMode ? 'bg-slate-950' : 'bg-slate-100'}`}>
+                              <img src={img} alt={`Media ${idx + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {postImages.length === 3 && (
+                        <div className="grid grid-cols-2 gap-1.5 cursor-pointer" onClick={() => setActiveDetailsPost(post)}>
+                          <div className={`h-64 overflow-hidden rounded-xl flex items-center justify-center ${darkMode ? 'bg-slate-950' : 'bg-slate-100'}`}>
+                            <img src={postImages[0]} alt="Media 1" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                          </div>
+                          <div className="grid grid-rows-2 gap-1.5 h-64">
+                            {postImages.slice(1, 3).map((img, idx) => (
+                              <div key={idx} className={`overflow-hidden rounded-xl flex items-center justify-center h-full ${darkMode ? 'bg-slate-950' : 'bg-slate-100'}`}>
+                                <img src={img} alt={`Media ${idx + 2}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {postImages.length >= 4 && (
+                        <div className="grid grid-cols-2 gap-1.5 cursor-pointer" onClick={() => setActiveDetailsPost(post)}>
+                          <div className={`h-40 sm:h-48 overflow-hidden rounded-xl flex items-center justify-center ${darkMode ? 'bg-slate-950' : 'bg-slate-100'}`}>
+                            <img src={postImages[0]} alt="Media 1" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                          </div>
+                          <div className={`h-40 sm:h-48 overflow-hidden rounded-xl flex items-center justify-center ${darkMode ? 'bg-slate-950' : 'bg-slate-100'}`}>
+                            <img src={postImages[1]} alt="Media 2" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                          </div>
+                          <div className={`h-40 sm:h-48 overflow-hidden rounded-xl flex items-center justify-center ${darkMode ? 'bg-slate-950' : 'bg-slate-100'}`}>
+                            <img src={postImages[2]} alt="Media 3" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                          </div>
+                          <div className={`h-40 sm:h-48 overflow-hidden rounded-xl relative flex items-center justify-center ${darkMode ? 'bg-slate-950' : 'bg-slate-100'}`}>
+                            <img src={postImages[3]} alt="Media 4" className="w-full h-full object-cover" />
+                            {postImages.length > 4 && (
+                              <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px] flex items-center justify-center text-white font-black text-lg sm:text-xl">
+                                +{postImages.length - 4}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -390,7 +445,7 @@ const Newsfeed = () => {
           </div>
         )}
 
-        {/* Pagination Controls (Prev, Numbers, Next) */}
+        {/* Pagination Controls */}
         {totalPages > 1 && (
           <nav aria-label="Pagination Navigation" className="flex items-center justify-center gap-1.5 sm:gap-2 pt-6 pb-10 flex-wrap">
             <button
@@ -438,7 +493,7 @@ const Newsfeed = () => {
 
       </div>
 
-      {/* "See Details" Full Post Modal */}
+      {/* "See Details" Full Post Modal with Multiple Images Scrollable View */}
       {activeDetailsPost && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 z-50 animate-fadeIn">
           <div className={`border w-full max-w-lg rounded-3xl p-5 sm:p-6 space-y-4 max-h-[90vh] flex flex-col shadow-2xl transition-all ${
@@ -458,13 +513,21 @@ const Newsfeed = () => {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-3.5 pr-1 scrollbar-thin">
+            <div className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-thin">
               <h2 className="font-extrabold text-base sm:text-lg leading-snug">{activeDetailsPost.title}</h2>
               <time className="text-[11px] sm:text-xs font-medium opacity-60 block">{formatAnnouncementDate(activeDetailsPost.createdAt)}</time>
               
-              {activeDetailsPost.image && (
-                <div className={`rounded-2xl overflow-hidden border flex items-center justify-center ${darkMode ? 'border-slate-800 bg-slate-950' : 'border-slate-100 bg-slate-50'}`}>
-                  <img src={activeDetailsPost.image} alt="Announcement full media" className="w-full h-auto max-h-[400px] object-contain" />
+              {/* Scrollable Multiple Images in Details View */}
+              {((activeDetailsPost.images && activeDetailsPost.images.length > 0) || activeDetailsPost.image) && (
+                <div className="space-y-3">
+                  {(activeDetailsPost.images && activeDetailsPost.images.length > 0 
+                    ? activeDetailsPost.images 
+                    : [activeDetailsPost.image]
+                  ).map((imgUrl, imgIdx) => (
+                    <div key={imgIdx} className={`rounded-2xl overflow-hidden border flex items-center justify-center ${darkMode ? 'border-slate-800 bg-slate-950' : 'border-slate-100 bg-slate-50'}`}>
+                      <img src={imgUrl} alt={`Detail media ${imgIdx + 1}`} className="w-full h-auto max-h-[450px] object-contain" />
+                    </div>
+                  ))}
                 </div>
               )}
 
