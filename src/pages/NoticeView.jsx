@@ -38,12 +38,10 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
     return matchesSearch && noticeDate === selectedDate;
   });
 
-  // Pagination Logic
   const totalPages = Math.ceil(filteredNotices.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentNotices = filteredNotices.slice(startIndex, startIndex + itemsPerPage);
 
-  // Reset to page 1 on search or date change
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedDate]);
@@ -62,7 +60,6 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-slate-950 text-slate-100' : 'bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 text-slate-900'} font-serif selection:bg-emerald-600 selection:text-white pb-20`}>
       
-      {/* গ্লোবাল নেভবার হেডার */}
       <Navbar 
         darkMode={darkMode} 
         setDarkMode={setDarkMode} 
@@ -70,7 +67,6 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
         handleLogout={handleLogout} 
       />
 
-      {/* Header Banner */}
       <div className={`relative overflow-hidden border-b ${darkMode ? 'border-slate-800 bg-slate-900/60' : 'border-slate-200/80 bg-white/60'} backdrop-blur-xl pt-28 pb-16 px-4 sm:px-8 shadow-sm`}>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.05),transparent_50%)] pointer-events-none"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(99,102,241,0.05),transparent_50%)] pointer-events-none"></div>
@@ -88,7 +84,6 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
             Explore authentic, securely-compiled digital institutional notices generated on official administrative letterpads with verified signatories.
           </p>
 
-          {/* Search & Date Filter Container */}
           <div className="w-full max-w-xl mt-4 flex flex-col sm:flex-row items-center gap-3">
             <div className="w-full relative">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -125,7 +120,6 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
         </div>
       </div>
 
-      {/* Main Container for Notice List */}
       <div className="max-w-6xl mx-auto px-2 sm:px-8 mt-10">
         
         {filteredNotices.length === 0 ? (
@@ -136,11 +130,10 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
           </div>
         ) : (
           <>
-            <div className="space-y-12 flex flex-col items-center">
+            <div className="space-y-16 flex flex-col items-center">
               {currentNotices.map((n) => (
                 <div key={n._id} className="w-full flex flex-col items-center group">
                   
-                  {/* Document Information Badge Header */}
                   <div className={`w-full max-w-[794px] mb-3 flex items-center justify-between px-4 py-2 ${darkMode ? 'bg-slate-900/70 border-slate-800 text-slate-300' : 'bg-white/70 border-slate-200 text-slate-700'} border rounded-xl backdrop-blur-md shadow-sm font-sans`}>
                     <div className="flex items-center gap-2 text-xs font-medium truncate">
                       <FileText className={`w-4 h-4 ${darkMode ? 'text-emerald-500' : 'text-blue-600'} shrink-0`} />
@@ -156,18 +149,16 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
                     </div>
                   </div>
 
-                  {/* Responsive A4 Document Container (Desktop-এ ছোট এবং Mobile-এ ১০০% ফিট করার জন্য স্কেলিং) */}
-                  <div className="w-full flex justify-center overflow-x-auto py-2">
-                    <div className="w-[794px] h-[1123px] min-w-[794px] scale-[0.45] sm:scale-[0.70] lg:scale-100 origin-top my-[-310px] sm:my-[-170px] lg:my-0 bg-white text-slate-900 px-10 pt-0 pb-8 shadow-2xl rounded-xl border border-slate-300 flex flex-col justify-between relative overflow-hidden font-serif">
+                  {/* সম্পূর্ণ ফিক্সড রেসপন্সিভ কন্টেইনার যাতে কোনো অংশ কেটে না যায় */}
+                  <div className="w-full flex justify-center overflow-x-auto py-4">
+                    <div className="w-[794px] h-[1123px] min-w-[794px] scale-[0.50] sm:scale-[0.75] lg:scale-100 origin-top my-[-275px] sm:my-[-140px] lg:my-0 bg-white text-slate-900 px-10 pt-0 pb-8 shadow-2xl rounded-xl border border-slate-300 flex flex-col justify-between relative overflow-hidden font-serif">
                       
-                      {/* Center Watermark Shadow Logo */}
                       {n.watermarkImg && (
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
                           <img src={n.watermarkImg} alt="Watermark" style={{ width: n.watermarkSize || '320px', opacity: n.watermarkOpacity || '0.10' }} className="object-contain" />
                         </div>
                       )}
 
-                      {/* Header */}
                       <div className="relative z-10">
                         <div className="flex -mx-10 mb-3 items-start">
                           <div className="w-16 h-20 bg-gradient-to-b from-blue-900 to-rose-600"></div>
@@ -200,10 +191,8 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
                         <div className="border-b-[1.5px] border-slate-900 mt-1"></div>
                       </div>
 
-                      {/* Main Canvas Area with Shape & Text Boxes */}
                       <div className="relative flex-grow z-10 my-2">
                         {n.textBoxes && typeof n.textBoxes === 'string' ? (
-                          // যদি ডেটাবেজে JSON স্ট্রিং আকারে থাকে তবে পার্স করে নেওয়া হলো
                           JSON.parse(n.textBoxes).map((box) => (
                             <div
                               key={box.id}
@@ -248,7 +237,6 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
                         )}
                       </div>
 
-                      {/* Signatures & Footer */}
                       <div className="pt-2 space-y-4 z-10">
                         <div className="flex justify-between px-6">
                           <div className="text-center relative" style={{ transform: `translate(${n.sig1X || 0}px, ${n.sig1Y || 0}px)` }}>
@@ -299,7 +287,6 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
               ))}
             </div>
 
-            {/* Professional Pagination Component */}
             {totalPages > 1 && (
               <div className={`mt-16 flex flex-col sm:flex-row items-center justify-between gap-4 ${darkMode ? 'bg-slate-900/75 border-slate-800 text-slate-300' : 'bg-white/70 border-slate-200 text-slate-500'} border px-6 py-4 rounded-2xl backdrop-blur-md shadow-lg font-sans`}>
                 
