@@ -70,7 +70,7 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
         handleLogout={handleLogout} 
       />
 
-      {/* World-Class Executive Header Banner (টপ প্যাডিং দেওয়া হয়েছে যাতে নেভবারের নিচে কন্টেন্ট ঢাকা না পড়ে) */}
+      {/* World-Class Executive Header Banner (টপ প্যাডিং দেওয়া হয়েছে যাতে নেভবারের নিচে কন্টেন্ট ঢাকা না পড়ে) */}
       <div className={`relative overflow-hidden border-b ${darkMode ? 'border-slate-800 bg-slate-900/60' : 'border-slate-200/80 bg-white/60'} backdrop-blur-xl pt-28 pb-16 px-4 sm:px-8 shadow-sm`}>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.05),transparent_50%)] pointer-events-none"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(99,102,241,0.05),transparent_50%)] pointer-events-none"></div>
@@ -128,7 +128,7 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
       </div>
 
       {/* Main Container for Notice List */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-8 mt-10">
+      <div className="max-w-6xl mx-auto px-2 sm:px-8 mt-10">
         
         {filteredNotices.length === 0 ? (
           <div className={`${darkMode ? 'bg-slate-900/70 border-slate-800' : 'bg-white/70 border-slate-200'} border rounded-2xl p-12 text-center space-y-3 backdrop-blur-md shadow-lg`}>
@@ -138,7 +138,7 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
           </div>
         ) : (
           <>
-            <div className="space-y-16 flex flex-col items-center">
+            <div className="space-y-12 flex flex-col items-center">
               {currentNotices.map((n) => (
                 <div key={n._id} className="w-full flex flex-col items-center group">
                   
@@ -158,9 +158,9 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
                     </div>
                   </div>
 
-                  {/* A4 Document Container */}
-                  <div className="w-full flex justify-center overflow-x-auto py-2">
-                    <div className="w-[794px] min-w-[794px] h-[1123px] bg-white text-slate-900 px-7 pt-0 pb-5 shadow-2xl rounded-xl border border-slate-300 flex flex-col justify-between relative overflow-hidden font-serif scale-[0.45] sm:scale-[0.65] md:scale-[0.85] lg:scale-[1] origin-top my-[-280px] sm:my-[-180px] md:my-[-70px] lg:my-0">
+                  {/* Fully Responsive A4 Document Container */}
+                  <div className="w-full flex justify-center py-2">
+                    <div className="w-full max-w-[794px] aspect-[1/1.414] bg-white text-slate-900 p-4 sm:p-7 shadow-2xl rounded-xl border border-slate-300 flex flex-col justify-between relative overflow-hidden font-serif">
                       
                       {n.watermarkImg && (
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
@@ -175,31 +175,31 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
 
                       {/* Header */}
                       <div className="relative z-10">
-                        <div className="flex -mx-7 mb-2 items-start">
-                          <div className="w-12 h-16 bg-gradient-to-b from-blue-900 to-rose-600"></div>
-                          <div className="w-10 h-11 bg-gradient-to-b from-indigo-800 to-rose-500"></div>
-                          <div className="w-10 h-7 bg-gradient-to-b from-rose-600 to-pink-500"></div>
+                        <div className="flex -mx-4 sm:-mx-7 mb-2 items-start">
+                          <div className="w-8 sm:w-12 h-12 sm:h-16 bg-gradient-to-b from-blue-900 to-rose-600"></div>
+                          <div className="w-6 sm:w-10 h-8 sm:h-11 bg-gradient-to-b from-indigo-800 to-rose-500"></div>
+                          <div className="w-6 sm:w-10 h-5 sm:h-7 bg-gradient-to-b from-rose-600 to-pink-500"></div>
                         </div>
 
-                        <div className="flex justify-between items-center relative px-12 pt-1 pb-2">
-                          <div className="flex items-center justify-center pl-2" style={{ width: n.logoSize || '65px', height: n.logoSize || '65px' }}>
+                        <div className="flex justify-between items-center relative px-2 sm:px-12 pt-1 pb-2">
+                          <div className="flex items-center justify-center pl-1 sm:pl-2" style={{ width: 'clamp(40px, 10vw, 65px)', height: 'clamp(40px, 10vw, 65px)' }}>
                             {n.logoLeft ? (
                               <img src={n.logoLeft} alt="Logo 1" className="w-full h-full object-contain" />
                             ) : (
-                              <div className="text-[9px] border rounded-full w-full h-full flex items-center justify-center text-slate-400">Logo 1</div>
+                              <div className="text-[8px] sm:text-[9px] border rounded-full w-full h-full flex items-center justify-center text-slate-400">Logo 1</div>
                             )}
                           </div>
 
-                          <div className="text-center px-4">
-                            <h2 className="text-[22px] font-extrabold tracking-wide uppercase leading-tight font-serif text-slate-900">{n.clubName}</h2>
-                            <p className="text-[11.5px] font-bold tracking-wide uppercase font-serif text-slate-900 mt-1">{n.clubSubName}</p>
+                          <div className="text-center px-2 sm:px-4">
+                            <h2 className="text-xs sm:text-[22px] font-extrabold tracking-wide uppercase leading-tight font-serif text-slate-900">{n.clubName}</h2>
+                            <p className="text-[9px] sm:text-[11.5px] font-bold tracking-wide uppercase font-serif text-slate-900 mt-0.5 sm:mt-1">{n.clubSubName}</p>
                           </div>
 
-                          <div className="flex items-center justify-center pr-2" style={{ width: n.logoSize || '65px', height: n.logoSize || '65px' }}>
+                          <div className="flex items-center justify-center pr-1 sm:pr-2" style={{ width: 'clamp(40px, 10vw, 65px)', height: 'clamp(40px, 10vw, 65px)' }}>
                             {n.logoRight ? (
                               <img src={n.logoRight} alt="Logo 2" className="w-full h-full object-contain" />
                             ) : (
-                              <div className="text-[9px] border rounded-full w-full h-full flex items-center justify-center text-slate-400">Logo 2</div>
+                              <div className="text-[8px] sm:text-[9px] border rounded-full w-full h-full flex items-center justify-center text-slate-400">Logo 2</div>
                             )}
                           </div>
                         </div>
@@ -207,7 +207,7 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
                       </div>
 
                       {/* Main Canvas Area */}
-                      <div className="relative flex-grow z-10 my-2">
+                      <div className="relative flex-grow z-10 my-2 overflow-y-auto">
                         {n.textBoxes && n.textBoxes.map((box) => (
                           <div
                             key={box.id}
@@ -219,8 +219,8 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
                               minHeight: `${box.height}px`,
                               backgroundColor: box.bg,
                               border: box.border,
-                              fontSize: box.fontSize,
-                              padding: '8px',
+                              fontSize: 'clamp(9px, 1.5vw, 14px)',
+                              padding: '6px',
                               borderRadius: '4px',
                               boxSizing: 'border-box'
                             }}
@@ -231,28 +231,28 @@ const NoticeView = ({ darkMode, setDarkMode, user, handleLogout }) => {
                       </div>
 
                       {/* Signatures & Footer */}
-                      <div className="pt-2 space-y-3.5 z-10">
-                        <div className="flex justify-between px-6">
-                          <div className="text-center relative" style={{ transform: `translate(${n.sig1X || 0}px, ${n.sig1Y || 0}px)` }}>
+                      <div className="pt-2 space-y-2 sm:space-y-3.5 z-10">
+                        <div className="flex justify-between px-2 sm:px-6">
+                          <div className="text-center relative">
                             {n.sig1Img ? (
-                              <img src={n.sig1Img} alt="Sign 1" style={{ width: n.sig1ImgWidth || '90px', height: n.sig1ImgHeight || '36px' }} className="mx-auto object-contain mb-0.5" />
-                            ) : <div className="h-7"></div>}
-                            <div style={{ fontSize: n.sig1FontSize || '11px' }} className={`${n.sig1FontWeight || 'font-bold'} leading-tight`}>{n.sig1Name}</div>
-                            <div style={{ fontSize: n.sig1FontSize || '11px' }} className={`${n.sig1FontWeight || 'font-bold'} text-slate-800 leading-tight`}>{n.sig1Role}</div>
-                            <div className="text-[9.5px] text-slate-700">{n.sig1Club || 'BRIU Sports Club'}</div>
+                              <img src={n.sig1Img} alt="Sign 1" style={{ width: 'clamp(60px, 15vw, 90px)', height: 'clamp(24px, 6vw, 36px)' }} className="mx-auto object-contain mb-0.5" />
+                            ) : <div className="h-5 sm:h-7"></div>}
+                            <div className="text-[9px] sm:text-[11px] font-bold leading-tight">{n.sig1Name}</div>
+                            <div className="text-[9px] sm:text-[11px] font-bold text-slate-800 leading-tight">{n.sig1Role}</div>
+                            <div className="text-[8px] sm:text-[9.5px] text-slate-700">{n.sig1Club || 'BRIU Sports Club'}</div>
                           </div>
 
-                          <div className="text-center relative" style={{ transform: `translate(${n.sig2X || 0}px, ${n.sig2Y || 0}px)` }}>
+                          <div className="text-center relative">
                             {n.sig2Img ? (
-                              <img src={n.sig2Img} alt="Sign 2" style={{ width: n.sig2ImgWidth || '90px', height: n.sig2ImgHeight || '36px' }} className="mx-auto object-contain mb-0.5" />
-                            ) : <div className="h-7"></div>}
-                            <div style={{ fontSize: n.sig2FontSize || '11px' }} className={`${n.sig2FontWeight || 'font-bold'} leading-tight`}>{n.sig2Name}</div>
-                            <div style={{ fontSize: n.sig2FontSize || '11px' }} className={`${n.sig2FontWeight || 'font-bold'} text-slate-800 leading-tight`}>{n.sig2Role}</div>
-                            <div className="text-[9.5px] text-slate-700">{n.sig2Club || 'BRIU Sports Club'}</div>
+                              <img src={n.sig2Img} alt="Sign 2" style={{ width: 'clamp(60px, 15vw, 90px)', height: 'clamp(24px, 6vw, 36px)' }} className="mx-auto object-contain mb-0.5" />
+                            ) : <div className="h-5 sm:h-7"></div>}
+                            <div className="text-[9px] sm:text-[11px] font-bold leading-tight">{n.sig2Name}</div>
+                            <div className="text-[9px] sm:text-[11px] font-bold text-slate-800 leading-tight">{n.sig2Role}</div>
+                            <div className="text-[8px] sm:text-[9.5px] text-slate-700">{n.sig2Club || 'BRIU Sports Club'}</div>
                           </div>
                         </div>
 
-                        <div className={`bg-gradient-to-r ${n.footerTheme || 'from-indigo-950 via-rose-600 to-indigo-950'} text-white ${n.footerFontSize || 'text-[8.5px]'} py-1.5 px-6 flex flex-col gap-0.5 -mx-7 -mb-5 font-serif`}>
+                        <div className={`bg-gradient-to-r ${n.footerTheme || 'from-indigo-950 via-rose-600 to-indigo-950'} text-white text-[7.5px] sm:text-[8.5px] py-1.5 px-3 sm:px-6 flex flex-col gap-0.5 -mx-4 sm:-mx-7 -mb-4 sm:-mb-5 font-serif`}>
                           <div className="flex justify-between items-center">
                             <div>📧 {n.footerEmail}</div>
                             <div>📘 {n.footerSocial}</div>
