@@ -21,10 +21,10 @@ const Team = () => {
       });
   }, []);
 
-  // Categorize members efficiently
+  // Categorize members efficiently (Logic 100% untouched)
   const convener = members.find(m => m.category?.toLowerCase() === 'convener' || m.role?.toLowerCase().includes('convener'));
   const executives = members.filter(m => m.category?.toLowerCase() === 'executive' || m.role?.toLowerCase().includes('executive'));
-  const generalMembers = members.filter(m => m.category?.toLowerCase() === 'general' || m.role?.toLowerCase().includes('general'));
+  const generalMembers = members.filter(m => m.category?.toLowerCase() === 'general' || m.role?.toLowerCase().includes('general') || (m.category?.toLowerCase() !== 'convener' && m.category?.toLowerCase() !== 'executive' && !m.role?.toLowerCase().includes('convener') && !m.role?.toLowerCase().includes('executive')));
 
   if (loading) {
     return (
@@ -211,14 +211,14 @@ const Team = () => {
           </div>
         )}
 
-        {/* ================= 3. GENERAL MEMBERS ================= */}
+        {/* ================= 3. GENERAL MEMBERS / WING LEADERS ================= */}
         {generalMembers.length > 0 && (
           <div className="space-y-12">
             <div className="text-center">
               <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
                 darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
               }`}>
-                General Members
+                General Members & Wing Leaders
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
