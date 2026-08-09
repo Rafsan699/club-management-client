@@ -1,451 +1,244 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import API from '../services/api';
+import { UserPlus, Image as ImageIcon, Trash2, Users } from 'lucide-react';
 
-const Team = () => {
-  const [members, setMembers] = useState([]);
-  const [selectedMember, setSelectedMember] = useState(null);
-  const [darkMode, setDarkMode] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const AddNewMember = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    category: '',
+    department: '',
+    batch: '',
+    semester: '',
+  });
+  const [imageFile, setImageFile] = useState(null);
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [members, setMembers] = useState([]); // এডমিন প্যানেলে মেম্বার লিস্ট দেখানোর জন্য
+
+  // মেম্বার লিস্ট ফেচ করা
+  const fetchMembers = async () => {
+    try {
+      const res = await API.get('/api/members/list');
+      setMembers(res.data.data);
+    } catch (err) {
+      console.error('Error fetching members:', err);
+    }
+  };
 
   useEffect(() => {
-    API.get('/api/team')
-      .then(res => {
-        setMembers(res.data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error fetching team:", err);
-        setError("Failed to load team members.");
-        setLoading(false);
-      });
+    fetchMembers();
   }, []);
 
-  // Categorize members efficiently (আপনার ফর্মের ক্যাটাগরিগুলোর সাথে মিল রেখে লজিক আপডেট করা হলো)
-  const convener = members.find(m => m.category?.toLowerCase() === 'convener' || m.role?.toLowerCase().includes('convener'));
-  
-  const executiveCommittee = members.filter(m => 
-    m.category?.toLowerCase() === 'executive committee' || m.role?.toLowerCase().includes('executive committee')
-  );
-  
-  const wingLeaders = members.filter(m => 
-    m.category?.toLowerCase() === 'wing leaders' || m.role?.toLowerCase().includes('wing leaders')
-  );
-  
-  const executiveMembers = members.filter(m => 
-    m.category?.toLowerCase() === 'executive members' || m.role?.toLowerCase().includes('executive members')
-  );
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  const generalMembers = members.filter(m => 
-    m.category?.toLowerCase() === 'general' || m.role?.toLowerCase().includes('general') || (!m.category && !m.role)
-  );
+  const handleImageChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg font-semibold animate-pulse">Loading Team Members...</p>
-      </div>
-    );
-  }
+  // মেম্বার সাবমিট বা যোগ করার হ্যান্ডলার
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatus('Uploading member profile...');
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-red-500 font-semibold">{error}</p>
-      </div>
-    );
-  }
+    const data = new FormData();
+    data.append('name', formData.name);
+    data.append('category', formData.category);
+    data.append('department', formData.department);
+    data.append('batch', formData.batch);
+    data.append('semester', formData.semester);
+    
+    if (imageFile) {
+      data.append('image', imageFile);
+    }
+
+    try {
+      await API.post('/api/members/add', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      setStatus('Member profile created successfully!');
+      setFormData({ name: '', category: '', department: '', batch: '', semester: '' });
+      setImageFile(null);
+      fetchMembers(); // নতুন মেম্বার যোগ হওয়ার পর লিস্ট রিফ্রেশ হবে
+    } catch (err) {
+      console.error(err);
+      setStatus('Failed to add member. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // এডমিন প্যানেল থেকে মেম্বার ডিলিট করার হ্যান্ডলার
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this member?')) {
+      try {
+        await API.delete(`/api/members/delete/${id}`);
+        setMembers(members.filter(m => m._id !== id));
+        setStatus('Member deleted successfully!');
+      } catch (err) {
+        console.error('Failed to delete member:', err);
+        setStatus('Failed to delete member.');
+      }
+    }
+  };
 
   return (
-    <div className={`min-h-screen w-full transition-colors duration-500 font-sans relative antialiased selection:bg-blue-600 selection:text-white ${
-      darkMode 
-        ? 'bg-[#090d16] text-slate-100' 
-        : 'bg-[#f8fafc] text-slate-900'
-    }`}
-    style={{
-      backgroundImage: darkMode 
-        ? 'radial-gradient(rgba(30, 58, 138, 0.12) 1px, transparent 1px)' 
-        : 'radial-gradient(rgba(148, 163, 184, 0.2) 1px, transparent 1px)',
-      backgroundSize: '24px 24px'
-    }}>
-
-      <div className="w-full px-5 sm:px-8 lg:px-16 py-12 sm:py-16 space-y-24 sm:space-y-32 max-w-[1440px] mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-white py-12 px-4">
+      <div className="max-w-4xl mx-auto space-y-10">
         
-        {/* Header Section */}
-        <div className="text-center space-y-4 max-w-2xl mx-auto">
-          <span className={`text-[11px] font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border shadow-sm inline-block transition-colors duration-300 ${
-            darkMode ? 'bg-blue-950/40 border-blue-800/60 text-blue-400 shadow-blue-950/20' : 'bg-blue-50/80 border-blue-200 text-blue-700 shadow-blue-100/50'
-          }`}>
-            University Leadership
-          </span>
-          <h1 className={`text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] ${
-            darkMode ? 'text-white' : 'text-slate-900'
-          }`}>
-            Meet Our Team
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 font-normal text-sm sm:text-base leading-relaxed max-w-lg mx-auto">
-            The dedicated academic and student leaders driving excellence at BRIU Sports Club.
-          </p>
-        </div>
-
-        {/* ================= 1. CONVENER SECTION ================= */}
-        {convener && (
-          <div className="space-y-8">
-            <div className="text-center">
-              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
-                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
-              }`}>
-                BRIU Sports Club Convener
-              </h2>
+        {/* ফর্ম সেকশন */}
+        <div className="bg-white/90 backdrop-blur-md border border-purple-100 p-8 max-w-md w-full mx-auto rounded-3xl shadow-xl shadow-purple-900/5">
+          <div className="text-center mb-6">
+            <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl mx-auto flex items-center justify-center mb-2 shadow-inner">
+              <UserPlus className="w-6 h-6" />
             </div>
-            <div className="flex justify-center">
-              <div 
-                onClick={() => setSelectedMember(convener)}
-                className={`w-full max-w-[320px] rounded-[2rem] overflow-hidden shadow-xl cursor-pointer transition-all duration-500 hover:-translate-y-2.5 hover:shadow-2xl border backdrop-blur-xl group relative ${
-                  darkMode 
-                    ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/50 hover:border-blue-500/60' 
-                    : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/60 hover:border-blue-300'
-                }`}
+            <h2 className="text-xl font-black text-purple-950 uppercase tracking-tight">Add New Member</h2>
+            <p className="text-xs text-purple-600/70 font-semibold mt-0.5">Admin Control Panel</p>
+            <div className="w-10 h-1 bg-purple-600 mx-auto mt-2 rounded-full"></div>
+          </div>
+
+          {status && (
+            <div className={`mb-4 p-3 rounded-xl text-xs font-bold text-center ${status.includes('successfully') ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-purple-50 text-purple-700 border border-purple-200'}`}>
+              {status}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-3.5">
+            <div>
+              <label className="block text-[11px] font-bold text-purple-950 mb-1 uppercase tracking-wider">Member Name *</label>
+              <input 
+                type="text" 
+                name="name"
+                placeholder="e.g. John Doe" 
+                value={formData.name} 
+                onChange={handleInputChange} 
+                className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-purple-100 rounded-xl focus:outline-none focus:border-purple-600 focus:bg-white transition-all text-purple-950 font-medium" 
+                required 
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold text-purple-950 mb-1 uppercase tracking-wider">Category</label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-purple-100 rounded-xl focus:outline-none focus:border-purple-600 focus:bg-white transition-all text-purple-950 font-medium"
               >
-                <div className="h-64 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                  <img src={convener.img} alt={convener.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
-                </div>
-                <div className="p-6 space-y-4">
-                  <div>
-                    <h3 className={`text-lg font-bold tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>{convener.name}</h3>
-                    <p className={`font-semibold text-xs uppercase tracking-wider mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{convener.role}</p>
-                  </div>
-                  <div className={`pt-4 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border truncate max-w-[170px] ${
-                      darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'
-                    }`}>
-                      {convener.dept}
-                    </span>
-                    <span className={`text-xs font-bold tracking-wide flex items-center gap-1 group-hover:translate-x-1 transition-transform duration-300 ${
-                      darkMode ? 'text-blue-400' : 'text-blue-600'
-                    }`}>
-                      Profile <span className="text-[10px]">→</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ================= 2. EXECUTIVE COMMITTEE ================= */}
-        {executiveCommittee.length > 0 && (
-          <div className="space-y-12">
-            <div className="text-center">
-              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
-                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
-              }`}>
-                Executive Committee
-              </h2>
+                <option value="">Select Category</option>
+                <option value="Convener">Convener</option>
+                <option value="Executive Committee">Executive Committee</option>
+                <option value="Wing Leaders">Wing Leaders</option>
+                <option value="Executive Members">Executive Members</option>
+                <option value="General">General</option>
+              </select>
             </div>
 
-            {/* First Row: 3 Members */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto items-end">
-              {executiveCommittee.slice(0, 3).map((member, idx) => (
-                <div 
-                  key={member._id}
-                  onClick={() => setSelectedMember(member)}
-                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2.5 hover:shadow-2xl border backdrop-blur-xl group relative ${
-                    idx === 1 ? 'md:-translate-y-4 lg:-translate-y-6' : ''
-                  } ${
-                    darkMode 
-                      ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/50 hover:border-blue-500/60' 
-                      : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/60 hover:border-blue-300'
-                  }`}
-                >
-                  <div className="h-60 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
-                  </div>
-                  <div className="p-6 space-y-4">
-                    <div>
-                      <h3 className={`text-lg font-bold tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
-                      <p className={`font-semibold text-xs uppercase tracking-wider mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
-                    </div>
-                    <div className={`pt-4 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border truncate max-w-[170px] ${
-                        darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'
-                      }`}>
-                        {member.dept}
-                      </span>
-                      <span className={`text-xs font-bold tracking-wide flex items-center gap-1 group-hover:translate-x-1 transition-transform duration-300 ${
-                        darkMode ? 'text-blue-400' : 'text-blue-600'
-                      }`}>
-                        Profile <span className="text-[10px]">→</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div>
+              <label className="block text-[11px] font-bold text-purple-950 mb-1 uppercase tracking-wider">Department</label>
+              <input 
+                type="text" 
+                name="department"
+                placeholder="e.g. CSE / EEE" 
+                value={formData.department} 
+                onChange={handleInputChange} 
+                className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-purple-100 rounded-xl focus:outline-none focus:border-purple-600 focus:bg-white transition-all text-purple-950 font-medium" 
+              />
             </div>
 
-            {/* Subsequent Rows: 4 Members per row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-              {executiveCommittee.slice(3).map(member => (
-                <div 
-                  key={member._id}
-                  onClick={() => setSelectedMember(member)}
-                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
-                    darkMode 
-                      ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' 
-                      : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
-                  }`}
-                >
-                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
-                  </div>
-                  <div className="p-5 space-y-3.5">
-                    <div>
-                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
-                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
-                    </div>
-                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${
-                        darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'
-                      }`}>
-                        {member.dept}
-                      </span>
-                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${
-                        darkMode ? 'text-blue-400' : 'text-blue-600'
-                      }`}>
-                        Profile <span className="text-[10px]">→</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ================= 3. WING LEADERS ================= */}
-        {wingLeaders.length > 0 && (
-          <div className="space-y-12">
-            <div className="text-center">
-              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
-                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
-              }`}>
-                Wing Leaders
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-              {wingLeaders.map(member => (
-                <div 
-                  key={member._id}
-                  onClick={() => setSelectedMember(member)}
-                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
-                    darkMode 
-                      ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' 
-                      : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
-                  }`}
-                >
-                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
-                  </div>
-                  <div className="p-5 space-y-3.5">
-                    <div>
-                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
-                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
-                    </div>
-                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${
-                        darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'
-                      }`}>
-                        {member.dept}
-                      </span>
-                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${
-                        darkMode ? 'text-blue-400' : 'text-blue-600'
-                      }`}>
-                        Profile <span className="text-[10px]">→</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ================= 4. EXECUTIVE MEMBERS ================= */}
-        {executiveMembers.length > 0 && (
-          <div className="space-y-12">
-            <div className="text-center">
-              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
-                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
-              }`}>
-                Executive Members
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-              {executiveMembers.map(member => (
-                <div 
-                  key={member._id}
-                  onClick={() => setSelectedMember(member)}
-                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
-                    darkMode 
-                      ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' 
-                      : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
-                  }`}
-                >
-                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
-                  </div>
-                  <div className="p-5 space-y-3.5">
-                    <div>
-                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
-                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
-                    </div>
-                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${
-                        darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'
-                      }`}>
-                        {member.dept}
-                      </span>
-                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${
-                        darkMode ? 'text-blue-400' : 'text-blue-600'
-                      }`}>
-                        Profile <span className="text-[10px]">→</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ================= 5. GENERAL MEMBERS ================= */}
-        {generalMembers.length > 0 && (
-          <div className="space-y-12">
-            <div className="text-center">
-              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
-                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
-              }`}>
-                General Members
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-              {generalMembers.map(member => (
-                <div 
-                  key={member._id}
-                  onClick={() => setSelectedMember(member)}
-                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
-                    darkMode 
-                      ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' 
-                      : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
-                  }`}
-                >
-                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
-                  </div>
-                  <div className="p-5 space-y-3.5">
-                    <div>
-                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
-                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
-                    </div>
-                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${
-                        darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'
-                      }`}>
-                        {member.dept}
-                      </span>
-                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${
-                        darkMode ? 'text-blue-400' : 'text-blue-600'
-                      }`}>
-                        Profile <span className="text-[10px]">→</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-      </div>
-
-      {/* ================= CONTACT INFO FOOTER ================= */}
-      <footer className={`w-full border-t mt-28 py-12 px-6 backdrop-blur-xl ${
-        darkMode ? 'bg-[#0b101b]/95 border-slate-800 text-slate-300' : 'bg-white/90 border-slate-200/80 text-slate-700 shadow-sm'
-      }`}>
-        <div className="max-w-[1440px] mx-auto text-center space-y-3">
-          <h3 className={`text-xs font-bold uppercase tracking-[0.2em] ${darkMode ? 'text-blue-400' : 'text-blue-900'}`}>
-            Contact Information
-          </h3>
-          <p className="text-sm font-medium">
-            Email: <a href="mailto:briu.sportsclub@gmail.com" className={`underline underline-offset-4 font-semibold transition-colors duration-200 ${darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-700 hover:text-blue-900'}`}>briu.sportsclub@gmail.com</a>
-          </p>
-        </div>
-      </footer>
-
-      {/* ================= PROFILE MODAL ================= */}
-      {selectedMember && (
-        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6 animate-in fade-in duration-200">
-          <div className={`border rounded-[2.5rem] p-6 sm:p-8 max-w-md w-full relative space-y-6 shadow-2xl backdrop-blur-2xl transform transition-all scale-100 ${
-            darkMode ? 'bg-[#111827]/95 border-slate-800/80 text-white shadow-black/60' : 'bg-white/95 border-slate-200 text-slate-900 shadow-2xl shadow-slate-900/10'
-          }`}>
-            <button 
-              onClick={() => setSelectedMember(null)}
-              className={`absolute top-5 right-5 font-bold text-xs w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 active:scale-95 ${
-                darkMode ? 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900'
-              }`}
-              title="Close"
-            >
-              ✕
-            </button>
-
-            <div className="text-center space-y-3 pt-2">
-              <div className="relative inline-block">
-                <img 
-                  src={selectedMember.img} 
-                  alt={selectedMember.name} 
-                  className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl object-cover mx-auto border-4 border-blue-500/30 shadow-xl" 
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[11px] font-bold text-purple-950 mb-1 uppercase tracking-wider">Batch</label>
+                <input 
+                  type="text" 
+                  name="batch"
+                  placeholder="e.g. 56" 
+                  value={formData.batch} 
+                  onChange={handleInputChange} 
+                  className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-purple-100 rounded-xl focus:outline-none focus:border-purple-600 focus:bg-white transition-all text-purple-950 font-medium" 
                 />
               </div>
               <div>
-                <h3 className="text-xl sm:text-2xl font-extrabold tracking-tight">{selectedMember.name}</h3>
-                <p className={`font-bold text-xs uppercase tracking-wider mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                  {selectedMember.role}
-                </p>
+                <label className="block text-[11px] font-bold text-purple-950 mb-1 uppercase tracking-wider">Semester</label>
+                <input 
+                  type="text" 
+                  name="semester"
+                  placeholder="e.g. 5th" 
+                  value={formData.semester} 
+                  onChange={handleInputChange} 
+                  className="w-full px-3.5 py-2.5 text-xs bg-slate-50 border border-purple-100 rounded-xl focus:outline-none focus:border-purple-600 focus:bg-white transition-all text-purple-950 font-medium" 
+                />
               </div>
             </div>
 
-            <div className={`border rounded-2xl p-4 sm:p-5 space-y-3 text-xs sm:text-sm font-medium ${
-              darkMode ? 'bg-[#090d16]/70 border-slate-800/80 text-slate-300' : 'bg-slate-50/80 border-slate-200/80 text-slate-700'
-            }`}>
-              <div className="flex justify-between items-center border-b pb-2.5 border-slate-500/15">
-                <span className="text-slate-400 font-normal">Category</span>
-                <span className="uppercase font-bold tracking-wider text-[11px]">{selectedMember.category}</span>
-              </div>
-              <div className="flex justify-between items-center border-b pb-2.5 border-slate-500/15">
-                <span className="text-slate-400 font-normal">Department</span>
-                <span className="font-semibold text-right max-w-[200px] truncate">{selectedMember.dept}</span>
-              </div>
-              <div className="flex justify-between items-center border-b pb-2.5 border-slate-500/15">
-                <span className="text-slate-400 font-normal">Email</span>
-                <span className={`font-semibold truncate max-w-[200px] ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{selectedMember.email || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-400 font-normal">Phone</span>
-                <span className="font-semibold">{selectedMember.phone || 'N/A'}</span>
+            <div>
+              <label className="block text-[11px] font-bold text-purple-950 mb-1 uppercase tracking-wider">Profile Picture *</label>
+              <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-purple-100 rounded-xl">
+                <ImageIcon className="w-4 h-4 text-purple-500 shrink-0" />
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleImageChange} 
+                  className="w-full text-xs text-slate-500 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-purple-100 file:text-purple-700 hover:file:bg-purple-200 cursor-pointer" 
+                  required 
+                />
               </div>
             </div>
-          </div>
+
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full mt-2 bg-purple-600 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-purple-700 transition-all shadow-md shadow-purple-200 disabled:opacity-50"
+            >
+              {loading ? 'Processing...' : 'Add Member'}
+            </button>
+          </form>
         </div>
-      )}
 
+        {/* বর্তমান যুক্ত থাকা মেম্বারদের তালিকা ও ডিলিট সেকশন */}
+        <div className="bg-white/90 backdrop-blur-md border border-purple-100 p-6 sm:p-8 rounded-3xl shadow-xl shadow-purple-900/5">
+          <div className="flex items-center gap-2 mb-6 border-b border-purple-100 pb-4">
+            <Users className="w-5 h-5 text-purple-600" />
+            <h3 className="text-lg font-black text-purple-950 uppercase tracking-tight">Manage Added Members ({members.length})</h3>
+          </div>
+
+          {members.length === 0 ? (
+            <p className="text-center text-xs text-slate-400 py-8 font-semibold">No members added yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {members.map(member => (
+                <div key={member._id} className="flex items-center justify-between p-3 bg-slate-50 border border-purple-100 rounded-2xl">
+                  <div className="flex items-center gap-3">
+                    <img 
+                      src={member.image || "https://via.placeholder.com/150"} 
+                      alt={member.name} 
+                      className="w-10 h-10 rounded-xl object-cover border border-purple-200" 
+                    />
+                    <div>
+                      <h4 className="font-bold text-xs text-purple-950">{member.name}</h4>
+                      <p className="text-[10px] text-purple-600 font-semibold">{member.department || 'N/A'} {member.batch ? `(Batch: ${member.batch})` : ''}</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => handleDelete(member._id)}
+                    className="p-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-xl transition-all"
+                    title="Delete Member"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+      </div>
     </div>
   );
 };
 
-export default Team;
+export default AddNewMember;
