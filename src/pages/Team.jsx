@@ -127,7 +127,7 @@ const Team = () => {
               <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
                 darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
               }`}>
-                Executive Committees
+                Executive Committee
               </h2>
             </div>
 
@@ -218,7 +218,7 @@ const Team = () => {
               <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
                 darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
               }`}>
-                Wing Leaders 
+                General Members
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
