@@ -25,11 +25,11 @@ import {
 | The outer wrapper is responsive and reserves the exact scaled height.
 |--------------------------------------------------------------------------
 */
-const ResponsiveA4Page = ({ children }) => {
+const ResponsiveA4Page = ({ children, id }) => {
   const containerRef = useRef(null);
 
   const A4_WIDTH = 794;
-  const A4_HEIGHT = 1200; // ফোন ভিউতে ফুল টেক্সট দেখানোর জন্য হাইট একটু বাড়িয়ে ১২০০ করা হলো
+  const A4_HEIGHT = 1250; // ফোন ভিউতে ফুল টেক্সট যাতে কোনোভাবেই কাটা না পড়ে হাইট আরও একটু বাড়িয়ে ১২৫০ করা হলো
 
   const [scale, setScale] = useState(1);
   const [wrapperHeight, setWrapperHeight] = useState(A4_HEIGHT);
@@ -100,28 +100,48 @@ const ResponsiveA4Page = ({ children }) => {
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full max-w-[794px] mx-auto relative overflow-hidden"
-      style={{
-        height: `${wrapperHeight}px`
-      }}
-    >
+    <>
+      <style>{`
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          #printable-notice-${id}, #printable-notice-${id} * {
+            visibility: visible;
+          }
+          #printable-notice-${id} {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100% !important;
+            transform: scale(1) !important;
+          }
+        }
+      `}</style>
       <div
-        className="bg-white text-slate-900 px-10 pt-0 pb-8 shadow-2xl rounded-xl border border-slate-300 flex flex-col justify-between font-serif box-border"
+        ref={containerRef}
+        className="w-full max-w-[794px] mx-auto relative overflow-hidden"
         style={{
-          width: `${A4_WIDTH}px`,
-          height: `${A4_HEIGHT}px`,
-          transform: `scale(${scale})`,
-          transformOrigin: 'top left',
-          position: 'absolute',
-          top: 0,
-          left: 0
+          height: `${wrapperHeight}px`
         }}
       >
-        {children}
+        <div
+          id={`printable-notice-${id}`}
+          className="bg-white text-slate-900 px-10 pt-0 pb-8 shadow-2xl rounded-xl border border-slate-300 flex flex-col justify-between font-serif box-border print:shadow-none print:border-none"
+          style={{
+            width: `${A4_WIDTH}px`,
+            height: `${A4_HEIGHT}px`,
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+            position: 'absolute',
+            top: 0,
+            left: 0
+          }}
+        >
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -187,7 +207,7 @@ const NoticeView = ({
     setCurrentPage(1);
   }, [searchTerm, selectedDate]);
 
-  // Notice PDF/Image download handler
+  // Notice PDF/Print download handler
   const handleDownloadNotice = () => {
     window.print();
   };
@@ -434,7 +454,7 @@ const NoticeView = ({
                   | Responsive A4 Document
                   |--------------------------------------------------------------------------
                   */}
-                  <ResponsiveA4Page>
+                  <ResponsiveA4Page id={n._id}>
                     {/* Watermark */}
                     {n.watermarkImg && (
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
