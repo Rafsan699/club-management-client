@@ -10,7 +10,8 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
-  X
+  X,
+  Download
 } from 'lucide-react';
 
 /*
@@ -28,7 +29,7 @@ const ResponsiveA4Page = ({ children }) => {
   const containerRef = useRef(null);
 
   const A4_WIDTH = 794;
-  const A4_HEIGHT = 1123;
+  const A4_HEIGHT = 1200; // ফোন ভিউতে ফুল টেক্সট দেখানোর জন্য হাইট একটু বাড়িয়ে ১২০০ করা হলো
 
   const [scale, setScale] = useState(1);
   const [wrapperHeight, setWrapperHeight] = useState(A4_HEIGHT);
@@ -185,6 +186,11 @@ const NoticeView = ({
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedDate]);
+
+  // Notice PDF/Image download handler
+  const handleDownloadNotice = () => {
+    window.print();
+  };
 
   if (loading) {
     return (
@@ -372,7 +378,7 @@ const NoticeView = ({
                 >
                   {/* Notice Metadata */}
                   <div
-                    className={`w-full max-w-[794px] mb-3 flex items-center justify-between px-4 py-2 ${
+                    className={`w-full max-w-[794px] mb-3 flex flex-wrap items-center justify-between gap-2 px-4 py-2 ${
                       darkMode
                         ? 'bg-slate-900/70 border-slate-800 text-slate-300'
                         : 'bg-white/70 border-slate-200 text-slate-700'
@@ -409,15 +415,17 @@ const NoticeView = ({
                           : 'Official Pad'}
                       </span>
 
-                      <span
-                        className={`px-2 py-0.5 rounded ${
+                      <button
+                        onClick={handleDownloadNotice}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold ${
                           darkMode
-                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                            : 'bg-blue-50 text-blue-700 border-blue-200'
-                        } border font-semibold uppercase text-[10px]`}
+                            ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                            : 'bg-blue-600 hover:bg-blue-700 text-white'
+                        } transition-all cursor-pointer shadow-sm`}
                       >
-                        Verified
-                      </span>
+                        <Download className="w-3.5 h-3.5" />
+                        Download Notice
+                      </button>
                     </div>
                   </div>
 
@@ -717,21 +725,21 @@ const NoticeView = ({
                       >
                         <div className="flex justify-between items-center">
                           <div>
-                            📧 {n.footerEmail}
+                            {n.footerEmail}
                           </div>
 
                           <div>
-                            📘 {n.footerSocial}
+                            {n.footerSocial}
                           </div>
                         </div>
 
                         <div className="flex justify-between items-center">
                           <div>
-                            📍 {n.footerAddress}
+                            {n.footerAddress}
                           </div>
 
                           <div>
-                            🌐 {n.footerWeb}
+                            {n.footerWeb}
                           </div>
                         </div>
                       </div>
