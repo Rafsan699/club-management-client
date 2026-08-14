@@ -75,7 +75,7 @@ const Team = () => {
           <span className={`text-[11px] font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border shadow-sm inline-block transition-colors duration-300 ${
             darkMode ? 'bg-blue-950/40 border-blue-800/60 text-blue-400 shadow-blue-950/20' : 'bg-blue-50/80 border-blue-200 text-blue-700 shadow-blue-100/50'
           }`}>
-            University Leadership
+            BRIU Sports Club
           </span>
           <h1 className={`text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] ${
             darkMode ? 'text-white' : 'text-slate-900'
@@ -239,7 +239,7 @@ const Team = () => {
               <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
                 darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
               }`}>
-                General Members
+                Wing Leaders
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">

@@ -13,6 +13,7 @@ import Contact from './pages/Contact';
 import Newsfeed from './pages/Newsfeed';
 import MemberList from './pages/MemberList';
 import NoticeView from './pages/NoticeView';
+import Founders from './pages/Founders';
 
 // কমন লেআউট কম্পোনেন্ট
 const Layout = ({ darkMode, setDarkMode, user, content, handleLogout }) => {
@@ -39,7 +40,7 @@ function App() {
   const [content, setContent] = useState(null);
   const [user, setUser] = useState(null);
 
-  // লোকালস্টোরেজ থেকে ডার্ক মোড স্টেট ইনিশিয়ালাইজ করা যাতে সব পেজে কাজ করে
+  // লোকালস্টোরেজ থেকে ডার্ক মোড স্টেট ইনিশিয়ালাইজ করা যাতে সব পেজে কাজ করে
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem('theme') === 'dark';
   });
@@ -96,6 +97,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/register" element={<Register />} />
           <Route path="/registration" element={<Register />} />
+          <Route path="/founders" element={<Founders />} />
         </Route>
 
         {/* আলাদা পেজ যেমন অ্যাডমিন বা লগইন */}
