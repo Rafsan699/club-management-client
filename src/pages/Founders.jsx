@@ -155,14 +155,6 @@ Founded in 2026, BRIU Sports Club was established with a vision to foster sports
                         </div>
                       )}
                     </div>
-
-                    <button 
-                      onClick={() => setSelectedFounder(founder)}
-                      className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 font-extrabold text-[11px] uppercase tracking-wider bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition-all shadow-md active:scale-95"
-                    >
-                      <span>Explore Profile Details</span>
-                      <span>→</span>
-                    </button>
                   </div>
                 </div>
               </div>
