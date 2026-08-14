@@ -21,10 +21,23 @@ const Team = () => {
       });
   }, []);
 
-  // ক্যাটাগরি দিয়ে প্রাইমারি ফিল্টারিং
+  // ক্যাটাগরি দিয়ে প্রাইমারি ফিল্টারিং
   const convener = members.find(m => m.category?.toLowerCase() === 'convener');
   const executiveMembers = members.filter(m => m.category?.toLowerCase() === 'executive');
   const generalMembers = members.filter(m => m.category?.toLowerCase() === 'general');
+
+  // নতুন যোগ করা ক্যাটাগরিগুলোর ফিল্টারিং
+  const eSportsMembers = members.filter(m => m.category?.toLowerCase() === 'e-sports division');
+  const athleticsMembers = members.filter(m => m.category?.toLowerCase() === 'athletics');
+  const cricketMembers = members.filter(m => m.category?.toLowerCase() === 'cricket');
+  const footballMembers = members.filter(m => m.category?.toLowerCase() === 'football');
+  const badmintonMembers = members.filter(m => m.category?.toLowerCase() === 'badminton');
+  const volleyballMembers = members.filter(m => m.category?.toLowerCase() === 'volleyball');
+  const ludoMembers = members.filter(m => m.category?.toLowerCase() === 'ludo');
+  const carromMembers = members.filter(m => m.category?.toLowerCase() === 'carrom');
+  const chessMembers = members.filter(m => m.category?.toLowerCase() === 'chess');
+  const tableTennisMembers = members.filter(m => m.category?.toLowerCase() === 'table tennis');
+  const deadLiftMembers = members.filter(m => m.category?.toLowerCase() === 'dead lift');
 
   // এক্সিকিউটিভ ক্যাটাগরি থেকে বিশেষ ৩টি রোল আলাদা করা (President, Vice President, General Secretary)
   const president = executiveMembers.find(m => m.role?.toLowerCase().includes('president') && !m.role?.toLowerCase().includes('vice'));
@@ -144,11 +157,9 @@ const Team = () => {
               </h2>
             </div>
 
-            {/* First Row: Vice President (Left), President (Middle), General Secretary (Right) */}
             {topRowExecutives.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto items-end">
                 {topRowExecutives.map((member, idx) => {
-                  // মাঝখানের প্রেসিডেন্ট কার্ডটি একটু উঁচুতে দেখানোর জন্য
                   const isPresidentCenter = member === president;
                   return (
                     <div 
@@ -190,7 +201,6 @@ const Team = () => {
               </div>
             )}
 
-            {/* Subsequent Rows: বাকি এক্সিকিউটিভ মেম্বারগণ (ডাটাবেজ এন্ট्रीর সিরিয়াল অনুযায়ী) */}
             {otherExecutives.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
                 {otherExecutives.map(member => (
@@ -273,6 +283,435 @@ const Team = () => {
                       }`}>
                         Profile <span className="text-[10px]">→</span>
                       </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ================= 4. E-SPORTS DIVISION ================= */}
+        {eSportsMembers.length > 0 && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
+                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
+              }`}>
+                E-Sports Division
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {eSportsMembers.map(member => (
+                <div 
+                  key={member._id}
+                  onClick={() => setSelectedMember(member)}
+                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
+                    darkMode ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
+                  }`}
+                >
+                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
+                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
+                  </div>
+                  <div className="p-5 space-y-3.5">
+                    <div>
+                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
+                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
+                    </div>
+                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'}`}>{member.dept}</span>
+                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Profile <span className="text-[10px]">→</span></span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ================= 5. ATHLETICS ================= */}
+        {athleticsMembers.length > 0 && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
+                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
+              }`}>
+                Athletics
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {athleticsMembers.map(member => (
+                <div 
+                  key={member._id}
+                  onClick={() => setSelectedMember(member)}
+                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
+                    darkMode ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
+                  }`}
+                >
+                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
+                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
+                  </div>
+                  <div className="p-5 space-y-3.5">
+                    <div>
+                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
+                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
+                    </div>
+                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'}`}>{member.dept}</span>
+                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Profile <span className="text-[10px]">→</span></span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ================= 6. CRICKET ================= */}
+        {cricketMembers.length > 0 && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
+                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
+              }`}>
+                Cricket
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {cricketMembers.map(member => (
+                <div 
+                  key={member._id}
+                  onClick={() => setSelectedMember(member)}
+                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
+                    darkMode ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
+                  }`}
+                >
+                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
+                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
+                  </div>
+                  <div className="p-5 space-y-3.5">
+                    <div>
+                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
+                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
+                    </div>
+                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'}`}>{member.dept}</span>
+                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Profile <span className="text-[10px]">→</span></span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ================= 7. FOOTBALL ================= */}
+        {footballMembers.length > 0 && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
+                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
+              }`}>
+                Football
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {footballMembers.map(member => (
+                <div 
+                  key={member._id}
+                  onClick={() => setSelectedMember(member)}
+                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
+                    darkMode ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
+                  }`}
+                >
+                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
+                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
+                  </div>
+                  <div className="p-5 space-y-3.5">
+                    <div>
+                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
+                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
+                    </div>
+                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'}`}>{member.dept}</span>
+                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Profile <span className="text-[10px]">→</span></span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ================= 8. BADMINTON ================= */}
+        {badmintonMembers.length > 0 && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
+                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
+              }`}>
+                Badminton
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {badmintonMembers.map(member => (
+                <div 
+                  key={member._id}
+                  onClick={() => setSelectedMember(member)}
+                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
+                    darkMode ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
+                  }`}
+                >
+                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
+                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
+                  </div>
+                  <div className="p-5 space-y-3.5">
+                    <div>
+                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
+                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
+                    </div>
+                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'}`}>{member.dept}</span>
+                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Profile <span className="text-[10px]">→</span></span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ================= 9. VOLLEYBALL ================= */}
+        {volleyballMembers.length > 0 && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
+                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
+              }`}>
+                Volleyball
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {volleyballMembers.map(member => (
+                <div 
+                  key={member._id}
+                  onClick={() => setSelectedMember(member)}
+                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
+                    darkMode ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
+                  }`}
+                >
+                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
+                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
+                  </div>
+                  <div className="p-5 space-y-3.5">
+                    <div>
+                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
+                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
+                    </div>
+                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'}`}>{member.dept}</span>
+                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Profile <span className="text-[10px]">→</span></span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ================= 10. LUDO ================= */}
+        {ludoMembers.length > 0 && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
+                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
+              }`}>
+                Ludo
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {ludoMembers.map(member => (
+                <div 
+                  key={member._id}
+                  onClick={() => setSelectedMember(member)}
+                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
+                    darkMode ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
+                  }`}
+                >
+                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
+                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
+                  </div>
+                  <div className="p-5 space-y-3.5">
+                    <div>
+                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
+                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
+                    </div>
+                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'}`}>{member.dept}</span>
+                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Profile <span className="text-[10px]">→</span></span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ================= 11. CARROM ================= */}
+        {carromMembers.length > 0 && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
+                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
+              }`}>
+                Carrom
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {carromMembers.map(member => (
+                <div 
+                  key={member._id}
+                  onClick={() => setSelectedMember(member)}
+                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
+                    darkMode ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
+                  }`}
+                >
+                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
+                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
+                  </div>
+                  <div className="p-5 space-y-3.5">
+                    <div>
+                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
+                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
+                    </div>
+                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'}`}>{member.dept}</span>
+                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Profile <span className="text-[10px]">→</span></span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ================= 12. CHESS ================= */}
+        {chessMembers.length > 0 && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
+                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
+              }`}>
+                Chess
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {chessMembers.map(member => (
+                <div 
+                  key={member._id}
+                  onClick={() => setSelectedMember(member)}
+                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
+                    darkMode ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
+                  }`}
+                >
+                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
+                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
+                  </div>
+                  <div className="p-5 space-y-3.5">
+                    <div>
+                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
+                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
+                    </div>
+                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'}`}>{member.dept}</span>
+                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Profile <span className="text-[10px]">→</span></span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ================= 13. TABLE TENNIS ================= */}
+        {tableTennisMembers.length > 0 && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
+                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
+              }`}>
+                Table Tennis
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {tableTennisMembers.map(member => (
+                <div 
+                  key={member._id}
+                  onClick={() => setSelectedMember(member)}
+                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
+                    darkMode ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
+                  }`}
+                >
+                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
+                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
+                  </div>
+                  <div className="p-5 space-y-3.5">
+                    <div>
+                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
+                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
+                    </div>
+                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'}`}>{member.dept}</span>
+                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Profile <span className="text-[10px]">→</span></span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ================= 14. DEAD LIFT ================= */}
+        {deadLiftMembers.length > 0 && (
+          <div className="space-y-12">
+            <div className="text-center">
+              <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
+                darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
+              }`}>
+                Dead Lift
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {deadLiftMembers.map(member => (
+                <div 
+                  key={member._id}
+                  onClick={() => setSelectedMember(member)}
+                  className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border backdrop-blur-xl group relative ${
+                    darkMode ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
+                  }`}
+                >
+                  <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
+                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
+                  </div>
+                  <div className="p-5 space-y-3.5">
+                    <div>
+                      <h3 className={`text-base font-bold tracking-tight truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>{member.name}</h3>
+                      <p className={`font-semibold text-[11px] uppercase tracking-wider truncate mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{member.role}</p>
+                    </div>
+                    <div className={`pt-3.5 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border truncate max-w-[130px] ${darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'}`}>{member.dept}</span>
+                      <span className={`text-[11px] font-bold tracking-wide group-hover:translate-x-1 transition-transform duration-300 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>Profile <span className="text-[10px]">→</span></span>
                     </div>
                   </div>
                 </div>
