@@ -104,19 +104,19 @@ const Home = () => {
   const thirdRow = rawMembers.slice(7, 10);
 
   return (
-    <div className={`${darkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-[#f8fafc] text-slate-900'} min-h-screen font-sans pb-32 selection:bg-purple-500 selection:text-white relative overflow-x-hidden transition-colors duration-300 w-full box-border`}>
+    <div className={`${darkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-[#f8fafc] text-slate-900'} min-h-screen font-sans pb-32 selection:bg-purple-500 selection:text-white relative overflow-x-hidden transition-colors duration-300`}>
       
       {/* HEADER PANEL SECTION */}
-      <header className={`fixed top-0 inset-x-0 z-40 transition-transform duration-300 ${showNavbar ? 'translate-y-0' : '-translate-y-full'} ${darkMode ? 'bg-slate-950/90 border-slate-800 text-slate-100' : 'bg-white/90 border-slate-200 text-slate-900'} backdrop-blur-md border-b w-full box-border overflow-x-hidden`}>
-        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-1 sm:gap-4 w-full box-border">
+      <header className={`fixed top-0 inset-x-0 z-40 transition-transform duration-300 ${showNavbar ? 'translate-y-0' : '-translate-y-full'} ${darkMode ? 'bg-slate-950/90 border-slate-800 text-slate-100' : 'bg-white/90 border-slate-200 text-slate-900'} backdrop-blur-md border-b`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
           
           {/* Menu / Explore Button */}
-          <div className="flex items-center gap-1 sm:gap-3 shrink-0 min-w-0">
+          <div className="flex items-center gap-3">
             <button 
               onClick={() => setShowExploreMenu(!showExploreMenu)}
-              className={`px-2 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 shrink-0 ${darkMode ? 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800' : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200'}`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${darkMode ? 'bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800' : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200'}`}
             >
-              <Compass className="w-3.5 h-3.5 text-purple-500 shrink-0" /> <span className="truncate">Menu</span> <ChevronDown className="w-3 h-3 opacity-60 shrink-0" />
+              <Compass className="w-3.5 h-3.5 text-purple-500" /> Menu <ChevronDown className="w-3 h-3 opacity-60" />
             </button>
           </div>
 
@@ -132,15 +132,15 @@ const Home = () => {
           </nav>
 
           {/* Right side: Login / Register & Dark Mode Toggle */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-2">
             {user ? (
               <div className="relative">
                 <button 
                   onClick={() => setShowDropdown(!showDropdown)}
-                  className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-xs font-medium ${darkMode ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'} border`}
+                  className={`flex items-center gap-2 px-2.5 py-1 rounded-lg text-xs font-medium ${darkMode ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'} border`}
                 >
-                  <User className="w-3.5 h-3.5 text-purple-500 shrink-0" />
-                  <span className="max-w-[70px] sm:max-w-[80px] truncate">{user.name || 'User'}</span>
+                  <User className="w-3.5 h-3.5 text-purple-500" />
+                  <span className="max-w-[80px] truncate">{user.name || 'User'}</span>
                 </button>
                 {showDropdown && (
                   <div className={`absolute right-0 mt-2 w-40 rounded-xl shadow-xl border py-1 z-50 ${darkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'}`}>
@@ -151,11 +151,11 @@ const Home = () => {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-1">
-                <Link to="/login" className="px-2 sm:px-2.5 py-1 rounded-lg text-xs font-medium bg-purple-600 hover:bg-purple-500 text-white shadow-sm transition shrink-0">
+              <div className="flex items-center gap-1.5">
+                <Link to="/login" className="px-2.5 py-1 rounded-lg text-xs font-medium bg-purple-600 hover:bg-purple-500 text-white shadow-sm transition">
                   Login
                 </Link>
-                <Link to="/register" className={`px-2 sm:px-2.5 py-1 rounded-lg text-xs font-medium border transition shrink-0 ${darkMode ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200' : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-800'}`}>
+                <Link to="/register" className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition ${darkMode ? 'bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-200' : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-800'}`}>
                   Register
                 </Link>
               </div>
@@ -163,7 +163,7 @@ const Home = () => {
 
             <button 
               onClick={() => setDarkMode(!darkMode)}
-              className={`p-1.5 rounded-lg border transition shrink-0 ${darkMode ? 'bg-slate-900 border-slate-800 text-amber-400' : 'bg-slate-100 border-slate-200 text-slate-700'}`}
+              className={`p-1.5 rounded-lg border transition ${darkMode ? 'bg-slate-900 border-slate-800 text-amber-400' : 'bg-slate-100 border-slate-200 text-slate-700'}`}
             >
               {darkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
             </button>
@@ -199,30 +199,30 @@ const Home = () => {
       <div className="absolute top-1/3 right-10 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-indigo-500/10 rounded-full blur-[160px] pointer-events-none"></div>
 
       {/* HERO BANNER SECTION */}
-      <section className={`scroll-reveal relative overflow-hidden ${darkMode ? 'bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-slate-800' : 'bg-gradient-to-b from-white via-slate-50/50 to-white border-slate-200/80'} border-b pt-16 sm:pt-20 lg:pt-24 pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6 lg:px-8 text-center w-full box-border`}>
+      <section className={`scroll-reveal relative overflow-hidden ${darkMode ? 'bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-slate-800' : 'bg-gradient-to-b from-white via-slate-50/50 to-white border-slate-200/80'} border-b pt-16 sm:pt-20 lg:pt-24 pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6 lg:px-8 text-center`}>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.05)_0,transparent_70%)] pointer-events-none"></div>
         
         {/* Decorative Grid Lines */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#cbd5e110_1px,transparent_1px),linear-gradient(to_bottom,#cbd5e110_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none"></div>
 
-        <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 relative z-10 w-full box-border">
-          <div className={`inline-flex items-center gap-2 px-4.5 py-2 rounded-full ${darkMode ? 'bg-purple-500/10 border-purple-500/20 text-purple-300' : 'bg-purple-50 border-purple-200/80 text-purple-700'} text-xs font-medium uppercase tracking-widest shadow-sm backdrop-blur-md max-w-full text-center box-border`}>
-            <Sparkles className="w-3.5 h-3.5 text-purple-500 animate-spin shrink-0" /> <span className="truncate">Brahmaputra International University Sports Club</span>
+        <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 relative z-10">
+          <div className={`inline-flex items-center gap-2 px-4.5 py-2 rounded-full ${darkMode ? 'bg-purple-500/10 border-purple-500/20 text-purple-300' : 'bg-purple-50 border-purple-200/80 text-purple-700'} text-xs font-medium uppercase tracking-widest shadow-sm backdrop-blur-md`}>
+            <Sparkles className="w-3.5 h-3.5 text-purple-500 animate-spin shrink-0" /> Brahmaputra International University Sports Club
           </div>
           
-          <h1 className={`text-2xl sm:text-5xl lg:text-6xl font-medium ${darkMode ? 'text-white' : 'text-slate-900'} uppercase tracking-tight leading-[1.15] px-2 break-words`}>
+          <h1 className={`text-3xl sm:text-5xl lg:text-6xl font-medium ${darkMode ? 'text-white' : 'text-slate-900'} uppercase tracking-tight leading-[1.15] px-2`}>
             {content.clubTitle || 'BRIU Sports Club'}
           </h1>
           
-          <p className={`${darkMode ? 'text-slate-300' : 'text-slate-600'} text-sm sm:text-lg lg:text-xl font-normal max-w-2xl mx-auto leading-relaxed px-4 break-words`}>
+          <p className={`${darkMode ? 'text-slate-300' : 'text-slate-600'} text-sm sm:text-lg lg:text-xl font-normal max-w-2xl mx-auto leading-relaxed px-4`}>
             Unleashing athletic excellence, fostering discipline, and building the future champions of Brahmaputra International University.
           </p>
 
-          <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-4 w-full box-border">
-            <Link to="/news" className="w-full sm:w-auto px-7 py-3.5 bg-purple-600 hover:bg-purple-500 text-white rounded-2xl font-medium text-sm shadow-lg shadow-purple-600/20 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 box-border">
-              Explore Newsfeed <ArrowRight className="w-4 h-4 shrink-0" />
+          <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-4">
+            <Link to="/news" className="w-full sm:w-auto px-7 py-3.5 bg-purple-600 hover:bg-purple-500 text-white rounded-2xl font-medium text-sm shadow-lg shadow-purple-600/20 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+              Explore Newsfeed <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link to="/founders" className={`w-full sm:w-auto px-7 py-3.5 ${darkMode ? 'bg-slate-900/90 hover:bg-slate-800 text-white border-slate-800' : 'bg-white hover:bg-slate-50 text-slate-900 border-slate-200/90'} rounded-2xl font-medium text-sm border transition-all hover:scale-105 active:scale-95 shadow-sm backdrop-blur-md flex items-center justify-center box-border`}>
+            <Link to="/founders" className={`w-full sm:w-auto px-7 py-3.5 ${darkMode ? 'bg-slate-900/90 hover:bg-slate-800 text-white border-slate-800' : 'bg-white hover:bg-slate-50 text-slate-900 border-slate-200/90'} rounded-2xl font-medium text-sm border transition-all hover:scale-105 active:scale-95 shadow-sm backdrop-blur-md flex items-center justify-center`}>
               Founders Panel
             </Link>
           </div>
@@ -230,16 +230,16 @@ const Home = () => {
       </section>
 
       {/* MAIN CONTAINER */}
-      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12 sm:py-20 space-y-16 sm:space-y-24 w-full box-border overflow-x-hidden">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 space-y-16 sm:space-y-24">
         
         {/* ABOUT & OBJECTIVES SECTION */}
-        <section id="about" className={`scroll-reveal rounded-3xl relative overflow-hidden border ${darkMode ? 'bg-slate-900/30 border-slate-800/60' : 'bg-white/70 border-slate-200/80'} shadow-sm backdrop-blur-xl w-full box-border`}>
+        <section id="about" className={`scroll-reveal rounded-3xl relative overflow-hidden border ${darkMode ? 'bg-slate-900/30 border-slate-800/60' : 'bg-white/70 border-slate-200/80'} shadow-sm backdrop-blur-xl`}>
           <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-          <div className={`px-4 sm:px-10 py-5 sm:py-6 font-medium text-lg sm:text-xl flex items-center justify-between border-b ${darkMode ? 'border-slate-800/80 text-white' : 'border-slate-100 text-slate-900'} w-full box-border`}>
-            <span className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className={`px-6 sm:px-10 py-5 sm:py-6 font-medium text-lg sm:text-xl flex items-center justify-between border-b ${darkMode ? 'border-slate-800/80 text-white' : 'border-slate-100 text-slate-900'}`}>
+            <span className="flex items-center gap-3 min-w-0">
               <div className={`p-2.5 rounded-2xl border shadow-inner shrink-0 ${darkMode ? 'bg-purple-500/10 border-purple-500/20 text-purple-400' : 'bg-purple-50 border-purple-100 text-purple-600'}`}>
-                <Trophy className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" /> 
+                <Trophy className="w-5 h-5 sm:w-6 sm:h-6" /> 
               </div>
               <span className="truncate">Core Mission & Objectives</span>
             </span>
@@ -248,15 +248,15 @@ const Home = () => {
             </span>
           </div>
 
-          <div className="p-4 sm:p-10 lg:p-12 space-y-8 sm:space-y-10 w-full box-border">
+          <div className="p-6 sm:p-10 lg:p-12 space-y-8 sm:space-y-10">
             <div>
               <h3 className={`text-base sm:text-lg lg:text-xl font-medium ${darkMode ? 'text-white' : 'text-slate-900'} mb-3 sm:mb-4 flex items-center gap-3`}>
                 <div className={`p-2 ${darkMode ? 'bg-purple-500/10 border-purple-500/20' : 'bg-purple-50 border-purple-100'} rounded-xl border shrink-0`}>
-                  <Target className="w-4 h-4 text-purple-600 shrink-0" />
+                  <Target className="w-4 h-4 text-purple-600" />
                 </div> 
                 Our Objective:
               </h3>
-              <p className={`${darkMode ? 'text-slate-300 bg-slate-950/40 border-slate-800/60' : 'text-slate-700 bg-slate-50/80 border-slate-200/85'} leading-relaxed text-sm sm:text-base lg:text-lg font-normal p-4 sm:p-8 rounded-2xl sm:rounded-3xl border shadow-sm break-words`}>
+              <p className={`${darkMode ? 'text-slate-300 bg-slate-950/40 border-slate-800/60' : 'text-slate-700 bg-slate-50/80 border-slate-200/85'} leading-relaxed text-sm sm:text-base lg:text-lg font-normal p-6 sm:p-8 rounded-2xl sm:rounded-3xl border shadow-sm`}>
                 {content.objective || 'Promoting sports and physical fitness among students.'}
               </p>
             </div>
@@ -264,20 +264,20 @@ const Home = () => {
             <div id="activities">
               <h3 className={`text-base sm:text-lg lg:text-xl font-medium ${darkMode ? 'text-white' : 'text-slate-900'} mb-4 flex items-center gap-3`}>
                 <div className={`p-2 ${darkMode ? 'bg-purple-500/10 border-purple-500/20' : 'bg-purple-50 border-purple-100'} rounded-xl border shrink-0`}>
-                  <Activity className="w-4 h-4 text-purple-600 shrink-0" />
+                  <Activity className="w-4 h-4 text-purple-600" />
                 </div> 
                 Major Activities:
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 w-full box-border">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {content.activities && content.activities.length > 0 ? (
                   content.activities.map((act, idx) => (
-                    <div key={idx} className={`flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl ${darkMode ? 'bg-slate-950/40 border-slate-800/60 hover:border-purple-500/40 text-slate-200' : 'bg-slate-50/80 border-slate-200/85 hover:border-purple-500/40 text-slate-800'} font-normal text-xs sm:text-sm shadow-sm transition-all group w-full box-border`}>
+                    <div key={idx} className={`flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl ${darkMode ? 'bg-slate-950/40 border-slate-800/60 hover:border-purple-500/40 text-slate-200' : 'bg-slate-50/80 border-slate-200/85 hover:border-purple-500/40 text-slate-800'} font-normal text-xs sm:text-sm shadow-sm transition-all group`}>
                       <span className="w-2.5 h-2.5 rounded-full bg-purple-600 shrink-0 shadow-sm shadow-purple-600/40 group-hover:scale-125 transition-transform"></span>
                       <span className="break-words">{act}</span>
                     </div>
                   ))
                 ) : (
-                  <div className={`flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl ${darkMode ? 'bg-slate-950/40 border-slate-800/60 text-slate-200' : 'bg-slate-50/80 border-slate-200/85 text-slate-800'} font-normal text-xs sm:text-sm shadow-sm w-full box-border`}>
+                  <div className={`flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl ${darkMode ? 'bg-slate-950/40 border-slate-800/60 text-slate-200' : 'bg-slate-50/80 border-slate-200/85 text-slate-800'} font-normal text-xs sm:text-sm shadow-sm`}>
                     <span className="w-2.5 h-2.5 rounded-full bg-purple-600 shrink-0 shadow-sm shadow-purple-600/40"></span>
                     <span>Annual Sports Tournament</span>
                   </div>
@@ -288,21 +288,21 @@ const Home = () => {
         </section>
 
         {/* COMMITTEE SECTION */}
-        <section id="committee" className={`scroll-reveal rounded-3xl p-4 sm:p-12 lg:p-16 text-center relative overflow-hidden border ${darkMode ? 'bg-slate-900/20 border-slate-800/50' : 'bg-white/60 border-slate-200/80'} shadow-sm backdrop-blur-xl w-full box-border`}>
+        <section id="committee" className={`scroll-reveal rounded-3xl p-6 sm:p-12 lg:p-16 text-center relative overflow-hidden border ${darkMode ? 'bg-slate-900/20 border-slate-800/50' : 'bg-white/60 border-slate-200/80'} shadow-sm backdrop-blur-xl`}>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] bg-amber-500/5 rounded-full blur-[140px] pointer-events-none"></div>
 
-          <div className="mb-12 sm:mb-16 space-y-2 sm:space-y-3 relative z-10 px-2 w-full box-border">
+          <div className="mb-12 sm:mb-16 space-y-2 sm:space-y-3 relative z-10 px-2">
             <span className="inline-block text-[11px] sm:text-xs uppercase tracking-widest bg-amber-500/10 text-amber-600 dark:text-amber-400 px-4 py-1.5 rounded-full border border-amber-500/20 font-medium shadow-sm">
               Congratulations
             </span>
-            <h2 className={`text-xl sm:text-4xl font-serif font-medium ${darkMode ? 'text-slate-100' : 'text-black'} tracking-tight break-words`}>
+            <h2 className={`text-2xl sm:text-4xl font-serif font-medium ${darkMode ? 'text-slate-100' : 'text-black'} tracking-tight`}>
               {content.committeeHeader || 'Executive Committee 2026'}
             </h2>
             <div className="w-24 sm:w-32 h-1.5 bg-gradient-to-r from-purple-600 to-indigo-500 mx-auto mt-3 rounded-full shadow-sm"></div>
           </div>
 
           {content.convener?.name && (
-            <div className="mb-16 sm:mb-20 flex flex-col items-center relative z-10 px-2 w-full box-border">
+            <div className="mb-16 sm:mb-20 flex flex-col items-center relative z-10 px-2">
               <div className="relative p-2 rounded-full bg-gradient-to-tr from-purple-600 via-indigo-500 to-amber-500 shadow-xl group">
                 <img 
                   src={content.convener.image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"} 
@@ -310,22 +310,22 @@ const Home = () => {
                   className={`w-36 h-36 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-full object-cover border-4 ${darkMode ? 'border-slate-950' : 'border-white'} shadow-xl group-hover:scale-105 transition-transform duration-500`}
                 />
               </div>
-              <h4 className={`text-lg sm:text-2xl font-medium ${darkMode ? 'text-white' : 'text-slate-900'} mt-5 tracking-wide break-words`}>{content.convener.name}</h4>
-              <p className="text-sm sm:text-base font-normal text-purple-600 mt-1 break-words">{content.convener.role}</p>
-              <p className={`text-xs sm:text-sm font-normal ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5 break-words`}>{content.convener.dept}</p>
+              <h4 className={`text-lg sm:text-2xl font-medium ${darkMode ? 'text-white' : 'text-slate-900'} mt-5 tracking-wide`}>{content.convener.name}</h4>
+              <p className="text-sm sm:text-base font-normal text-purple-600 mt-1">{content.convener.role}</p>
+              <p className={`text-xs sm:text-sm font-normal ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5`}>{content.convener.dept}</p>
             </div>
           )}
 
-          <div className="space-y-6 sm:space-y-10 relative z-10 w-full box-border">
+          <div className="space-y-6 sm:space-y-10 relative z-10">
             {firstRow.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-end w-full box-border">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-end">
                 {firstRow.map((member, idx) => {
                   const isVicePresident = member.role && member.role.toLowerCase().includes('vice president');
                   
                   return (
                     <div 
                       key={idx} 
-                      className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5 ${idx === 1 ? `sm:-translate-y-4 ring-4 ring-purple-500/10 shadow-xl ${darkMode ? 'border-purple-500/40 bg-slate-900/60' : 'border-purple-500/40 bg-white'}` : ''} ${isVicePresident ? 'order-first sm:order-none' : ''} w-full box-border`}
+                      className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5 ${idx === 1 ? `sm:-translate-y-4 ring-4 ring-purple-500/10 shadow-xl ${darkMode ? 'border-purple-500/40 bg-slate-900/60' : 'border-purple-500/40 bg-white'}` : ''} ${isVicePresident ? 'order-first sm:order-none' : ''}`}
                     >
                       <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600/30 to-indigo-500/30 shadow-sm">
                         <img 
@@ -334,9 +334,9 @@ const Home = () => {
                           className={`w-28 h-28 sm:w-36 sm:h-36 rounded-full object-cover border-4 ${darkMode ? 'border-slate-950' : 'border-white'} shadow-md group-hover:scale-105 transition duration-300`}
                         />
                       </div>
-                      <h5 className={`text-sm sm:text-lg font-medium ${darkMode ? 'text-white' : 'text-slate-900'} mt-4 leading-snug break-words`}>{member.name}</h5>
-                      <p className="text-xs sm:text-sm font-normal text-purple-600 mt-1 break-words">{member.role}</p>
-                      <p className={`text-[11px] sm:text-xs font-normal ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5 break-words`}>{member.dept}</p>
+                      <h5 className={`text-sm sm:text-lg font-medium ${darkMode ? 'text-white' : 'text-slate-900'} mt-4 leading-snug`}>{member.name}</h5>
+                      <p className="text-xs sm:text-sm font-normal text-purple-600 mt-1">{member.role}</p>
+                      <p className={`text-[11px] sm:text-xs font-normal ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5`}>{member.dept}</p>
                     </div>
                   );
                 })}
@@ -344,11 +344,11 @@ const Home = () => {
             )}
 
             {secondRow.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full box-border">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {secondRow.map((member, idx) => {
                   const isVicePresident = member.role && member.role.toLowerCase().includes('vice president');
                   return (
-                    <div key={idx} className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5 ${isVicePresident ? 'order-first sm:order-none' : ''} w-full box-border`}>
+                    <div key={idx} className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5 ${isVicePresident ? 'order-first sm:order-none' : ''}`}>
                       <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600/30 to-indigo-500/30 shadow-sm">
                         <img 
                           src={member.img || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"} 
@@ -356,9 +356,9 @@ const Home = () => {
                           className={`w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 ${darkMode ? 'border-slate-950' : 'border-white'} shadow-md group-hover:scale-105 transition duration-300`}
                         />
                       </div>
-                      <h5 className={`text-sm sm:text-lg font-medium ${darkMode ? 'text-white' : 'text-slate-900'} mt-4 leading-snug break-words`}>{member.name}</h5>
-                      <p className="text-xs sm:text-sm font-normal text-purple-600 mt-1 break-words">{member.role}</p>
-                      <p className={`text-[11px] sm:text-xs font-normal ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5 break-words`}>{member.dept}</p>
+                      <h5 className={`text-sm sm:text-lg font-medium ${darkMode ? 'text-white' : 'text-slate-900'} mt-4 leading-snug`}>{member.name}</h5>
+                      <p className="text-xs sm:text-sm font-normal text-purple-600 mt-1">{member.role}</p>
+                      <p className={`text-[11px] sm:text-xs font-normal ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5`}>{member.dept}</p>
                     </div>
                   );
                 })}
@@ -366,11 +366,11 @@ const Home = () => {
             )}
 
             {thirdRow.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full box-border">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {thirdRow.map((member, idx) => {
                   const isVicePresident = member.role && member.role.toLowerCase().includes('vice president');
                   return (
-                    <div key={idx} className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5 ${isVicePresident ? 'order-first sm:order-none' : ''} w-full box-border`}>
+                    <div key={idx} className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5 ${isVicePresident ? 'order-first sm:order-none' : ''}`}>
                       <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600/30 to-indigo-500/30 shadow-sm">
                         <img 
                           src={member.img || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"} 
@@ -378,9 +378,9 @@ const Home = () => {
                           className={`w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-4 ${darkMode ? 'border-slate-950' : 'border-white'} shadow-md group-hover:scale-105 transition duration-300`}
                         />
                       </div>
-                      <h5 className={`text-sm sm:text-lg font-medium ${darkMode ? 'text-white' : 'text-slate-900'} mt-4 leading-snug break-words`}>{member.name}</h5>
-                      <p className="text-xs sm:text-sm font-normal text-purple-600 mt-1 break-words">{member.role}</p>
-                      <p className={`text-[11px] sm:text-xs font-normal ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5 break-words`}>{member.dept}</p>
+                      <h5 className={`text-sm sm:text-lg font-medium ${darkMode ? 'text-white' : 'text-slate-900'} mt-4 leading-snug`}>{member.name}</h5>
+                      <p className="text-xs sm:text-sm font-normal text-purple-600 mt-1">{member.role}</p>
+                      <p className={`text-[11px] sm:text-xs font-normal ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5`}>{member.dept}</p>
                     </div>
                   );
                 })}
@@ -391,12 +391,12 @@ const Home = () => {
 
         {/* UPCOMING EVENT BANNER SECTION */}
         {content.upcomingEvent && (content.upcomingEvent.title || content.upcomingEvent.bannerUrl) && (
-          <section className={`scroll-reveal rounded-3xl border shadow-sm overflow-hidden relative ${darkMode ? 'bg-slate-900/30 border-slate-800/80' : 'bg-white/70 border-slate-200/85'} p-4 sm:p-10 backdrop-blur-xl w-full box-border`}>
+          <section className={`scroll-reveal rounded-3xl border shadow-sm overflow-hidden relative ${darkMode ? 'bg-slate-900/30 border-slate-800/80' : 'bg-white/70 border-slate-200/85'} p-6 sm:p-10 backdrop-blur-xl`}>
             <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-            <div className="flex flex-col lg:flex-row items-center gap-6 sm:gap-8 relative z-10 w-full box-border">
+            <div className="flex flex-col lg:flex-row items-center gap-6 sm:gap-8 relative z-10">
               {content.upcomingEvent.bannerUrl && (
-                <div className="w-full lg:w-1/2 overflow-hidden rounded-2xl shadow-md border border-slate-200/50 dark:border-slate-800 box-border">
+                <div className="w-full lg:w-1/2 overflow-hidden rounded-2xl shadow-md border border-slate-200/50 dark:border-slate-800">
                   <img 
                     src={content.upcomingEvent.bannerUrl} 
                     alt="Upcoming Event Banner" 
@@ -405,28 +405,28 @@ const Home = () => {
                 </div>
               )}
 
-              <div className={`w-full ${content.upcomingEvent.bannerUrl ? 'lg:w-1/2' : 'lg:w-full'} space-y-4 text-left box-border`}>
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 font-normal text-[11px] uppercase tracking-widest max-w-full">
-                  <Calendar className="w-3.5 h-3.5 shrink-0" /> <span className="truncate">Upcoming Event</span>
+              <div className={`w-full ${content.upcomingEvent.bannerUrl ? 'lg:w-1/2' : 'lg:w-full'} space-y-4 text-left`}>
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 font-normal text-[11px] uppercase tracking-widest">
+                  <Calendar className="w-3.5 h-3.5" /> Upcoming Event
                 </div>
 
-                <h3 className={`text-xl sm:text-2xl font-medium ${darkMode ? 'text-white' : 'text-slate-900'} tracking-tight break-words`}>
+                <h3 className={`text-xl sm:text-2xl font-medium ${darkMode ? 'text-white' : 'text-slate-900'} tracking-tight`}>
                   {content.upcomingEvent.title || 'Exciting Event Coming Up!'}
                 </h3>
 
-                <p className={`text-xs sm:text-sm font-normal ${darkMode ? 'text-slate-300' : 'text-slate-600'} leading-relaxed break-words`}>
+                <p className={`text-xs sm:text-sm font-normal ${darkMode ? 'text-slate-300' : 'text-slate-600'} leading-relaxed`}>
                   {content.upcomingEvent.description || 'Stay tuned for more details regarding our upcoming sports event and activities.'}
                 </p>
 
-                <div className="flex flex-wrap gap-3 pt-1 text-xs font-normal text-slate-500 w-full box-border">
+                <div className="flex flex-wrap gap-3 pt-1 text-xs font-normal text-slate-500">
                   {content.upcomingEvent.date && (
-                    <div className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border ${darkMode ? 'bg-slate-800/80 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'} max-w-full`}>
-                      <Calendar className="w-3.5 h-3.5 text-purple-600 shrink-0" /> <span className="break-words">Date: {content.upcomingEvent.date}</span>
+                    <div className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border ${darkMode ? 'bg-slate-800/80 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
+                      <Calendar className="w-3.5 h-3.5 text-purple-600 shrink-0" /> Date: {content.upcomingEvent.date}
                     </div>
                   )}
                   {content.upcomingEvent.location && (
-                    <div className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border ${darkMode ? 'bg-slate-800/80 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'} max-w-full`}>
-                      <MapPin className="w-3.5 h-3.5 text-purple-600 shrink-0" /> <span className="break-words">Location: {content.upcomingEvent.location}</span>
+                    <div className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border ${darkMode ? 'bg-slate-800/80 border-slate-700 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'}`}>
+                      <MapPin className="w-3.5 h-3.5 text-purple-600 shrink-0" /> Location: {content.upcomingEvent.location}
                     </div>
                   )}
                 </div>
@@ -436,7 +436,7 @@ const Home = () => {
                     onClick={() => setShowEventModal(true)}
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-normal text-xs shadow-md shadow-purple-600/20 transition hover:scale-105 active:scale-95 cursor-pointer"
                   >
-                    details <ArrowRight className="w-4 h-4 shrink-0" />
+                    details <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -445,8 +445,8 @@ const Home = () => {
         )}
 
         {/* DEPARTMENTS SECTION */}
-        <div className={`scroll-reveal rounded-3xl overflow-x-hidden w-full box-border`}>
-          <div className="w-full box-border">
+        <div className={`scroll-reveal rounded-3xl overflow-x-hidden`}>
+          <div>
             <DepartmentsSection departments={content?.departments} />
           </div>
         </div>
@@ -454,52 +454,52 @@ const Home = () => {
 
       {/* SAME PAGE EVENT DETAILS MODAL */}
       {showEventModal && content.upcomingEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in w-full box-border">
-          <div className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto ${darkMode ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-950'} rounded-3xl shadow-2xl border p-4 sm:p-8 custom-scrollbar box-border`}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in">
+          <div className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto ${darkMode ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-950'} rounded-3xl shadow-2xl border p-6 sm:p-8 custom-scrollbar`}>
             
-            <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 mb-6 w-full box-border">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <span className="p-2 bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-xl border border-purple-500/20 shrink-0">
-                  <Calendar className="w-5 h-5 shrink-0" />
+            <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 mb-6">
+              <div className="flex items-center gap-2.5">
+                <span className="p-2 bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-xl border border-purple-500/20">
+                  <Calendar className="w-5 h-5" />
                 </span>
-                <h3 className="text-base sm:text-xl font-medium uppercase tracking-wide truncate">Event Full Details</h3>
+                <h3 className="text-lg sm:text-xl font-medium uppercase tracking-wide">Event Full Details</h3>
               </div>
               <button 
                 onClick={() => setShowEventModal(false)}
-                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-xl transition shrink-0"
+                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-xl transition"
               >
-                <X className="w-5 h-5 shrink-0" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-6 w-full box-border">
+            <div className="space-y-6">
               {content.upcomingEvent.bannerUrl && (
-                <div className="rounded-2xl overflow-hidden border border-slate-200/60 dark:border-slate-800 shadow-sm box-border">
+                <div className="rounded-2xl overflow-hidden border border-slate-200/60 dark:border-slate-800 shadow-sm">
                   <img src={content.upcomingEvent.bannerUrl} alt="Event Banner" className="w-full h-auto max-h-[300px] object-cover" />
                 </div>
               )}
 
-              <div className="space-y-3 w-full box-border">
-                <h4 className="text-lg sm:text-2xl font-medium tracking-tight break-words">{content.upcomingEvent.title}</h4>
-                <p className="text-xs sm:text-sm font-normal leading-relaxed opacity-90 break-words">{content.upcomingEvent.description}</p>
+              <div className="space-y-3">
+                <h4 className="text-xl sm:text-2xl font-medium tracking-tight">{content.upcomingEvent.title}</h4>
+                <p className="text-sm font-normal leading-relaxed opacity-90">{content.upcomingEvent.description}</p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 w-full box-border">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 {content.upcomingEvent.date && (
-                  <div className={`flex items-center gap-3 p-3.5 rounded-2xl border ${darkMode ? 'bg-slate-800/60 border-slate-700/80' : 'bg-slate-50 border-slate-200/80'} w-full box-border`}>
+                  <div className={`flex items-center gap-3 p-3.5 rounded-2xl border ${darkMode ? 'bg-slate-800/60 border-slate-700/80' : 'bg-slate-50 border-slate-200/80'}`}>
                     <Calendar className="w-4 h-4 text-purple-600 shrink-0" />
-                    <div className="min-w-0">
+                    <div>
                       <p className="text-[10px] uppercase font-normal text-slate-400">Date</p>
-                      <p className="text-xs font-medium break-words">{content.upcomingEvent.date}</p>
+                      <p className="text-xs font-medium">{content.upcomingEvent.date}</p>
                     </div>
                   </div>
                 )}
                 {content.upcomingEvent.location && (
-                  <div className={`flex items-center gap-3 p-3.5 rounded-2xl border ${darkMode ? 'bg-slate-800/60 border-slate-700/80' : 'bg-slate-50 border-slate-200/80'} w-full box-border`}>
+                  <div className={`flex items-center gap-3 p-3.5 rounded-2xl border ${darkMode ? 'bg-slate-800/60 border-slate-700/80' : 'bg-slate-50 border-slate-200/80'}`}>
                     <MapPin className="w-4 h-4 text-purple-600 shrink-0" />
-                    <div className="min-w-0">
+                    <div>
                       <p className="text-[10px] uppercase font-normal text-slate-400">Location</p>
-                      <p className="text-xs font-medium break-words">{content.upcomingEvent.location}</p>
+                      <p className="text-xs font-medium">{content.upcomingEvent.location}</p>
                     </div>
                   </div>
                 )}
@@ -511,41 +511,41 @@ const Home = () => {
       )}
 
       {/* DYNAMIC CONTACT / FOOTER PANEL SECTION */}
-      <div id="contact" className="w-full bg-slate-900 text-slate-100 py-12 sm:py-16 px-4 sm:px-8 lg:px-16 mt-20 sm:mt-32 shadow-2xl relative z-20 border-t border-slate-800 box-border overflow-x-hidden">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-10 w-full box-border">
+      <div id="contact" className="w-full bg-slate-900 text-slate-100 py-12 sm:py-16 px-4 sm:px-8 lg:px-16 mt-20 sm:mt-32 shadow-2xl relative z-20 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-10">
           
-          <div className="space-y-3 w-full box-border">
-            <h3 className="text-sm font-medium text-amber-400 tracking-wide uppercase break-words">
+          <div className="space-y-3">
+            <h3 className="text-sm font-medium text-amber-400 tracking-wide uppercase">
               {content.contact?.companyName || content.clubTitle || "Club Info"}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed font-normal break-words">
+            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed font-normal">
               {content.contact?.shortDescription || content.objective || "Empowering members through sports and physical fitness."}
             </p>
           </div>
 
-          <div className="space-y-3 w-full box-border">
+          <div className="space-y-3">
             <h3 className="text-xs font-medium text-amber-400 uppercase tracking-widest flex items-center gap-2">
-              <Phone size={15} className="shrink-0" /> Contact Us
+              <Phone size={15} /> Contact Us
             </h3>
-            <div className="space-y-2.5 text-xs sm:text-sm text-slate-300 font-normal w-full box-border">
+            <div className="space-y-2.5 text-xs sm:text-sm text-slate-300 font-normal">
               <p className="flex items-start gap-2">
                 <MapPin size={15} className="text-amber-400 shrink-0 mt-0.5" />
-                <span className="break-all">{content.contact?.address || content.address || 'N/A'}</span>
+                <span className="break-all sm:break-normal">{content.contact?.address || content.address || 'N/A'}</span>
               </p>
               <p className="flex items-center gap-2">
                 <Mail size={15} className="text-amber-400 shrink-0" />
-                <span className="break-all">{content.contact?.email || content.email || 'N/A'}</span>
+                <span className="break-all sm:break-normal">{content.contact?.email || content.email || 'N/A'}</span>
               </p>
               <p className="flex items-center gap-2">
                 <Phone size={15} className="text-amber-400 shrink-0" />
-                <span className="break-all">{content.contact?.phone || content.phone || 'N/A'}</span>
+                <span className="break-all sm:break-normal">{content.contact?.phone || content.phone || 'N/A'}</span>
               </p>
             </div>
           </div>
 
-          <div className="space-y-3 sm:col-span-2 md:col-span-1 w-full box-border">
+          <div className="space-y-3 sm:col-span-2 md:col-span-1">
             <h3 className="text-xs font-medium text-amber-400 uppercase tracking-widest">Follow Us</h3>
-            <div className="flex flex-wrap gap-2.5 pt-1 w-full box-border">
+            <div className="flex flex-wrap gap-2.5 pt-1">
               {content.contact?.socialLinks && content.contact.socialLinks.length > 0 ? (
                 content.contact.socialLinks.map((social, idx) => (
                   <a 
@@ -553,7 +553,7 @@ const Home = () => {
                     href={social.url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-normal hover:bg-amber-500 hover:text-slate-950 transition shadow-md flex items-center justify-center border border-slate-700 max-w-full break-all"
+                    className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-normal hover:bg-amber-500 hover:text-slate-950 transition shadow-md flex items-center justify-center border border-slate-700"
                   >
                     {social.platform}
                   </a>
@@ -566,18 +566,18 @@ const Home = () => {
 
         </div>
 
-        <div className="max-w-7xl mx-auto border-t border-slate-800 mt-10 pt-6 text-center text-xs text-slate-500 px-2 font-normal w-full box-border break-words">
+        <div className="max-w-7xl mx-auto border-t border-slate-800 mt-10 pt-6 text-center text-xs text-slate-500 px-2 font-normal">
           {content.contact?.copyright || `© ${new Date().getFullYear()} ${content.clubTitle || "Club"}. All rights reserved.`}
         </div>
       </div>
 
       {/* FLASH NEWS TICKER */}
       {content.flashNews && (
-        <div className="fixed bottom-0 inset-x-0 bg-slate-900/95 backdrop-blur-xl text-white text-xs sm:text-sm py-3 px-3 sm:px-8 flex items-center gap-3 sm:gap-4 z-50 border-t border-slate-800 shadow-[0_-15px_40px_rgba(0,0,0,0.15)] w-full box-border overflow-hidden">
-          <span className="bg-purple-500 text-slate-950 font-medium px-2.5 sm:px-3 py-1 rounded-xl text-[10px] uppercase tracking-widest shrink-0 z-10 shadow-md shadow-purple-500/30 animate-pulse flex items-center gap-1.5">
+        <div className="fixed bottom-0 inset-x-0 bg-slate-900/95 backdrop-blur-xl text-white text-xs sm:text-sm py-3 px-4 sm:px-8 flex items-center gap-4 z-50 border-t border-slate-800 shadow-[0_-15px_40px_rgba(0,0,0,0.15)]">
+          <span className="bg-purple-500 text-slate-950 font-medium px-3 py-1 rounded-xl text-[10px] uppercase tracking-widest shrink-0 z-10 shadow-md shadow-purple-500/30 animate-pulse flex items-center gap-1.5">
             <Flame className="w-3.5 h-3.5 text-slate-950 fill-current shrink-0" /> Live News
           </span>
-          <div className="w-full overflow-hidden whitespace-nowrap relative min-w-0">
+          <div className="w-full overflow-hidden whitespace-nowrap relative">
             <div className="inline-block animate-marquee font-normal text-purple-400 tracking-wide text-xs sm:text-sm">
               {content.flashNews}
             </div>
@@ -586,9 +586,8 @@ const Home = () => {
       )}
 
       <style>{`
-        html { scroll-behavior: smooth; box-sizing: border-box; }
-        *, *:before, *:after { box-sizing: inherit; }
-        body { overflow-x: hidden; width: 100%; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { overflow-x: hidden; }
 
         @supports (animation-timeline: view()) {
           .scroll-reveal {
@@ -651,10 +650,10 @@ const Home = () => {
           }
         }
 
-        img { max-width: 100%; height: auto; }
-        p, span, h1, h2, h3, h4, h5, h6 { overflow-wrap: anywhere; word-break: break-word; }
-        main { width: 100%; min-width: 0; max-width: 100%; }
-        header { max-width: 100vw; width: 100%; }
+        img { max-width: 100%; }
+        p, span, h1, h2, h3, h4, h5, h6 { overflow-wrap: anywhere; }
+        main { width: 100%; min-width: 0; }
+        header { max-width: 100vw; }
 
         .custom-scrollbar {
           overscroll-behavior: contain;
@@ -665,12 +664,12 @@ const Home = () => {
           html { scroll-padding-top: 4.5rem; }
 
           main {
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
           }
 
           .fixed.inset-0.z-50 > div {
-            max-width: calc(100vw - 1rem);
+            max-width: calc(100vw - 1.25rem);
             max-height: min(90dvh, 760px);
           }
 
@@ -716,30 +715,27 @@ const Home = () => {
 
         @media (max-width: 374px) {
           main {
-            padding-left: .5rem;
-            padding-right: .5rem;
+            padding-left: .75rem;
+            padding-right: .75rem;
           }
 
           header > div {
-            padding-left: .5rem !important;
-            padding-right: .5rem !important;
-            gap: .25rem !important;
+            padding-left: .65rem !important;
+            padding-right: .65rem !important;
+            gap: .4rem !important;
           }
 
           header .flex.items-center.gap-2 {
-            gap: .15rem !important;
+            gap: .25rem !important;
           }
 
-          header .flex.items-center.gap-1 {
-            gap: .15rem !important;
+          header .flex.items-center.gap-1\\.5 {
+            gap: .25rem !important;
           }
 
           header button,
           header a {
             flex-shrink: 1;
-            font-size: 11px !important;
-            padding-left: 6px !important;
-            padding-right: 6px !important;
           }
         }
 
