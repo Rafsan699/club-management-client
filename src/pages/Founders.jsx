@@ -72,7 +72,7 @@ const Founders = () => {
             Founding Panel — BRIU Sports Club
 
 Founded in 2026, BRIU Sports Club was established with a vision to foster sportsmanship, leadership, teamwork, and a strong athletic culture within the university community. The Founding Panel represents the dedicated individuals who laid the foundation of the club and shaped its early vision, values, and direction. Their commitment marks the beginning of a journey toward excellence in university sports and a lasting legacy for future generations.
-            </p>
+          </p>
         </div>
       </div>
 
@@ -123,12 +123,14 @@ Founded in 2026, BRIU Sports Club was established with a vision to foster sports
                 <div className="w-full lg:w-7/12 space-y-5 text-center sm:text-left">
                   <div className="space-y-2.5">
                     <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 bg-blue-50 px-3 py-1 rounded-lg border border-blue-200 inline-block shadow-sm">
-                        {founder.role}
-                      </span>
                       {founder.dept && (
                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 px-3 py-1 rounded-lg border border-slate-200 inline-block">
                           Dept. of {founder.dept}
+                        </span>
+                      )}
+                      {founder.batch && (
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 bg-blue-50 px-3 py-1 rounded-lg border border-blue-200 inline-block shadow-sm">
+                          Batch: {founder.batch}
                         </span>
                       )}
                     </div>
@@ -227,7 +229,9 @@ Founded in 2026, BRIU Sports Club was established with a vision to foster sports
               />
               <div className="space-y-1">
                 <h3 className="text-xl sm:text-2xl font-black text-slate-900 break-words">{selectedFounder.name}</h3>
-                <p className="font-extrabold text-[11px] uppercase tracking-wider text-blue-600">{selectedFounder.role}</p>
+                <p className="font-extrabold text-[11px] uppercase tracking-wider text-blue-600">
+                  {selectedFounder.batch ? `Batch: ${selectedFounder.batch}` : ''}
+                </p>
               </div>
             </div>
 
@@ -235,6 +239,10 @@ Founded in 2026, BRIU Sports Club was established with a vision to foster sports
               <div className="flex justify-between items-center border-b border-slate-200 pb-2.5">
                 <span className="text-slate-500 font-medium">Department</span>
                 <span className="font-bold text-slate-800 uppercase text-right">{selectedFounder.dept || 'N/A'}</span>
+              </div>
+              <div className="flex justify-between items-center border-b border-slate-200 pb-2.5">
+                <span className="text-slate-500 font-medium">Batch</span>
+                <span className="font-bold text-blue-600 text-right">{selectedFounder.batch || 'N/A'}</span>
               </div>
               <div className="flex flex-col sm:flex-row justify-between sm:items-center border-b border-slate-200 pb-2.5 gap-1">
                 <span className="text-slate-500 font-medium">Email</span>
