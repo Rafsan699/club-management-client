@@ -11,7 +11,7 @@ export const exploreMenuTree = [
   {
     title: 'Members',
     subItems: [
-      { name: 'Register', path: '/register' },
+      //{ name: 'Register', path: '/register' },
       { name: 'Member List', path: '/members/list' },
       //{ name: 'Alumni', path: '/members/alumni' },
       
@@ -51,7 +51,7 @@ export const exploreMenuTree = [
     subItems: [
       { name: 'General', path: '/notice/general' },
      // { name: 'Meeting', path: '/notice/meeting' },
-      //{ name: 'Registration', path: '/notice/registration' },
+      { name: 'Registration', path: '/notice/registration' },
     ]
   },
   

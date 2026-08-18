@@ -14,6 +14,8 @@ import Newsfeed from './pages/Newsfeed';
 import MemberList from './pages/MemberList';
 import NoticeView from './pages/NoticeView';
 import Founders from './pages/Founders';
+import DynamicFormView from './pages/DynamicFormView';
+import EntryGate from './pages/EntryGate';
 
 // কমন লেআউট কম্পোনেন্ট
 const Layout = ({ darkMode, setDarkMode, user, content, handleLogout }) => {
@@ -63,7 +65,6 @@ function App() {
       setUser(JSON.parse(savedUser));
     }
 
-    // ব্যাকএন্ড রাউটের সাথে মিল রেখে /api/content থেকে পরিবর্তন করে /api/club/content করা হয়েছে
     axios.get('/api/club/content')
       .then(res => {
         if (res.data) setContent(res.data);
@@ -106,6 +107,11 @@ function App() {
         <Route path="/news" element={<Newsfeed />} />
         <Route path="/members/list" element={<MemberList />} />
         <Route path="/notice/general" element={<NoticeView />} />
+        <Route path="/notice/registration" element={<EntryGate />} />
+        
+        {/* পাথ এক করার জন্য এখানে /dynamic-form এবং /Access-Form দুটোই সাপোর্ট রাখা হলো */}
+        <Route path="/dynamic-form" element={<DynamicFormView />} />
+        <Route path="/Access-Form" element={<DynamicFormView />} />
       </Routes>
     </Router>
   );
