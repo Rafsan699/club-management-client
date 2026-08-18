@@ -49,7 +49,7 @@ const Team = () => {
     m !== president && m !== vicePresident && m !== generalSecretary
   );
 
-  // প্রথম সারির ৩ জনের স্পেশাল অ্যারে: [Vice President, President, General Secretary]
+  // প্রথম সারির ৩ জনের স্পেশাল অ্যারে: ডেস্কটপ মোডে প্রেসিডেন্ট মাঝে [vicePresident, president, generalSecretary]
   const topRowExecutives = [vicePresident, president, generalSecretary].filter(Boolean);
 
   if (loading) {
@@ -158,14 +158,26 @@ const Team = () => {
             </div>
 
             {topRowExecutives.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto items-end">
-                {topRowExecutives.map((member, idx) => {
+              <div className="flex flex-col md:grid md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto items-end">
+                {topRowExecutives.map((member) => {
                   const isPresidentCenter = member === president;
+                  
+                  // মোবাইল ভিউতে অর্ডার সেট করার জন্য লজিক: 
+                  // President -> 1 (সবার উপরে), Vice President -> 2 (মাঝে), General Secretary -> 3 (সবার নিচে)
+                  let mobileOrderClass = '';
+                  if (member === president) {
+                    mobileOrderClass = 'order-1 md:order-none';
+                  } else if (member === vicePresident) {
+                    mobileOrderClass = 'order-2 md:order-none';
+                  } else if (member === generalSecretary) {
+                    mobileOrderClass = 'order-3 md:order-none';
+                  }
+
                   return (
                     <div 
                       key={member._id}
                       onClick={() => setSelectedMember(member)}
-                      className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2.5 hover:shadow-2xl border backdrop-blur-xl group relative ${
+                      className={`w-full max-w-[320px] mx-auto rounded-[2rem] overflow-hidden shadow-lg cursor-pointer transition-all duration-500 hover:-translate-y-2.5 hover:shadow-2xl border backdrop-blur-xl group relative ${mobileOrderClass} ${
                         isPresidentCenter ? 'md:-translate-y-4 lg:-translate-y-6' : ''
                       } ${
                         darkMode 
@@ -249,7 +261,7 @@ const Team = () => {
               <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
                 darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
               }`}>
-                Wing Leaders
+                EXECUTIVE MEMBERS
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">

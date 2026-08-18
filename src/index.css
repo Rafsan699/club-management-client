@@ -1,6 +1,13 @@
 @import "tailwindcss";
-/* Admin সম্পর্কিত লিঙ্ক বা বাটন হাইড করার জন্য */
-a[href*="admin"], 
+
+/* .dark ক্লাস থাকলে ব্যাকগ্রাউন্ড ও টেক্সট কালার অটো পরিবর্তন হবে */
+.dark body {
+  background-color: #030712; /* bg-slate-950 এর কালার কোড */
+  color: #f1f5f9; /* text-slate-100 এর কালার কোড */
+}
+
+/* Admin লিংক হাইড করার কোড */
+a[href*="admin"],
 button:has(a[href*="admin"]) {
   display: none !important;
 }

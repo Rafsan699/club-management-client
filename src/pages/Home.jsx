@@ -97,7 +97,16 @@ const Home = () => {
     );
   }
 
-  const rawMembers = Array.isArray(content.members) ? content.members : [];
+  const rawMembers = Array.isArray(content.members) ? [...content.members] : [];
+  
+  const pIndex = rawMembers.findIndex(m => m.role && m.role.toLowerCase().includes('president') && !m.role.toLowerCase().includes('vice'));
+  const vpIndex = rawMembers.findIndex(m => m.role && m.role.toLowerCase().includes('vice president'));
+
+  if (pIndex !== -1 && vpIndex !== -1 && vpIndex < pIndex) {
+    const temp = rawMembers[pIndex];
+    rawMembers[pIndex] = rawMembers[vpIndex];
+    rawMembers[vpIndex] = temp;
+  }
 
   const firstRow = rawMembers.slice(0, 3);
   const secondRow = rawMembers.slice(3, 7);
@@ -319,13 +328,31 @@ const Home = () => {
           <div className="space-y-6 sm:space-y-10 relative z-10">
             {firstRow.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-end">
-                {firstRow.map((member, idx) => {
-                  const isVicePresident = member.role && member.role.toLowerCase().includes('vice president');
+                {(() => {
+                  const sortedRow = [...firstRow];
+                  const pIdx = sortedRow.findIndex(m => m.role && m.role.toLowerCase().includes('president') && !m.role.toLowerCase().includes('vice'));
+                  const vpIdx = sortedRow.findIndex(m => m.role && m.role.toLowerCase().includes('vice president'));
                   
+                  // ডেস্কটপ মোডে প্রেসিডেন্টকে মাঝখানে এবং ফোন মোডে প্রেসিডেন্টকে উপরে রাখার লজিক
+                  if (pIdx !== -1 && vpIdx !== -1) {
+                    const president = sortedRow[pIdx];
+                    const vicePresident = sortedRow[vpIdx];
+                    const other = sortedRow.filter((_, i) => i !== pIdx && i !== vpIdx)[0];
+                    
+                    // বিন্যাস: [Vice President, President, Other] -> ডেস্কটপে মিডল কলাম প্রেসিডেন্ট (order-2 sm:order-2), ফোনে প্রথম (order-1 sm:order-none)
+                    return [
+                      { member: vicePresident, orderClass: 'order-2 sm:order-1', highlight: false },
+                      { member: president, orderClass: 'order-1 sm:order-2 sm:-translate-y-4 ring-4 ring-purple-500/10 shadow-xl border-purple-500/40 ' + (darkMode ? 'bg-slate-900/60' : 'bg-white'), highlight: true },
+                      { member: other, orderClass: 'order-3 sm:order-3', highlight: false }
+                    ];
+                  }
+                  return sortedRow.map(m => ({ member: m, orderClass: '', highlight: false }));
+                })().map(({ member, orderClass, highlight }, idx) => {
+                  if (!member) return null;
                   return (
                     <div 
                       key={idx} 
-                      className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5 ${idx === 1 ? `sm:-translate-y-4 ring-4 ring-purple-500/10 shadow-xl ${darkMode ? 'border-purple-500/40 bg-slate-900/60' : 'border-purple-500/40 bg-white'}` : ''} ${isVicePresident ? 'order-first sm:order-none' : ''}`}
+                      className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5 ${orderClass} ${highlight && darkMode ? 'border-purple-500/40 bg-slate-900/60' : ''} ${highlight && !darkMode ? 'border-purple-500/40 bg-white' : ''}`}
                     >
                       <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600/30 to-indigo-500/30 shadow-sm">
                         <img 
@@ -346,9 +373,8 @@ const Home = () => {
             {secondRow.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {secondRow.map((member, idx) => {
-                  const isVicePresident = member.role && member.role.toLowerCase().includes('vice president');
                   return (
-                    <div key={idx} className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5 ${isVicePresident ? 'order-first sm:order-none' : ''}`}>
+                    <div key={idx} className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5`}>
                       <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600/30 to-indigo-500/30 shadow-sm">
                         <img 
                           src={member.img || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"} 
@@ -368,9 +394,8 @@ const Home = () => {
             {thirdRow.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {thirdRow.map((member, idx) => {
-                  const isVicePresident = member.role && member.role.toLowerCase().includes('vice president');
                   return (
-                    <div key={idx} className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5 ${isVicePresident ? 'order-first sm:order-none' : ''}`}>
+                    <div key={idx} className={`scroll-card flex flex-col items-center p-6 sm:p-8 rounded-3xl ${darkMode ? 'hover:bg-slate-900/60 border-slate-800/80 bg-slate-900/30' : 'hover:bg-white border-slate-200/85 bg-white/70'} transition-all duration-300 border shadow-sm group hover:-translate-y-1.5`}>
                       <div className="relative p-1.5 rounded-full bg-gradient-to-tr from-purple-600/30 to-indigo-500/30 shadow-sm">
                         <img 
                           src={member.img || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"} 
