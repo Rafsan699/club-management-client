@@ -13,30 +13,31 @@ export const exploreMenuTree = [
     subItems: [
       //{ name: 'Register', path: '/register' },
       { name: 'Member List', path: '/members/list' },
-      //{ name: 'Alumni', path: '/members/alumni' },
+      //{ name: 'Previous Committee', path: '/members/alumni' },
       
     ]
   },
   /*{
    // title: 'Sports',
     subItems: [
+      { name: 'E-Sports', path: '/sports/e-sports' },
       { name: 'Cricket', path: '/sports/cricket' },
       { name: 'Football', path: '/sports/football' },
       { name: 'Volleyball', path: '/sports/volleyball' },
-      { name: 'Table Tennis', path: '/sports/table-tennis' },
-      { name: 'Chess', path: '/sports/chess' },
+      { name: 'Table Tennis & Badminton', path: '/sports/table-tennis' },
+      { name: 'Chess & Ludo', path: '/sports/chess' },
       { name: 'Carrom', path: '/sports/carrom' },
       { name: 'Athletics', path: '/sports/athletics' },
-      { name: 'Badminton', path: '/sports/e-sports' },
+      
     ]
   },*/
-  /*{
-    title: 'Activities',
+  {
+    title: 'Club Room',
     subItems: [
-      { name: 'Events', path: '/activities/events' },   
+      //{ name: 'Documents', path: '/activities/events' },   
       { name: 'Meetings', path: '/activities/meetings' },
     ]
-  },*/
+  },
   /*{
     title: 'Tournaments',
     subItems: [

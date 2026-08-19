@@ -17,6 +17,11 @@ import Founders from './pages/Founders';
 import DynamicFormView from './pages/DynamicFormView';
 import EntryGate from './pages/EntryGate';
 
+// নতুন মিটিং পেজ কম্পোনেন্টসমূহ আমদানি (আপনার ফোল্ডার পাথ অনুযায়ী ইমপোর্ট এডজাস্ট করে নেবেন)
+import MeetingHome from './pages/MeetingHome';
+import MeetingEntry from './pages/MeetingEntry';
+import MeetingDetailsUser from './pages/MeetingDetailsUser';
+
 // কমন লেআউট কম্পোনেন্ট
 const Layout = ({ darkMode, setDarkMode, user, content, handleLogout }) => {
   return (
@@ -99,6 +104,11 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/registration" element={<Register />} />
           <Route path="/founders" element={<Founders />} />
+
+          {/* ক্লাব মিটিং সংক্রান্ত নতুন রাউটসমূহ */}
+          <Route path="/activities/meetings" element={<MeetingHome />} />
+          <Route path="/activities/meetings/entry" element={<MeetingEntry />} />
+          <Route path="/activities/meetings/view" element={<MeetingDetailsUser />} />
         </Route>
 
         {/* আলাদা পেজ যেমন অ্যাডমিন বা লগইন */}

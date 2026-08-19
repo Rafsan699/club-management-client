@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API from '../services/api';
-import { Calendar, MapPin, RefreshCw, Image as ImageIcon, Search, ArrowLeft, ChevronLeft, ChevronRight, Mail, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, RefreshCw, Image as ImageIcon, Search, ArrowLeft, ChevronLeft, ChevronRight, Mail } from 'lucide-react';
 
 const Events = () => {
   const [events, setEvents] = useState([]);
@@ -18,7 +18,6 @@ const Events = () => {
   const fetchEvents = async () => {
     try {
       setLoading(true);
-      // API.js বা axios কল দিয়ে ডাটা ফেচ করুন
       const res = await API.get('/api/events');
       setEvents(res.data);
     } catch (err) {
@@ -92,8 +91,14 @@ const Events = () => {
                 : 'bg-white/95 border-slate-200/90 shadow-xl shadow-slate-900/10 text-slate-900'
             }`}>
               {selectedEvent.imageUrl ? (
-                <div className="w-full h-48 sm:h-64 md:h-[340px] overflow-hidden rounded-xl relative bg-slate-100 dark:bg-slate-800 shadow-md">
-                  <img src={selectedEvent.imageUrl} alt={selectedEvent.title} loading="lazy" className="w-full h-full object-cover object-center" />
+                /* সম্পূর্ণ ছবি কোনো ক্রপ বা কাটা ছাড়াই দেখানোর জন্য object-contain ব্যবহার করা হয়েছে */
+                <div className="w-full max-h-[450px] min-h-[250px] overflow-hidden rounded-xl relative bg-slate-950/90 flex items-center justify-center shadow-md">
+                  <img 
+                    src={selectedEvent.imageUrl} 
+                    alt={selectedEvent.title} 
+                    loading="lazy" 
+                    className="w-full h-full max-h-[450px] object-contain object-center" 
+                  />
                 </div>
               ) : (
                 <div className={`w-full h-48 sm:h-64 md:h-[340px] rounded-xl flex items-center justify-center ${
@@ -128,12 +133,6 @@ const Events = () => {
                     {selectedEvent.description}
                   </p>
                 </div>
-              </div>
-
-              <div className={`p-3.5 rounded-xl text-center border font-semibold text-[11px] tracking-wide shadow-sm break-words ${
-                darkMode ? 'bg-blue-950/40 border-blue-800/60 text-blue-300' : 'bg-blue-50/80 border-blue-200 text-blue-700'
-              }`}>
-                Event is active. For direct official queries contact us at: <a href="mailto:briu.sportsclub@gmail.com" className="underline font-bold block sm:inline mt-1 sm:mt-0 ml-1 break-all">briu.sportsclub@gmail.com</a>
               </div>
             </div>
           </div>
@@ -210,22 +209,24 @@ const Events = () => {
                     }`}
                   >
                     <div>
-                      {/* Image Banner */}
+                      {/* Image Banner - পুরো ছবি নিখুঁতভাবে দেখানোর জন্য object-contain এবং ডার্ক ব্যাকগ্রাউন্ড ফ্রেম */}
                       {ev.imageUrl ? (
-                        <div className="h-40 sm:h-44 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                          <img src={ev.imageUrl} alt={ev.title} loading="lazy" className="w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity" aria-hidden="true"></div>
+                        <div className="h-48 sm:h-52 w-full overflow-hidden relative bg-slate-950/90 flex items-center justify-center">
+                          <img 
+                            src={ev.imageUrl} 
+                            alt={ev.title} 
+                            loading="lazy" 
+                            className="w-full h-full object-contain object-center transition-transform duration-500 ease-out group-hover:scale-105" 
+                          />
                         </div>
                       ) : (
-                        <div className={`w-full h-40 sm:h-44 flex items-center justify-center ${darkMode ? 'bg-slate-800 text-slate-600' : 'bg-slate-100 text-slate-400'}`}>
+                        <div className={`w-full h-48 sm:h-52 flex items-center justify-center ${darkMode ? 'bg-slate-800 text-slate-600' : 'bg-slate-100 text-slate-400'}`}>
                           <ImageIcon className="w-8 h-8" aria-hidden="true" />
                         </div>
                       )}
                       
                       {/* Content Area */}
                       <div className="p-3.5 sm:p-4 space-y-2.5">
-                        
-                        {/* Title and Date Row */}
                         <div className="space-y-1.5">
                           <div className="flex items-center justify-between gap-2">
                             <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border max-w-full truncate ${
@@ -240,7 +241,6 @@ const Events = () => {
                           </h3>
                         </div>
 
-                        {/* Description */}
                         <p className={`text-[11px] line-clamp-2 leading-relaxed font-normal break-words ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
                           {ev.description}
                         </p>
