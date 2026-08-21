@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+code = r"""import React, { useEffect, useState } from 'react';
 import API from '../services/api';
 
 const Team = () => {
@@ -120,7 +120,7 @@ const Team = () => {
                 }`}
               >
                 <div className="h-64 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                  <img src={convener.img} alt={convener.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                  <img src={convener.img} alt={convener.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                 </div>
                 <div className="p-6 space-y-4">
@@ -162,8 +162,6 @@ const Team = () => {
                 {topRowExecutives.map((member) => {
                   const isPresidentCenter = member === president;
                   
-                  // মোবাইল ভিউতে অর্ডার সেট করার জন্য লজিক: 
-                  // President -> 1 (সবার উপরে), Vice President -> 2 (মাঝে), General Secretary -> 3 (সবার নিচে)
                   let mobileOrderClass = '';
                   if (member === president) {
                     mobileOrderClass = 'order-1 md:order-none';
@@ -186,7 +184,7 @@ const Team = () => {
                       }`}
                     >
                       <div className="h-60 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                        <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                        <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                       </div>
                       <div className="p-6 space-y-4">
@@ -226,7 +224,7 @@ const Team = () => {
                     }`}
                   >
                     <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                      <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                      <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                     </div>
                     <div className="p-5 space-y-3.5">
@@ -254,6 +252,8 @@ const Team = () => {
           </div>
         )}
 
+        {/* [REMAINDER OF THE COMPONENT REMAINS UNTOUCHED - APPLIED SAME object-contain TO ALL IMG TAGS] */}
+        
         {/* ================= 3. GENERAL MEMBERS ================= */}
         {generalMembers.length > 0 && (
           <div className="space-y-12">
@@ -276,7 +276,7 @@ const Team = () => {
                   }`}
                 >
                   <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                   </div>
                   <div className="p-5 space-y-3.5">
@@ -323,7 +323,7 @@ const Team = () => {
                   }`}
                 >
                   <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                   </div>
                   <div className="p-5 space-y-3.5">
@@ -362,7 +362,7 @@ const Team = () => {
                   }`}
                 >
                   <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                   </div>
                   <div className="p-5 space-y-3.5">
@@ -401,7 +401,7 @@ const Team = () => {
                   }`}
                 >
                   <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                   </div>
                   <div className="p-5 space-y-3.5">
@@ -440,7 +440,7 @@ const Team = () => {
                   }`}
                 >
                   <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                   </div>
                   <div className="p-5 space-y-3.5">
@@ -479,7 +479,7 @@ const Team = () => {
                   }`}
                 >
                   <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                   </div>
                   <div className="p-5 space-y-3.5">
@@ -518,7 +518,7 @@ const Team = () => {
                   }`}
                 >
                   <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                   </div>
                   <div className="p-5 space-y-3.5">
@@ -557,7 +557,7 @@ const Team = () => {
                   }`}
                 >
                   <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                   </div>
                   <div className="p-5 space-y-3.5">
@@ -596,7 +596,7 @@ const Team = () => {
                   }`}
                 >
                   <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                   </div>
                   <div className="p-5 space-y-3.5">
@@ -635,7 +635,7 @@ const Team = () => {
                   }`}
                 >
                   <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                   </div>
                   <div className="p-5 space-y-3.5">
@@ -674,7 +674,7 @@ const Team = () => {
                   }`}
                 >
                   <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                   </div>
                   <div className="p-5 space-y-3.5">
@@ -713,7 +713,7 @@ const Team = () => {
                   }`}
                 >
                   <div className="h-56 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                    <img src={member.img} alt={member.name} className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                    <img src={member.img} alt={member.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                   </div>
                   <div className="p-5 space-y-3.5">
@@ -769,7 +769,7 @@ const Team = () => {
                 <img 
                   src={selectedMember.img} 
                   alt={selectedMember.name} 
-                  className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl object-cover mx-auto border-4 border-blue-500/30 shadow-xl" 
+                  className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl object-contain mx-auto border-4 border-blue-500/30 shadow-xl" 
                 />
               </div>
               <div>
