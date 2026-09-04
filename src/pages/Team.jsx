@@ -1,4 +1,4 @@
-code = r"""import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import API from '../services/api';
 
 const Team = () => {

@@ -26,6 +26,9 @@ const Home = () => {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
+  // States for Hero Slider (2 seconds interval)
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,6 +67,27 @@ const Home = () => {
       });
   }, []);
 
+  // ডাইনামিক ব্যানার লিস্ট তৈরি (ব্যাকএন্ড থেকে না আসলে ফলব্যাক ডিফল্ট ব্যানার দেখাবে)
+  const defaultBanners = [
+    {
+      imageUrl: "https://images.unsplash.com/photo-1517649763962-0c6232660102?auto=format&fit=crop&w=1920&q=80",
+      title: content?.clubTitle || 'BRIU Sports Club',
+      subtitle: "Unleashing athletic excellence, fostering discipline, and building the future champions.",
+      link: "/news"
+    }
+  ];
+
+  const activeBanners = (content?.banners && content.banners.length > 0) ? content.banners : defaultBanners;
+
+  // ২ সেকেন্ড পর পর ব্যানার স্লাইড হওয়ার লজিক
+  useEffect(() => {
+    const slideTimer = setInterval(() => {
+      setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % activeBanners.length);
+    }, 2000);
+
+    return () => clearInterval(slideTimer);
+  }, [activeBanners.length]);
+
   const handleLogout = () => {
     localStorage.removeItem('clubUser');
     setUser(null);
@@ -78,7 +102,7 @@ const Home = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center font-normal text-2xl text-slate-800 bg-[#f8fafc] px-4">
-        <div className="flex items-center gap-4 sm:gap-5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl px-6 sm:px-10 py-6 sm:py-7 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800 text-slate-900 dark:text-slate-100 max-w-full text-center">
+        <div className="flex items-center gap-4 sm:gap-5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl px-6 sm:px-10 py-6 sm:py-7 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800 text-slate-900 dark:text-slate-100 max-w-full text-center">
           <div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin shrink-0"></div>
           <span className="text-base sm:text-lg font-medium tracking-wider bg-gradient-to-r from-purple-600 to-indigo-500 bg-clip-text text-transparent">Loading Club Universe...</span>
         </div>
@@ -112,6 +136,8 @@ const Home = () => {
   const secondRow = rawMembers.slice(3, 7);
   const thirdRow = rawMembers.slice(7, 10);
 
+  const currentBanner = activeBanners[currentSlideIndex] || activeBanners[0];
+
   return (
     <div className={`${darkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-[#f8fafc] text-slate-900'} min-h-screen font-sans pb-32 selection:bg-purple-500 selection:text-white relative overflow-x-hidden transition-colors duration-300`}>
       
@@ -119,7 +145,6 @@ const Home = () => {
       <header className={`fixed top-0 inset-x-0 z-40 transition-transform duration-300 ${showNavbar ? 'translate-y-0' : '-translate-y-full'} ${darkMode ? 'bg-slate-950/90 border-slate-800 text-slate-100' : 'bg-white/90 border-slate-200 text-slate-900'} backdrop-blur-md border-b`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
           
-          {/* Menu / Explore Button */}
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setShowExploreMenu(!showExploreMenu)}
@@ -129,7 +154,6 @@ const Home = () => {
             </button>
           </div>
 
-          {/* Nav Options in One Line */}
           <nav className="hidden md:flex items-center gap-6 text-xs font-medium uppercase tracking-wider">
             <a href="#" className="hover:text-purple-600 transition">Home</a>
             <a href="#about" className="hover:text-purple-600 transition">About</a>
@@ -140,7 +164,6 @@ const Home = () => {
             <Link to="/news" className="hover:text-purple-600 transition">Newsfeed</Link>
           </nav>
 
-          {/* Right side: Login / Register & Dark Mode Toggle */}
           <div className="flex items-center gap-2">
             {user ? (
               <div className="relative">
@@ -181,7 +204,6 @@ const Home = () => {
         </div>
       </header>
 
-      {/* Explore Menu Dropdown/Modal */}
       {showExploreMenu && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-start justify-start pt-16 px-4">
           <div className={`w-full max-w-sm rounded-2xl shadow-2xl border p-4 ${darkMode ? 'bg-slate-900 border-slate-800 text-slate-100' : 'bg-white border-slate-200 text-slate-900'}`}>
@@ -203,38 +225,62 @@ const Home = () => {
         </div>
       )}
       
-      {/* Background Ambient Glow Effects */}
       <div className="absolute top-0 left-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-purple-500/10 rounded-full blur-[140px] pointer-events-none"></div>
       <div className="absolute top-1/3 right-10 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-indigo-500/10 rounded-full blur-[160px] pointer-events-none"></div>
 
-      {/* HERO BANNER SECTION */}
-      <section className={`scroll-reveal relative overflow-hidden ${darkMode ? 'bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-slate-800' : 'bg-gradient-to-b from-white via-slate-50/50 to-white border-slate-200/80'} border-b pt-16 sm:pt-20 lg:pt-24 pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6 lg:px-8 text-center`}>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.05)_0,transparent_70%)] pointer-events-none"></div>
+      {/* HERO BANNER SECTION (DYNAMIC ADMIN UPLOADED SLIDER) */}
+      <section className="scroll-reveal relative overflow-hidden bg-slate-900 pt-24 sm:pt-28 lg:pt-32 pb-20 sm:pb-28 lg:pb-36 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-200 dark:border-slate-800">
         
-        {/* Decorative Grid Lines */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#cbd5e110_1px,transparent_1px),linear-gradient(to_bottom,#cbd5e110_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none"></div>
-
+        {/* Background Image with object-fit cover for full view across devices */}
+        <div className="absolute inset-0 w-full h-full">
+          <img 
+            src={currentBanner.imageUrl || currentBanner.bannerImage} 
+            alt={currentBanner.title || "Banner"} 
+            className="w-full h-full object-cover transition-all duration-700"
+          />
+          <div className="absolute inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-[2px]"></div>
+        </div>
+        
         <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 relative z-10">
-          <div className={`inline-flex items-center gap-2 px-4.5 py-2 rounded-full ${darkMode ? 'bg-purple-500/10 border-purple-500/20 text-purple-300' : 'bg-purple-50 border-purple-200/80 text-purple-700'} text-xs font-medium uppercase tracking-widest shadow-sm backdrop-blur-md`}>
-            <Sparkles className="w-3.5 h-3.5 text-purple-500 animate-spin shrink-0" /> Brahmaputra International University Sports Club
+          <div className="inline-flex items-center gap-2 px-4.5 py-2 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-200 text-xs font-medium uppercase tracking-widest shadow-lg backdrop-blur-md">
+            <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-spin shrink-0" /> Brahmaputra International University Sports Club
           </div>
           
-          <h1 className={`text-3xl sm:text-5xl lg:text-6xl font-medium ${darkMode ? 'text-white' : 'text-slate-900'} uppercase tracking-tight leading-[1.15] px-2`}>
-            {content.clubTitle || 'BRIU Sports Club'}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-medium text-white uppercase tracking-tight leading-[1.15] px-2 drop-shadow-md">
+            {currentBanner.title || content.clubTitle || 'BRIU Sports Club'}
           </h1>
           
-          <p className={`${darkMode ? 'text-slate-300' : 'text-slate-600'} text-sm sm:text-lg lg:text-xl font-normal max-w-2xl mx-auto leading-relaxed px-4`}>
-            Unleashing athletic excellence, fostering discipline, and building the future champions of Brahmaputra International University.
+          <p className="text-slate-200 text-sm sm:text-lg lg:text-xl font-normal max-w-2xl mx-auto leading-relaxed px-4 drop-shadow">
+            {currentBanner.subtitle || "Unleashing athletic excellence, fostering discipline, and building the future champions of Brahmaputra International University."}
           </p>
 
           <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-4">
-            <Link to="/news" className="w-full sm:w-auto px-7 py-3.5 bg-purple-600 hover:bg-purple-500 text-white rounded-2xl font-medium text-sm shadow-lg shadow-purple-600/20 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
-              Explore Newsfeed <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link to="/founders" className={`w-full sm:w-auto px-7 py-3.5 ${darkMode ? 'bg-slate-900/90 hover:bg-slate-800 text-white border-slate-800' : 'bg-white hover:bg-slate-50 text-slate-900 border-slate-200/90'} rounded-2xl font-medium text-sm border transition-all hover:scale-105 active:scale-95 shadow-sm backdrop-blur-md flex items-center justify-center`}>
+            {currentBanner.link ? (
+              <a href={currentBanner.link} className="w-full sm:w-auto px-7 py-3.5 bg-purple-600 hover:bg-purple-500 text-white rounded-2xl font-medium text-sm shadow-xl shadow-purple-600/30 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                Explore More <ArrowRight className="w-4 h-4" />
+              </a>
+            ) : (
+              <Link to="/news" className="w-full sm:w-auto px-7 py-3.5 bg-purple-600 hover:bg-purple-500 text-white rounded-2xl font-medium text-sm shadow-xl shadow-purple-600/30 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                Explore Newsfeed <ArrowRight className="w-4 h-4" />
+              </Link>
+            )}
+            <Link to="/founders" className="w-full sm:w-auto px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-2xl font-medium text-sm backdrop-blur-md transition-all hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center">
               Founders Panel
             </Link>
           </div>
+
+          {activeBanners.length > 1 && (
+            <div className="flex justify-center items-center gap-2 pt-4">
+              {activeBanners.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentSlideIndex(idx)}
+                  className={`h-2 rounded-full transition-all duration-300 ${currentSlideIndex === idx ? 'w-8 bg-purple-500' : 'w-2 bg-white/50'}`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -333,13 +379,11 @@ const Home = () => {
                   const pIdx = sortedRow.findIndex(m => m.role && m.role.toLowerCase().includes('president') && !m.role.toLowerCase().includes('vice'));
                   const vpIdx = sortedRow.findIndex(m => m.role && m.role.toLowerCase().includes('vice president'));
                   
-                  // ডেস্কটপ মোডে প্রেসিডেন্টকে মাঝখানে এবং ফোন মোডে প্রেসিডেন্টকে উপরে রাখার লজিক
                   if (pIdx !== -1 && vpIdx !== -1) {
                     const president = sortedRow[pIdx];
                     const vicePresident = sortedRow[vpIdx];
                     const other = sortedRow.filter((_, i) => i !== pIdx && i !== vpIdx)[0];
                     
-                    // বিন্যাস: [Vice President, President, Other] -> ডেস্কটপে মিডল কলাম প্রেসিডেন্ট (order-2 sm:order-2), ফোনে প্রথম (order-1 sm:order-none)
                     return [
                       { member: vicePresident, orderClass: 'order-2 sm:order-1', highlight: false },
                       { member: president, orderClass: 'order-1 sm:order-2 sm:-translate-y-4 ring-4 ring-purple-500/10 shadow-xl border-purple-500/40 ' + (darkMode ? 'bg-slate-900/60' : 'bg-white'), highlight: true },
