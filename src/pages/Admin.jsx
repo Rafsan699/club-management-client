@@ -9,7 +9,7 @@ const initialContentState = {
   objective: '',
   flashNews: '',
   copyrightText: '',
-  convener: { name: '', role: '', dept: '', image: '' },
+  moderator: { name: '', role: '', dept: '', image: '' },
   activities: [],
   members: [],
   contact: { phone: '', hotline: '', email: '', address: '' },
@@ -31,7 +31,7 @@ export default function Admin() {
             ...initialContentState,
             ...res.data,
             contact: { ...initialContentState.contact, ...(res.data.contact || {}) },
-            convener: { ...initialContentState.convener, ...(res.data.convener || {}) },
+            moderator: { ...initialContentState.moderator, ...(res.data.moderator || {}) },
             members: res.data.members || [],
             departments: res.data.departments || [],
             activities: res.data.activities || []
@@ -250,16 +250,16 @@ export default function Admin() {
             />
           </div>
 
-          {/* Convener Section */}
+          {/* moderator Section */}
           <div className="bg-slate-800/40 p-8 rounded-2xl border border-slate-700">
-            <h2 className="text-2xl font-bold text-emerald-400 mb-6">Convener Information</h2>
+            <h2 className="text-2xl font-bold text-emerald-400 mb-6">moderator Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block mb-2 text-base font-semibold text-slate-300">Name</label>
                 <input 
                   type="text" 
-                  value={content.convener?.name || ''} 
-                  onChange={(e) => setContent({...content, convener: {...content.convener, name: e.target.value}})}
+                  value={content.moderator?.name || ''} 
+                  onChange={(e) => setContent({...content, moderator: {...content.moderator, name: e.target.value}})}
                   className="w-full p-4 bg-slate-800 text-lg rounded-xl border border-slate-700 focus:outline-none focus:border-emerald-500"
                 />
               </div>
@@ -267,8 +267,8 @@ export default function Admin() {
                 <label className="block mb-2 text-base font-semibold text-slate-300">Role</label>
                 <input 
                   type="text" 
-                  value={content.convener?.role || ''} 
-                  onChange={(e) => setContent({...content, convener: {...content.convener, role: e.target.value}})}
+                  value={content.moderator?.role || ''} 
+                  onChange={(e) => setContent({...content, moderator: {...content.moderator, role: e.target.value}})}
                   className="w-full p-4 bg-slate-800 text-lg rounded-xl border border-slate-700 focus:outline-none focus:border-emerald-500"
                 />
               </div>
@@ -276,8 +276,8 @@ export default function Admin() {
                 <label className="block mb-2 text-base font-semibold text-slate-300">Department</label>
                 <input 
                   type="text" 
-                  value={content.convener?.dept || ''} 
-                  onChange={(e) => setContent({...content, convener: {...content.convener, dept: e.target.value}})}
+                  value={content.moderator?.dept || ''} 
+                  onChange={(e) => setContent({...content, moderator: {...content.moderator, dept: e.target.value}})}
                   className="w-full p-4 bg-slate-800 text-lg rounded-xl border border-slate-700 focus:outline-none focus:border-emerald-500"
                 />
               </div>
@@ -285,8 +285,8 @@ export default function Admin() {
                 <label className="block mb-2 text-base font-semibold text-slate-300">Image URL</label>
                 <input 
                   type="text" 
-                  value={content.convener?.image || ''} 
-                  onChange={(e) => setContent({...content, convener: {...content.convener, image: e.target.value}})}
+                  value={content.moderator?.image || ''} 
+                  onChange={(e) => setContent({...content, moderator: {...content.moderator, image: e.target.value}})}
                   className="w-full p-4 bg-slate-800 text-lg rounded-xl border border-slate-700 focus:outline-none focus:border-emerald-500"
                 />
               </div>

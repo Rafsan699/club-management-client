@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import API from '../services/api'; // আপনার প্রজেক্ট স্ট্রাকচার অনুযায়ী পাথ ঠিক করে নিন (যেমন: './api' বা '../services/api')
+import API from '../services/api';
 import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import DepartmentsSection from '../components/DepartmentsSection';
@@ -19,14 +19,11 @@ const Home = () => {
   const [expandedCategory, setExpandedCategory] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   
-  // New state for handling Upcoming Event Details Modal on the same page
   const [showEventModal, setShowEventModal] = useState(false);
   
-  // States for header scroll hide/show
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  // States for Hero Slider (2 seconds interval)
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
   const navigate = useNavigate();
@@ -35,9 +32,9 @@ const Home = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        setShowNavbar(false); // Hide on scroll down
+        setShowNavbar(false);
       } else {
-        setShowNavbar(true); // Show on scroll up
+        setShowNavbar(true);
       }
       setLastScrollY(currentScrollY);
     };
@@ -52,7 +49,6 @@ const Home = () => {
       setUser(JSON.parse(savedUser));
     }
 
-    // পোর্টের ঝামেলা এড়াতে এবং ব্যাকএন্ড থেকে ডেটা ফেচ নিশ্চিত করতে ফুল URL ব্যবহার করা হয়েছে
     API.get('/api/club/content')
       .then(res => {
         if (res.data) {
@@ -67,7 +63,6 @@ const Home = () => {
       });
   }, []);
 
-  // ডাইনামিক ব্যানার লিস্ট তৈরি (ব্যাকএন্ড থেকে না আসলে ফলব্যাক ডিফল্ট ব্যানার দেখাবে)
   const defaultBanners = [
     {
       imageUrl: "https://images.unsplash.com/photo-1517649763962-0c6232660102?auto=format&fit=crop&w=1920&q=80",
@@ -79,7 +74,6 @@ const Home = () => {
 
   const activeBanners = (content?.banners && content.banners.length > 0) ? content.banners : defaultBanners;
 
-  // ২ সেকেন্ড পর পর ব্যানার স্লাইড হওয়ার লজিক
   useEffect(() => {
     const slideTimer = setInterval(() => {
       setCurrentSlideIndex((prevIndex) => (prevIndex + 1) % activeBanners.length);
@@ -93,10 +87,6 @@ const Home = () => {
     setUser(null);
     setShowDropdown(false);
     navigate('/login');
-  };
-
-  const toggleCategory = (title) => {
-    setExpandedCategory(prev => (prev === title ? null : title));
   };
 
   if (loading) {
@@ -228,17 +218,15 @@ const Home = () => {
       <div className="absolute top-0 left-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-purple-500/10 rounded-full blur-[140px] pointer-events-none"></div>
       <div className="absolute top-1/3 right-10 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-indigo-500/10 rounded-full blur-[160px] pointer-events-none"></div>
 
-      {/* HERO BANNER SECTION (DYNAMIC ADMIN UPLOADED SLIDER) */}
-      <section className="scroll-reveal relative overflow-hidden bg-slate-900 pt-24 sm:pt-28 lg:pt-32 pb-20 sm:pb-28 lg:pb-36 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-200 dark:border-slate-800">
-        
-        {/* Background Image with object-fit cover for full view across devices */}
-        <div className="absolute inset-0 w-full h-full">
+      {/* HERO BANNER SECTION */}
+      <section className="scroll-reveal relative overflow-hidden bg-slate-900 pt-28 sm:pt-36 lg:pt-44 pb-24 sm:pb-32 lg:pb-40 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-200 dark:border-slate-800 transition-all duration-700">
+        <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
           <img 
             src={currentBanner.imageUrl || currentBanner.bannerImage} 
-            alt={currentBanner.title || "Banner"} 
-            className="w-full h-full object-cover transition-all duration-700"
+            alt="Banner Background" 
+            className="w-full h-full object-cover object-center scale-105"
           />
-          <div className="absolute inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-[2px]"></div>
+          <div className="absolute inset-0 bg-black/60 dark:bg-black/75 backdrop-blur-[2px]"></div>
         </div>
         
         <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 relative z-10">
@@ -356,18 +344,22 @@ const Home = () => {
             <div className="w-24 sm:w-32 h-1.5 bg-gradient-to-r from-purple-600 to-indigo-500 mx-auto mt-3 rounded-full shadow-sm"></div>
           </div>
 
-          {content.convener?.name && (
+          {content.moderator?.name && (
             <div className="mb-16 sm:mb-20 flex flex-col items-center relative z-10 px-2">
               <div className="relative p-2 rounded-full bg-gradient-to-tr from-purple-600 via-indigo-500 to-amber-500 shadow-xl group">
                 <img 
-                  src={content.convener.image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"} 
-                  alt={content.convener.name} 
+                  src={content.moderator.image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"} 
+                  alt={content.moderator.name} 
                   className={`w-36 h-36 sm:w-48 sm:h-48 lg:w-56 lg:h-56 rounded-full object-cover border-4 ${darkMode ? 'border-slate-950' : 'border-white'} shadow-xl group-hover:scale-105 transition-transform duration-500`}
                 />
               </div>
-              <h4 className={`text-lg sm:text-2xl font-medium ${darkMode ? 'text-white' : 'text-slate-900'} mt-5 tracking-wide`}>{content.convener.name}</h4>
-              <p className="text-sm sm:text-base font-normal text-purple-600 mt-1">{content.convener.role}</p>
-              <p className={`text-xs sm:text-sm font-normal ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5`}>{content.convener.dept}</p>
+              <h4 className={`text-lg sm:text-2xl font-medium ${darkMode ? 'text-white' : 'text-slate-900'} mt-5 tracking-wide`}>{content.moderator.name}</h4>
+              <p className="text-sm sm:text-base font-normal text-purple-600 mt-1">{content.moderator.role}</p>
+              {/* UPDATED: Moderator name and BRIUSC ar majhkhane designation add korar jonno */}
+              <p className={`text-xs sm:text-sm font-normal ${darkMode ? 'text-slate-300' : 'text-slate-600'} mt-0.5`}>
+                {content.moderator.designation || 'BRIUSC'}
+              </p>
+              <p className={`text-xs sm:text-sm font-normal ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5`}>{content.moderator.dept}</p>
             </div>
           )}
 
@@ -469,7 +461,7 @@ const Home = () => {
                   <img 
                     src={content.upcomingEvent.bannerUrl} 
                     alt="Upcoming Event Banner" 
-                    className="scroll-image w-full h-auto max-h-[350px] object-cover hover:scale-105 transition-transform duration-500" 
+                    className="scroll-image w-full h-auto max-h-[350px] object-contain sm:object-cover hover:scale-105 transition-transform duration-500" 
                   />
                 </div>
               )}
@@ -544,7 +536,7 @@ const Home = () => {
             <div className="space-y-6">
               {content.upcomingEvent.bannerUrl && (
                 <div className="rounded-2xl overflow-hidden border border-slate-200/60 dark:border-slate-800 shadow-sm">
-                  <img src={content.upcomingEvent.bannerUrl} alt="Event Banner" className="w-full h-auto max-h-[300px] object-cover" />
+                  <img src={content.upcomingEvent.bannerUrl} alt="Event Banner" className="w-full h-auto max-h-[300px] object-contain" />
                 </div>
               )}
 

@@ -22,7 +22,7 @@ const Team = () => {
   }, []);
 
   // ক্যাটাগরি দিয়ে প্রাইমারি ফিল্টারিং
-  const convener = members.find(m => m.category?.toLowerCase() === 'convener');
+  const moderator = members.find(m => m.category?.toLowerCase() === 'moderator');
   const executiveMembers = members.filter(m => m.category?.toLowerCase() === 'executive');
   const generalMembers = members.filter(m => m.category?.toLowerCase() === 'general');
 
@@ -100,19 +100,19 @@ const Team = () => {
           </p>
         </div>
 
-        {/* ================= 1. CONVENER SECTION ================= */}
-        {convener && (
+        {/* ================= 1. MODERATOR SECTION ================= */}
+        {moderator && (
           <div className="space-y-8">
             <div className="text-center">
               <h2 className={`text-xs sm:text-sm font-bold tracking-[0.25em] uppercase inline-block border-b pb-2 ${
                 darkMode ? 'text-blue-400 border-blue-500/30' : 'text-blue-900 border-blue-600/20'
               }`}>
-                BRIU Sports Club Convener
+                BRIU Sports Club Moderator
               </h2>
             </div>
             <div className="flex justify-center">
               <div 
-                onClick={() => setSelectedMember(convener)}
+                onClick={() => setSelectedMember(moderator)}
                 className={`w-full max-w-[320px] rounded-[2rem] overflow-hidden shadow-xl cursor-pointer transition-all duration-500 hover:-translate-y-2.5 hover:shadow-2xl border backdrop-blur-xl group relative ${
                   darkMode 
                     ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/50 hover:border-blue-500/60' 
@@ -120,19 +120,19 @@ const Team = () => {
                 }`}
               >
                 <div className="h-64 w-full overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                  <img src={convener.img} alt={convener.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
+                  <img src={moderator.img} alt={moderator.name} className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-50 group-hover:opacity-40 transition-opacity"></div>
                 </div>
                 <div className="p-6 space-y-4">
                   <div>
-                    <h3 className={`text-lg font-bold tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>{convener.name}</h3>
-                    <p className={`font-semibold text-xs uppercase tracking-wider mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{convener.role}</p>
+                    <h3 className={`text-lg font-bold tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>{moderator.name}</h3>
+                    <p className={`font-semibold text-xs uppercase tracking-wider mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{moderator.role}</p>
                   </div>
                   <div className={`pt-4 flex justify-between items-center border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
                     <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border truncate max-w-[170px] ${
                       darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'
                     }`}>
-                      {convener.dept}
+                      {moderator.dept}
                     </span>
                     <span className={`text-xs font-bold tracking-wide flex items-center gap-1 group-hover:translate-x-1 transition-transform duration-300 ${
                       darkMode ? 'text-blue-400' : 'text-blue-600'
@@ -252,8 +252,6 @@ const Team = () => {
           </div>
         )}
 
-        {/* [REMAINDER OF THE COMPONENT REMAINS UNTOUCHED - APPLIED SAME object-contain TO ALL IMG TAGS] */}
-        
         {/* ================= 3. GENERAL MEMBERS ================= */}
         {generalMembers.length > 0 && (
           <div className="space-y-12">
@@ -772,32 +770,54 @@ const Team = () => {
                   className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl object-contain mx-auto border-4 border-blue-500/30 shadow-xl" 
                 />
               </div>
+              
+              {/* Moderator এর ক্ষেত্রে নাম এবং সিকোয়েন্স আপডেট করা হলো */}
               <div>
                 <h3 className="text-xl sm:text-2xl font-extrabold tracking-tight">{selectedMember.name}</h3>
-                <p className={`font-bold text-xs uppercase tracking-wider mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                  {selectedMember.role}
-                </p>
+                
+                {selectedMember.category?.toLowerCase() === 'moderator' ? (
+                  <div className="space-y-1 mt-1">
+                    <p className={`font-bold text-xs uppercase tracking-wider ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                      {selectedMember.role}
+                    </p>
+                    <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                      BRIU Sports Club
+                    </p>
+                    <p className={`font-semibold text-xs sm:text-sm tracking-wide pt-0.5 ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                      {selectedMember.designation || 'Lecturer, Department Of Law'}
+                    </p>
+                  </div>
+                ) : (
+                  <p className={`font-bold text-xs uppercase tracking-wider mt-1 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                    {selectedMember.role}
+                  </p>
+                )}
               </div>
-            </div>
 
-            <div className={`border rounded-2xl p-4 sm:p-5 space-y-3 text-xs sm:text-sm font-medium ${
-              darkMode ? 'bg-[#090d16]/70 border-slate-800/80 text-slate-300' : 'bg-slate-50/80 border-slate-200/80 text-slate-700'
-            }`}>
-              <div className="flex justify-between items-center border-b pb-2.5 border-slate-500/15">
-                <span className="text-slate-400 font-normal">Category</span>
-                <span className="uppercase font-bold tracking-wider text-[11px]">{selectedMember.category}</span>
-              </div>
-              <div className="flex justify-between items-center border-b pb-2.5 border-slate-500/15">
-                <span className="text-slate-400 font-normal">Department</span>
-                <span className="font-semibold text-right max-w-[200px] truncate">{selectedMember.dept}</span>
-              </div>
-              <div className="flex justify-between items-center border-b pb-2.5 border-slate-500/15">
-                <span className="text-slate-400 font-normal">Email</span>
-                <span className={`font-semibold truncate max-w-[200px] ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{selectedMember.email || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-400 font-normal">Phone</span>
-                <span className="font-semibold">{selectedMember.phone || 'N/A'}</span>
+              <div className={`border rounded-2xl p-4 sm:p-5 space-y-3 text-xs sm:text-sm font-medium ${
+                darkMode ? 'bg-[#090d16]/70 border-slate-800/80 text-slate-300' : 'bg-slate-50/80 border-slate-200/80 text-slate-700'
+              }`}>
+                <div className="flex justify-between items-center border-b pb-2.5 border-slate-500/15">
+                  <span className="text-slate-400 font-normal">Category</span>
+                  <span className="uppercase font-bold tracking-wider text-[11px]">{selectedMember.category}</span>
+                </div>
+                
+                {/* Department অপশনটি শুধুমাত্র তখনই দেখাবে যদি মেম্বারটি Moderator না হয় */}
+                {selectedMember.category?.toLowerCase() !== 'moderator' && (
+                  <div className="flex justify-between items-center border-b pb-2.5 border-slate-500/15">
+                    <span className="text-slate-400 font-normal">Department</span>
+                    <span className="font-semibold text-right max-w-[200px] truncate">{selectedMember.dept}</span>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center border-b pb-2.5 border-slate-500/15">
+                  <span className="text-slate-400 font-name">Email</span>
+                  <span className={`font-semibold truncate max-w-[200px] ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{selectedMember.email || 'N/A'}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400 font-normal">Phone</span>
+                  <span className="font-semibold">{selectedMember.phone || 'N/A'}</span>
+                </div>
               </div>
             </div>
           </div>

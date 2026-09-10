@@ -17,20 +17,20 @@ export const exploreMenuTree = [
       
     ]
   },
-  /*{
-   // title: 'Sports',
+  {
+    title: 'Sports',
     subItems: [
-      { name: 'E-Sports', path: '/sports/e-sports' },
+      //{ name: 'E-Sports', path: '/sports/e-sports' },
       { name: 'Cricket', path: '/sports/cricket' },
-      { name: 'Football', path: '/sports/football' },
-      { name: 'Volleyball', path: '/sports/volleyball' },
-      { name: 'Table Tennis & Badminton', path: '/sports/table-tennis' },
-      { name: 'Chess & Ludo', path: '/sports/chess' },
-      { name: 'Carrom', path: '/sports/carrom' },
-      { name: 'Athletics', path: '/sports/athletics' },
+      //{ name: 'Football', path: '/sports/football' },
+      //{ name: 'Volleyball', path: '/sports/volleyball' },
+     // { name: 'Table Tennis & Badminton', path: '/sports/table-tennis' },
+      //{ name: 'Chess & Ludo', path: '/sports/chess' },
+     // { name: 'Carrom', path: '/sports/carrom' },
+      //{ name: 'Athletics', path: '/sports/athletics' },
       
     ]
-  },*/
+  },
   {
     title: 'Club Room',
     subItems: [
