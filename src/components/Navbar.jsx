@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { exploreMenuTree } from '../data/exploreMenuData';
+import logoImage from './logo.jpg';
 import {
-  Trophy, Lock, LogIn, UserPlus, User, LogOut, ChevronDown, LayoutGrid, ChevronRight, X, Sun, Moon
+  Lock, LogIn, UserPlus, User, LogOut, ChevronDown, ChevronRight, Menu, X
 } from 'lucide-react';
+
+/*
+  Palette
+  ink    #0e2b22  deep bottle green (text, brand mark)
+  green  #14684e  primary actions, active states
+  brass  #b08a4e  single accent: directory top rule + open-category marker
+  wash   #f7f8f6  page/panel background
+  line   #dfe3dd  hairlines
+*/
 
 const NAV_LINKS = [
   { to: '/', label: 'Home', short: 'Home', end: true },
@@ -14,13 +24,25 @@ const NAV_LINKS = [
   { to: '/news', label: 'Newsfeed', short: 'News' },
 ];
 
-const Navbar = ({ content, user, darkMode, setDarkMode, handleLogout }) => {
+const getClubName = (content) => {
+  const raw = content && (content.clubName || content.name || content.title);
+  return typeof raw === 'string' && raw.trim() ? raw.trim() : 'BRIUSC';
+};
+
+const focusRing =
+  'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14684e] focus-visible:ring-offset-2 focus-visible:ring-offset-white';
+
+const Navbar = ({ content, user, handleLogout }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showExploreMenu, setShowExploreMenu] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState(null);
 
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  const clubName = getClubName(content);
+
+  const logoSrc = logoImage || content?.logo || content?.logoUrl || content?.clubLogo || null;
 
   const toggleCategory = (title) => {
     setExpandedCategory(prev => (prev === title ? null : title));
@@ -43,310 +65,306 @@ const Navbar = ({ content, user, darkMode, setDarkMode, handleLogout }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
-  /* ---------- Theme tokens ---------- */
-  const t = darkMode
-    ? {
-        header: 'bg-slate-950/80 border-white/10',
-        text: 'text-slate-100',
-        muted: 'text-slate-400',
-        link: 'text-slate-300 hover:text-white',
-        linkActive: 'text-white',
-        panel: 'bg-slate-950/95 border-white/10 text-slate-100 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)]',
-        divider: 'border-white/10',
-        iconBtn: 'bg-white/5 border-white/10 text-amber-300 hover:bg-white/10',
-        ghostBtn: 'text-slate-300 hover:text-white hover:bg-white/10',
-        outlineBtn: 'border-white/15 text-slate-100 hover:bg-white/10',
-        menuBtn: 'bg-emerald-500/15 border-emerald-400/30 text-emerald-200 hover:bg-emerald-500/25',
-        mobileRow: 'bg-slate-950/60 border-white/10',
-        mobileLink: 'text-slate-300 hover:bg-white/10',
-        mobileLinkActive: 'bg-emerald-500/15 text-emerald-300',
-        catRow: 'border-white/10 hover:bg-white/[0.04]',
-        catOpen: 'bg-white/[0.04] border-emerald-400/40',
-        countChip: 'bg-white/10 text-slate-300',
-        subLink: 'text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-300',
-        tile: 'bg-emerald-500/10 border-emerald-400/20 text-emerald-300',
-        closeBtn: 'text-slate-400 hover:text-white hover:bg-white/10',
-        userBtn: 'bg-white/5 border-white/10 hover:bg-white/10 text-slate-100',
-        dropdown: 'bg-slate-950 border-white/10 text-slate-200 shadow-[0_24px_60px_-16px_rgba(0,0,0,0.7)]',
-        chip: 'bg-white/5 border-white/10 text-slate-300',
-        logout: 'text-red-400 hover:bg-red-500/10',
-      }
-    : {
-        header: 'bg-white/80 border-slate-200/80',
-        text: 'text-slate-900',
-        muted: 'text-slate-500',
-        link: 'text-slate-600 hover:text-slate-900',
-        linkActive: 'text-emerald-800',
-        panel: 'bg-white/95 border-slate-200 text-slate-900 shadow-[0_30px_80px_-24px_rgba(15,23,42,0.35)]',
-        divider: 'border-slate-200/80',
-        iconBtn: 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50',
-        ghostBtn: 'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
-        outlineBtn: 'border-slate-300 text-slate-800 hover:bg-slate-50',
-        menuBtn: 'bg-emerald-900 border-emerald-900 text-white hover:bg-emerald-800',
-        mobileRow: 'bg-slate-50/80 border-slate-200/80',
-        mobileLink: 'text-slate-600 hover:bg-white',
-        mobileLinkActive: 'bg-white text-emerald-800 shadow-sm ring-1 ring-slate-200',
-        catRow: 'border-slate-200/80 hover:bg-slate-50',
-        catOpen: 'bg-emerald-50/50 border-emerald-600/40',
-        countChip: 'bg-slate-100 text-slate-600',
-        subLink: 'text-slate-700 hover:bg-emerald-50 hover:text-emerald-800',
-        tile: 'bg-emerald-50 border-emerald-200 text-emerald-700',
-        closeBtn: 'text-slate-500 hover:text-slate-900 hover:bg-slate-100',
-        userBtn: 'bg-white border-slate-200 hover:bg-slate-50 text-slate-800',
-        dropdown: 'bg-white border-slate-200 text-slate-800 shadow-[0_24px_60px_-20px_rgba(15,23,42,0.35)]',
-        chip: 'bg-slate-50 border-slate-200 text-slate-600',
-        logout: 'text-red-600 hover:bg-red-50',
-      };
+  useEffect(() => {
+    if (!showExploreMenu) return undefined;
+    const isSheet = window.matchMedia('(max-width: 1023px)').matches;
+    const previousOverflow = document.body.style.overflow;
+    if (isSheet) document.body.style.overflow = 'hidden';
 
-  const focus = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent';
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setShowExploreMenu(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [showExploreMenu]);
+
+  const closeMenu = () => setShowExploreMenu(false);
 
   return (
-    <header
-      className={`${t.header} ${t.text} backdrop-blur-xl border-b fixed inset-x-0 top-0 z-50 transition-transform duration-300 ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}
-    >
-      {/* Local animation (respects reduced motion) */}
+    <>
       <style>{`
-        @keyframes nb-pop { from { opacity: 0; transform: translateY(-6px) scale(.985); } to { opacity: 1; transform: none; } }
-        .nb-pop { animation: nb-pop .18s ease-out; transform-origin: top left; }
+        @import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap');
+        .nb-serif { font-family: 'Newsreader', Georgia, 'Times New Roman', serif; }
+        .nb-noscrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+        .nb-noscrollbar::-webkit-scrollbar { display: none; }
+        @keyframes nb-pop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+        .nb-pop { animation: nb-pop .18s ease-out; }
         @media (prefers-reduced-motion: reduce) { .nb-pop { animation: none; } }
       `}</style>
 
-      {/* Fine accent line along the bottom edge */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
+      <header
+        className={`fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-[#dfe3dd] transition-transform duration-300 ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}
+      >
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 h-16 flex items-center gap-2 sm:gap-4">
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3 sm:gap-6">
-
-        {/* Left Section: Menu Button */}
-        <div className="flex items-center sm:relative">
-          <button
-            onClick={() => setShowExploreMenu(!showExploreMenu)}
-            aria-expanded={showExploreMenu}
-            aria-haspopup="true"
-            className={`${t.menuBtn} ${focus} h-10 pl-3 pr-3.5 rounded-lg border font-semibold text-sm flex items-center gap-2 transition-colors duration-200 active:scale-[0.98]`}
-          >
-            <LayoutGrid className="w-4 h-4" />
-            <span>Menu</span>
-            <ChevronDown className={`w-3.5 h-3.5 opacity-70 transition-transform duration-300 ${showExploreMenu ? 'rotate-180' : ''}`} />
-          </button>
-
-          {showExploreMenu && (
-            <div
-              className={`nb-pop absolute left-2 right-2 top-full mt-2 sm:left-0 sm:right-auto sm:mt-3 sm:w-[880px] sm:max-w-[calc(100vw-3rem)] ${t.panel} backdrop-blur-2xl border rounded-2xl p-4 sm:p-7 z-50 max-h-[80vh] overflow-y-auto custom-scrollbar`}
+          {/* Left: Sudhu Menu Button + Brand */}
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            
+            {/* Sudhu ekti Menu Button */}
+            <button
+              onClick={() => setShowExploreMenu(!showExploreMenu)}
+              aria-expanded={showExploreMenu}
+              aria-haspopup="dialog"
+              aria-label="Open club menu"
+              className={`${focusRing} h-9 w-9 sm:h-10 sm:w-auto sm:px-3.5 rounded-lg border flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold transition-colors flex-shrink-0 ${
+                showExploreMenu
+                  ? 'bg-[#0e2b22] border-[#0e2b22] text-white'
+                  : 'bg-white border-[#dfe3dd] text-[#0e2b22] hover:bg-[#f3f5f1]'
+              }`}
             >
-              {/* Panel header */}
-              <div className={`flex items-start justify-between gap-4 pb-5 mb-5 border-b ${t.divider}`}>
-                <div className="flex items-center gap-3.5 min-w-0">
-                  <div className={`${t.tile} w-11 h-11 rounded-xl border flex items-center justify-center flex-shrink-0`}>
-                    <Trophy className="w-5 h-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="font-bold text-lg sm:text-xl tracking-tight leading-tight">
-                      Club directory
-                    </h3>
-                    <p className={`text-xs sm:text-[13px] ${t.muted} mt-0.5 leading-snug`}>
-                      Committees, resources and portals in one place
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowExploreMenu(false)}
-                  aria-label="Close menu"
-                  className={`${t.closeBtn} ${focus} p-2 rounded-lg transition-colors flex-shrink-0`}
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+              <Menu className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+              <span className="hidden sm:inline">Menu</span>
+              <ChevronDown className={`hidden sm:block w-3.5 h-3.5 opacity-60 transition-transform duration-300 ${showExploreMenu ? 'rotate-180' : ''}`} />
+            </button>
 
-              {/* Home shortcut */}
-              <div className="mb-5">
-                <Link
-                  to="/"
-                  onClick={() => setShowExploreMenu(false)}
-                  className={`${focus} inline-flex items-center gap-1.5 h-10 pl-4 pr-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold text-sm shadow-sm transition-colors`}
-                >
-                  Home dashboard <ChevronRight className="w-4 h-4" />
-                </Link>
-              </div>
-
-              {/* Categories */}
-              <div className="space-y-2">
-                {exploreMenuTree.map((cat, idx) => {
-                  const isOpen = expandedCategory === cat.title;
-
-                  return (
-                    <div
-                      key={idx}
-                      className={`rounded-xl border overflow-hidden transition-colors duration-200 ${isOpen ? t.catOpen : t.catRow}`}
-                    >
-                      <button
-                        onClick={() => toggleCategory(cat.title)}
-                        aria-expanded={isOpen}
-                        className={`${focus} w-full text-left px-4 py-3.5 flex items-center justify-between gap-3 transition-colors`}
-                      >
-                        <span className="flex items-center gap-3 min-w-0">
-                          <span className={`w-1 h-5 rounded-full flex-shrink-0 transition-colors duration-200 ${isOpen ? 'bg-emerald-500' : darkMode ? 'bg-slate-700' : 'bg-slate-300'}`} />
-                          <span className={`truncate font-semibold text-sm sm:text-[15px] ${isOpen ? (darkMode ? 'text-emerald-300' : 'text-emerald-800') : ''}`}>
-                            {cat.title}
-                          </span>
-                        </span>
-
-                        <span className="flex items-center gap-2.5 flex-shrink-0">
-                          <span className={`${t.countChip} text-[11px] px-2 py-0.5 rounded-md font-medium tabular-nums`}>
-                            {cat.subItems.length}
-                          </span>
-                          <ChevronDown className={`w-4 h-4 ${t.muted} transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
-                        </span>
-                      </button>
-
-                      {isOpen && (
-                        <div className={`nb-pop px-3 pb-3 pt-1 border-t ${t.divider}`}>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-1 pt-2">
-                            {cat.subItems.map((sub, sIdx) => (
-                              <Link
-                                key={sIdx}
-                                to={sub.path}
-                                onClick={() => setShowExploreMenu(false)}
-                                className={`${t.subLink} ${focus} group flex items-center gap-2 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-colors`}
-                              >
-                                <ChevronRight className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0 transition-transform duration-150 group-hover:translate-x-0.5" />
-                                <span className="truncate">{sub.name}</span>
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Center Section: Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-1" aria-label="Primary">
-          {NAV_LINKS.map(({ to, label, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              className={({ isActive }) =>
-                `${focus} relative px-3.5 py-2 text-sm font-semibold transition-colors rounded-md ${isActive ? t.linkActive : t.link} ` +
-                `after:absolute after:inset-x-3.5 after:bottom-0 after:h-0.5 after:rounded-full after:bg-emerald-500 after:origin-left after:transition-transform after:duration-200 ` +
-                (isActive ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100')
-              }
-            >
-              {label}
-            </NavLink>
-          ))}
-        </nav>
-
-        {/* Right Section: Theme Toggle & User Auth Buttons */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className={`${t.iconBtn} ${focus} w-10 h-10 rounded-lg border transition-colors flex items-center justify-center flex-shrink-0`}
-            title="Toggle theme"
-            aria-label="Toggle theme"
-          >
-            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
-
-          {user ? (
-            <div className="relative">
-              <button
-                onClick={() => setShowDropdown(!showDropdown)}
-                aria-expanded={showDropdown}
-                aria-haspopup="true"
-                className={`${t.userBtn} ${focus} flex items-center gap-2.5 h-10 pl-1.5 pr-3 rounded-full border transition-colors`}
+            <div className="flex items-center gap-2 min-w-0">
+              <div
+                className="nb-serif w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#0e2b22] text-[#e9d6b0] text-[17px] sm:text-[19px] font-semibold flex items-center justify-center flex-shrink-0 overflow-hidden border border-[#dfe3dd]"
               >
-                <div className="w-7 h-7 bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">
-                  {user.name ? user.name.charAt(0).toUpperCase() : <User className="w-3.5 h-3.5" />}
-                </div>
-                <span className="font-semibold text-sm hidden sm:inline max-w-[140px] truncate">
-                  {user.name}
+                {logoSrc ? (
+                  <img src={logoSrc} alt={clubName} className="w-full h-full object-cover" />
+                ) : (
+                  clubName.charAt(0).toUpperCase()
+                )}
+              </div>
+              <Link to="/" className={`${focusRing} flex items-center min-w-0 rounded-lg`} aria-label={`${clubName} home`}>
+                <span className="nb-serif hidden md:block text-[18px] font-semibold text-[#0e2b22] truncate max-w-[200px] xl:max-w-[260px]">
+                  {clubName}
                 </span>
-                <ChevronDown className={`w-3.5 h-3.5 ${t.muted} flex-shrink-0 transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`} />
-              </button>
-
-              {showDropdown && (
-                <div className={`nb-pop absolute right-0 mt-3 w-72 ${t.dropdown} border rounded-2xl p-2 z-50`} style={{ transformOrigin: 'top right' }}>
-                  <div className={`px-3 pt-3 pb-3.5 border-b ${t.divider}`}>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">
-                        {user.name ? user.name.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-bold text-sm truncate">{user.name}</p>
-                        <p className={`text-xs ${t.muted} truncate`}>{user.email}</p>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-2 text-[11px] font-medium mt-3">
-                      <span className={`${t.chip} px-2.5 py-1 rounded-md border`}>Dept: {user.dept || 'N/A'}</span>
-                      <span className={`${t.chip} px-2.5 py-1 rounded-md border`}>Batch: {user.batch || 'N/A'}</span>
-                    </div>
-                  </div>
-
-                  <div className="pt-2">
-                    <button
-                      onClick={handleLogout}
-                      className={`${t.logout} ${focus} w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors`}
-                    >
-                      <LogOut className="w-4 h-4" /> Log out
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <Link
-                to="/admin"
-                aria-label="Admin"
-                className={`${t.ghostBtn} ${focus} h-10 px-2.5 sm:px-3.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-colors flex-shrink-0`}
-              >
-                <Lock className="w-4 h-4" /> <span className="hidden sm:inline">Admin</span>
-              </Link>
-
-              <Link
-                to="/login"
-                className={`${t.outlineBtn} ${focus} h-10 px-3 sm:px-4 rounded-lg border text-sm font-semibold flex items-center gap-1.5 transition-colors flex-shrink-0`}
-              >
-                <LogIn className="w-4 h-4 text-emerald-500" /> Login
-              </Link>
-
-              <Link
-                to="/register"
-                className={`${focus} h-10 px-3 sm:px-4 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold shadow-sm shadow-emerald-900/20 flex items-center gap-1.5 transition-colors flex-shrink-0`}
-              >
-                <UserPlus className="w-4 h-4" /> Register
               </Link>
             </div>
-          )}
+          </div>
+
+          {/* Center: primary links (desktop) */}
+          <nav className="hidden lg:flex flex-1 items-center justify-center gap-1" aria-label="Primary">
+            {NAV_LINKS.map(({ to, label, end }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                className={({ isActive }) =>
+                  `${focusRing} relative px-3.5 py-2 text-[13.5px] font-medium rounded-md transition-colors ${isActive ? 'text-[#0e2b22]' : 'text-slate-500 hover:text-[#0e2b22]'} ` +
+                  `after:absolute after:inset-x-3.5 after:-bottom-[13px] after:h-0.5 after:bg-[#14684e] after:origin-center after:transition-transform after:duration-200 ` +
+                  (isActive ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100')
+                }
+              >
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* Right: account */}
+          <div className="ml-auto lg:ml-0 flex items-center gap-1 sm:gap-2 flex-shrink-0">
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowDropdown(!showDropdown)}
+                  aria-expanded={showDropdown}
+                  aria-haspopup="menu"
+                  className={`${focusRing} flex items-center gap-2 h-9 sm:h-10 pl-1 pr-2.5 sm:pr-3 rounded-full border border-[#dfe3dd] bg-white hover:bg-[#f3f5f1] text-[#0e2b22] transition-colors`}
+                >
+                  <span className="w-6 h-6 sm:w-7 sm:h-7 bg-[#14684e] text-white rounded-full flex items-center justify-center font-semibold text-xs flex-shrink-0">
+                    {user.name ? user.name.charAt(0).toUpperCase() : <User className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
+                  </span>
+                  <span className="font-semibold text-xs sm:text-sm hidden sm:inline max-w-[140px] truncate">{user.name}</span>
+                  <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 flex-shrink-0 transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`} />
+                </button>
+
+                {showDropdown && (
+                  <div
+                    className="nb-pop absolute right-0 mt-3 w-72 max-w-[calc(100vw-1.5rem)] bg-white border border-[#dfe3dd] rounded-2xl p-2 z-50 shadow-[0_24px_60px_-24px_rgba(14,43,34,0.4)]"
+                    style={{ transformOrigin: 'top right' }}
+                  >
+                    <div className="px-3 pt-3 pb-4 border-b border-[#e6e9e3]">
+                      <div className="flex items-center gap-3">
+                        <span className="w-11 h-11 bg-[#14684e] text-white rounded-full flex items-center justify-center font-semibold text-base flex-shrink-0">
+                          {user.name ? user.name.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="font-semibold text-sm text-[#0e2b22] truncate">{user.name}</p>
+                          <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                        </div>
+                      </div>
+                      <dl className="grid grid-cols-2 gap-2 mt-3.5 text-xs">
+                        <div className="rounded-lg bg-[#f7f8f6] border border-[#e6e9e3] px-3 py-2">
+                          <dt className="text-slate-500">Department</dt>
+                          <dd className="font-semibold text-[#0e2b22] mt-0.5 truncate">{user.dept || 'N/A'}</dd>
+                        </div>
+                        <div className="rounded-lg bg-[#f7f8f6] border border-[#e6e9e3] px-3 py-2">
+                          <dt className="text-slate-500">Batch</dt>
+                          <dd className="font-semibold text-[#0e2b22] mt-0.5 truncate">{user.batch || 'N/A'}</dd>
+                        </div>
+                      </dl>
+                    </div>
+
+                    <div className="pt-2">
+                      <button
+                        onClick={handleLogout}
+                        className={`${focusRing} w-full flex items-center gap-2.5 px-3 h-11 rounded-lg text-sm font-semibold text-red-700 hover:bg-red-50 transition-colors`}
+                      >
+                        <LogOut className="w-4 h-4" /> Log out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link
+                  to="/admin"
+                  aria-label="Admin"
+                  className={`${focusRing} h-9 w-9 sm:h-10 sm:w-auto sm:px-2.5 rounded-lg flex items-center justify-center gap-1 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#0e2b22] hover:bg-[#f3f5f1] transition-colors`}
+                >
+                  <Lock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Admin</span>
+                </Link>
+
+                <Link
+                  to="/login"
+                  className={`${focusRing} h-9 px-2.5 sm:px-3.5 rounded-lg border border-[#c9cfc6] bg-white hover:bg-[#f3f5f1] text-[#0e2b22] text-xs sm:text-sm font-semibold flex items-center gap-1 transition-colors`}
+                >
+                  <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#14684e]" /> Login
+                </Link>
+
+                <Link
+                  to="/register"
+                  className={`${focusRing} h-9 px-2.5 sm:px-3.5 rounded-lg bg-[#14684e] hover:bg-[#0f5540] text-white text-xs sm:text-sm font-semibold flex items-center gap-1 transition-colors`}
+                >
+                  <UserPlus className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Register
+                </Link>
+              </>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Mobile/Responsive Navigation Links Row */}
-      <div className={`lg:hidden ${t.mobileRow} border-t`}>
+        {/* Tablet / phone: compact tab-style link row */}
         <nav
           aria-label="Primary mobile"
-          className="flex items-center sm:justify-center gap-1 py-1.5 px-3 overflow-x-auto custom-scrollbar"
+          className="lg:hidden border-t border-[#e6e9e3] bg-white"
         >
-          {NAV_LINKS.map(({ to, short, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              className={({ isActive }) =>
-                `${focus} px-3.5 py-1.5 rounded-md text-[13px] font-semibold whitespace-nowrap transition-colors ${isActive ? t.mobileLinkActive : t.mobileLink}`
-              }
-            >
-              {short}
-            </NavLink>
-          ))}
+          <div className="nb-noscrollbar flex items-stretch sm:justify-center h-10 px-1 overflow-x-auto">
+            {NAV_LINKS.map(({ to, short, end }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                className={({ isActive }) =>
+                  `${focusRing} px-2.5 sm:px-4 flex items-center text-[12px] sm:text-[13px] font-medium whitespace-nowrap border-b-2 transition-colors ${
+                    isActive ? 'border-[#14684e] text-[#0e2b22]' : 'border-transparent text-slate-500 hover:text-[#0e2b22]'
+                  }`
+                }
+              >
+                {short}
+              </NavLink>
+            ))}
+          </div>
         </nav>
-      </div>
-    </header>
+      </header>
+
+      {/* ---------- Club menu dropdown drawer ---------- */}
+      {showExploreMenu && (
+        <>
+          <div
+            className="hidden lg:block fixed inset-0 z-40 bg-[#0e2b22]/25"
+            onClick={closeMenu}
+            aria-hidden="true"
+          />
+
+          <div className="fixed inset-0 z-[60] lg:z-50 lg:inset-x-0 lg:top-16 lg:bottom-auto lg:pointer-events-none">
+            <div className="h-full lg:h-auto lg:max-w-7xl lg:mx-auto lg:px-8">
+              <section
+                role="dialog"
+                aria-modal="true"
+                aria-label="Club directory"
+                className="nb-pop relative flex flex-col h-full w-full bg-white overflow-hidden lg:h-auto lg:w-[800px] lg:max-h-[min(78vh,740px)] lg:mt-3 lg:rounded-2xl lg:border lg:border-[#dfe3dd] lg:shadow-[0_30px_80px_-30px_rgba(14,43,34,0.5)] lg:pointer-events-auto"
+              >
+                <span className="absolute inset-x-0 top-0 h-0.5 bg-[#b08a4e]" aria-hidden="true" />
+
+                <div className="flex-shrink-0 flex items-start justify-between gap-4 px-4 sm:px-7 pt-[max(1.25rem,env(safe-area-inset-top))] pb-4 border-b border-[#dfe3dd] bg-white">
+                  <div className="min-w-0">
+                    <h2 className="nb-serif text-[26px] sm:text-[28px] leading-tight font-semibold text-[#0e2b22]">
+                      Club directory
+                    </h2>
+                    <p className="text-[13px] text-slate-500 mt-1">
+                      Committees, resources and portals
+                    </p>
+                  </div>
+                  <button
+                    onClick={closeMenu}
+                    aria-label="Close directory"
+                    className={`${focusRing} w-11 h-11 -mr-1 rounded-full border border-[#dfe3dd] text-slate-600 hover:text-[#0e2b22] hover:bg-[#f3f5f1] flex items-center justify-center transition-colors flex-shrink-0`}
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-[#f7f8f6] px-4 sm:px-7 pt-5 pb-[max(2rem,env(safe-area-inset-bottom))]">
+                  <Link
+                    to="/"
+                    onClick={closeMenu}
+                    className={`${focusRing} flex items-center justify-between h-12 px-4 rounded-xl bg-[#0e2b22] hover:bg-[#153a2f] text-white text-sm font-semibold transition-colors`}
+                  >
+                    Home dashboard
+                    <ChevronRight className="w-4 h-4 text-[#e9d6b0]" />
+                  </Link>
+
+                  <div className="mt-5 bg-white border border-[#dfe3dd] rounded-xl overflow-hidden divide-y divide-[#e6e9e3]">
+                    {exploreMenuTree.map((cat, idx) => {
+                      const isOpen = expandedCategory === cat.title;
+
+                      return (
+                        <div key={idx}>
+                          <button
+                            onClick={() => toggleCategory(cat.title)}
+                            aria-expanded={isOpen}
+                            className={`${focusRing} relative w-full min-h-[3.5rem] px-4 flex items-center justify-between gap-3 text-left transition-colors hover:bg-[#fafbf9] ${
+                              isOpen ? 'before:absolute before:left-0 before:inset-y-0 before:w-[3px] before:bg-[#b08a4e]' : ''
+                            }`}
+                          >
+                            <span className={`truncate text-[15px] font-semibold ${isOpen ? 'text-[#14684e]' : 'text-[#0e2b22]'}`}>
+                              {cat.title}
+                            </span>
+                            <span className="flex items-center gap-2.5 flex-shrink-0">
+                              <span className="min-w-[1.5rem] text-center text-xs font-medium tabular-nums text-slate-500 bg-[#eef1ec] rounded-full px-2 py-0.5">
+                                {cat.subItems.length}
+                              </span>
+                              <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-[#14684e]' : ''}`} />
+                            </span>
+                          </button>
+
+                          {isOpen && (
+                            <div className="nb-pop bg-[#f7f8f6] border-t border-[#e6e9e3] overflow-hidden">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 -mb-px">
+                                {cat.subItems.map((sub, sIdx) => (
+                                  <Link
+                                    key={sIdx}
+                                    to={sub.path}
+                                    onClick={closeMenu}
+                                    className={`${focusRing} group flex items-center justify-between gap-3 min-h-[3rem] px-4 text-[14px] font-medium text-[#1f3a30] border-b border-[#e6e9e3] hover:bg-white hover:text-[#14684e] transition-colors`}
+                                  >
+                                    <span className="truncate">{sub.name}</span>
+                                    <ChevronRight className="w-4 h-4 text-slate-300 flex-shrink-0 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-[#14684e]" />
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                </div>
+              </section>
+            </div>
+          </div>
+        </>
+      )}
+    </>
   );
 };
 
