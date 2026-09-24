@@ -1,23 +1,23 @@
 export const exploreMenuTree = [
-  {
-    title: 'About',
+  /*{
+    //title: 'About',
     subItems: [
-      { name: 'About Us', path: '/about-us' },
+      //{ name: 'About Us', path: '/about-us' },
      
       
     ]
-  },
+  },*/
   
   {
     title: 'Members',
     subItems: [
       //{ name: 'Register', path: '/register' },
       { name: 'Member List', path: '/members/list' },
-      //{ name: 'Previous Committee', path: '/members/alumni' },
+      { name: 'Previous Committee', path: '/members/alumni' },
       
     ]
   },
-  {
+  /*{
     title: 'Sports',
     subItems: [
       //{ name: 'E-Sports', path: '/sports/e-sports' },
@@ -30,7 +30,7 @@ export const exploreMenuTree = [
       //{ name: 'Athletics', path: '/sports/athletics' },
       
     ]
-  },
+  },*/
   {
     title: 'Club Room',
     subItems: [

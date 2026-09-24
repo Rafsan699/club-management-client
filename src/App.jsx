@@ -17,10 +17,14 @@ import Founders from './pages/Founders';
 import DynamicFormView from './pages/DynamicFormView';
 import EntryGate from './pages/EntryGate';
 
-// নতুন মিটিং পেজ কম্পোনেন্টসমূহ আমদানি (আপনার ফোল্ডার পাথ অনুযায়ী ইমপোর্ট এডজাস্ট করে নেবেন)
+// নতুন মিটিং পেজ কম্পোনেন্টসমূহ আমদানি
 import MeetingHome from './pages/MeetingHome';
 import MeetingEntry from './pages/MeetingEntry';
 import MeetingDetailsUser from './pages/MeetingDetailsUser';
+
+// প্রিভিয়াস কমিটি পেজ কম্পোনেন্টসমূহ আমদানি
+import PreviousCommitteesList from './pages/PreviousCommitteesList';
+import CommitteeDetails from './pages/CommitteeDetails';
 
 // কমন লেআউট কম্পোনেন্ট
 const Layout = ({ darkMode, setDarkMode, user, content, handleLogout }) => {
@@ -109,6 +113,10 @@ function App() {
           <Route path="/activities/meetings" element={<MeetingHome />} />
           <Route path="/activities/meetings/entry" element={<MeetingEntry />} />
           <Route path="/activities/meetings/view" element={<MeetingDetailsUser />} />
+
+          {/* প্রিভিয়াস কমিটি সংক্রান্ত নতুন রাউটসমূহ */}
+          <Route path="/members/alumni" element={<PreviousCommitteesList darkMode={darkMode} setDarkMode={setDarkMode} user={user} handleLogout={handleLogout} />} />
+          <Route path="/members/alumni/:id" element={<CommitteeDetails darkMode={darkMode} setDarkMode={setDarkMode} user={user} handleLogout={handleLogout} />} />
         </Route>
 
         {/* আলাদা পেজ যেমন অ্যাডমিন বা লগইন */}
