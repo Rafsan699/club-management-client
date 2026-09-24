@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { exploreMenuTree } from '../data/exploreMenuData';
-import { 
-  Trophy, Lock, LogIn, UserPlus, User, LogOut, ChevronDown, Compass, ChevronRight, X, Sun, Moon 
+import {
+  Trophy, Lock, LogIn, UserPlus, User, LogOut, ChevronDown, LayoutGrid, ChevronRight, X, Sun, Moon
 } from 'lucide-react';
+
+const NAV_LINKS = [
+  { to: '/', label: 'Home', short: 'Home', end: true },
+  { to: '/about-us', label: 'About Club', short: 'About' },
+  { to: '/team', label: 'Team', short: 'Team' },
+  { to: '/events', label: 'Events', short: 'Events' },
+  { to: '/contact', label: 'Contact Us', short: 'Contact' },
+  { to: '/news', label: 'Newsfeed', short: 'News' },
+];
 
 const Navbar = ({ content, user, darkMode, setDarkMode, handleLogout }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showExploreMenu, setShowExploreMenu] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState(null);
-  
+
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -34,94 +43,172 @@ const Navbar = ({ content, user, darkMode, setDarkMode, handleLogout }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
+  /* ---------- Theme tokens ---------- */
+  const t = darkMode
+    ? {
+        header: 'bg-slate-950/80 border-white/10',
+        text: 'text-slate-100',
+        muted: 'text-slate-400',
+        link: 'text-slate-300 hover:text-white',
+        linkActive: 'text-white',
+        panel: 'bg-slate-950/95 border-white/10 text-slate-100 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)]',
+        divider: 'border-white/10',
+        iconBtn: 'bg-white/5 border-white/10 text-amber-300 hover:bg-white/10',
+        ghostBtn: 'text-slate-300 hover:text-white hover:bg-white/10',
+        outlineBtn: 'border-white/15 text-slate-100 hover:bg-white/10',
+        menuBtn: 'bg-emerald-500/15 border-emerald-400/30 text-emerald-200 hover:bg-emerald-500/25',
+        mobileRow: 'bg-slate-950/60 border-white/10',
+        mobileLink: 'text-slate-300 hover:bg-white/10',
+        mobileLinkActive: 'bg-emerald-500/15 text-emerald-300',
+        catRow: 'border-white/10 hover:bg-white/[0.04]',
+        catOpen: 'bg-white/[0.04] border-emerald-400/40',
+        countChip: 'bg-white/10 text-slate-300',
+        subLink: 'text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-300',
+        tile: 'bg-emerald-500/10 border-emerald-400/20 text-emerald-300',
+        closeBtn: 'text-slate-400 hover:text-white hover:bg-white/10',
+        userBtn: 'bg-white/5 border-white/10 hover:bg-white/10 text-slate-100',
+        dropdown: 'bg-slate-950 border-white/10 text-slate-200 shadow-[0_24px_60px_-16px_rgba(0,0,0,0.7)]',
+        chip: 'bg-white/5 border-white/10 text-slate-300',
+        logout: 'text-red-400 hover:bg-red-500/10',
+      }
+    : {
+        header: 'bg-white/80 border-slate-200/80',
+        text: 'text-slate-900',
+        muted: 'text-slate-500',
+        link: 'text-slate-600 hover:text-slate-900',
+        linkActive: 'text-emerald-800',
+        panel: 'bg-white/95 border-slate-200 text-slate-900 shadow-[0_30px_80px_-24px_rgba(15,23,42,0.35)]',
+        divider: 'border-slate-200/80',
+        iconBtn: 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50',
+        ghostBtn: 'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
+        outlineBtn: 'border-slate-300 text-slate-800 hover:bg-slate-50',
+        menuBtn: 'bg-emerald-900 border-emerald-900 text-white hover:bg-emerald-800',
+        mobileRow: 'bg-slate-50/80 border-slate-200/80',
+        mobileLink: 'text-slate-600 hover:bg-white',
+        mobileLinkActive: 'bg-white text-emerald-800 shadow-sm ring-1 ring-slate-200',
+        catRow: 'border-slate-200/80 hover:bg-slate-50',
+        catOpen: 'bg-emerald-50/50 border-emerald-600/40',
+        countChip: 'bg-slate-100 text-slate-600',
+        subLink: 'text-slate-700 hover:bg-emerald-50 hover:text-emerald-800',
+        tile: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+        closeBtn: 'text-slate-500 hover:text-slate-900 hover:bg-slate-100',
+        userBtn: 'bg-white border-slate-200 hover:bg-slate-50 text-slate-800',
+        dropdown: 'bg-white border-slate-200 text-slate-800 shadow-[0_24px_60px_-20px_rgba(15,23,42,0.35)]',
+        chip: 'bg-slate-50 border-slate-200 text-slate-600',
+        logout: 'text-red-600 hover:bg-red-50',
+      };
+
+  const focus = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent';
+
   return (
-    <header className={`${darkMode ? 'bg-slate-900/90 border-slate-800' : 'bg-white/90 border-slate-200/85'} backdrop-blur-2xl border-b fixed inset-x-0 z-50 shadow-sm transition-all duration-300 ${showNavbar ? 'top-0' : '-translate-y-full'}`}>
-      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-2 sm:gap-4">
-        
+    <header
+      className={`${t.header} ${t.text} backdrop-blur-xl border-b fixed inset-x-0 top-0 z-50 transition-transform duration-300 ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}
+    >
+      {/* Local animation (respects reduced motion) */}
+      <style>{`
+        @keyframes nb-pop { from { opacity: 0; transform: translateY(-6px) scale(.985); } to { opacity: 1; transform: none; } }
+        .nb-pop { animation: nb-pop .18s ease-out; transform-origin: top left; }
+        @media (prefers-reduced-motion: reduce) { .nb-pop { animation: none; } }
+      `}</style>
+
+      {/* Fine accent line along the bottom edge */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
+
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3 sm:gap-6">
+
         {/* Left Section: Menu Button */}
-        <div className="flex items-center relative">
-          <button 
+        <div className="flex items-center sm:relative">
+          <button
             onClick={() => setShowExploreMenu(!showExploreMenu)}
-            className="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-650 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-all duration-300 focus:outline-none hover:scale-105 active:scale-95"
+            aria-expanded={showExploreMenu}
+            aria-haspopup="true"
+            className={`${t.menuBtn} ${focus} h-10 pl-3 pr-3.5 rounded-lg border font-semibold text-sm flex items-center gap-2 transition-colors duration-200 active:scale-[0.98]`}
           >
-            <Compass className={`w-4 h-4 text-white ${showExploreMenu ? 'rotate-90' : ''} transition-transform duration-300`} />
+            <LayoutGrid className="w-4 h-4" />
             <span>Menu</span>
-            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showExploreMenu ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-3.5 h-3.5 opacity-70 transition-transform duration-300 ${showExploreMenu ? 'rotate-180' : ''}`} />
           </button>
 
           {showExploreMenu && (
-            <div className={`absolute top-12 left-0 w-[94vw] sm:w-[900px] max-w-[95vw] ${darkMode ? 'bg-slate-900/98 border-slate-800 text-slate-100' : 'bg-white/98 border-slate-200/80 text-slate-900'} backdrop-blur-2xl border rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.15)] p-4 sm:p-8 z-50 max-h-[82vh] overflow-y-auto custom-scrollbar`}>
-              
-              <div className={`flex items-center justify-between pb-4 mb-5 border-b ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
-                <div className="flex items-center gap-3">
-                  <div className={`p-2.5 ${darkMode ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-emerald-50 border-emerald-100'} rounded-2xl border shadow-sm`}>
-                    <Trophy className="w-6 h-6 text-emerald-600" />
+            <div
+              className={`nb-pop absolute left-2 right-2 top-full mt-2 sm:left-0 sm:right-auto sm:mt-3 sm:w-[880px] sm:max-w-[calc(100vw-3rem)] ${t.panel} backdrop-blur-2xl border rounded-2xl p-4 sm:p-7 z-50 max-h-[80vh] overflow-y-auto custom-scrollbar`}
+            >
+              {/* Panel header */}
+              <div className={`flex items-start justify-between gap-4 pb-5 mb-5 border-b ${t.divider}`}>
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className={`${t.tile} w-11 h-11 rounded-xl border flex items-center justify-center flex-shrink-0`}>
+                    <Trophy className="w-5 h-5" />
                   </div>
-                  <div>
-                    <h3 className={`font-black ${darkMode ? 'text-white' : 'text-slate-900'} text-base sm:text-xl uppercase tracking-wider`}>
-                      Club Directory & Navigation
+                  <div className="min-w-0">
+                    <h3 className="font-bold text-lg sm:text-xl tracking-tight leading-tight">
+                      Club directory
                     </h3>
-                    <p className={`text-[11px] sm:text-xs font-bold ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5`}>Browse all club resources, committees and portals instantly</p>
+                    <p className={`text-xs sm:text-[13px] ${t.muted} mt-0.5 leading-snug`}>
+                      Committees, resources and portals in one place
+                    </p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => setShowExploreMenu(false)}
-                  className={`p-2.5 ${darkMode ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'} rounded-2xl transition`}
+                  aria-label="Close menu"
+                  className={`${t.closeBtn} ${focus} p-2 rounded-lg transition-colors flex-shrink-0`}
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
+              {/* Home shortcut */}
               <div className="mb-5">
-                <Link 
+                <Link
                   to="/"
                   onClick={() => setShowExploreMenu(false)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-black text-xs sm:text-sm shadow-md shadow-emerald-600/20 transition-all duration-200 hover:scale-[1.02]"
+                  className={`${focus} inline-flex items-center gap-1.5 h-10 pl-4 pr-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold text-sm shadow-sm transition-colors`}
                 >
-                  <ChevronRight className="w-4 h-4" /> Home Page Dashboard
+                  Home dashboard <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
 
-              {/* All Categories Listed Clearly */}
-              <div className="space-y-3">
+              {/* Categories */}
+              <div className="space-y-2">
                 {exploreMenuTree.map((cat, idx) => {
                   const isOpen = expandedCategory === cat.title;
 
                   return (
-                    <div 
-                      key={idx} 
-                      className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
-                        darkMode ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-50/80 border-slate-200/80'
-                      }`}
+                    <div
+                      key={idx}
+                      className={`rounded-xl border overflow-hidden transition-colors duration-200 ${isOpen ? t.catOpen : t.catRow}`}
                     >
                       <button
                         onClick={() => toggleCategory(cat.title)}
-                        className={`w-full text-left p-4 flex items-center justify-between font-black ${darkMode ? 'text-white' : 'text-slate-900'} text-xs sm:text-base uppercase tracking-wide transition-all hover:bg-emerald-500/5`}
+                        aria-expanded={isOpen}
+                        className={`${focus} w-full text-left px-4 py-3.5 flex items-center justify-between gap-3 transition-colors`}
                       >
-                        <span className="flex items-center gap-3 truncate pr-2">
-                          <span className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-300 ${isOpen ? 'bg-emerald-600 shadow-md shadow-emerald-600/40 scale-110' : `${darkMode ? 'bg-slate-700' : 'bg-slate-300'}`}`}></span>
-                          <span className={`truncate ${isOpen ? 'text-emerald-600' : ''}`}>{cat.title}</span>
-                        </span>
-                        
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-200 text-slate-600'}`}>
-                            {cat.subItems.length} items
+                        <span className="flex items-center gap-3 min-w-0">
+                          <span className={`w-1 h-5 rounded-full flex-shrink-0 transition-colors duration-200 ${isOpen ? 'bg-emerald-500' : darkMode ? 'bg-slate-700' : 'bg-slate-300'}`} />
+                          <span className={`truncate font-semibold text-sm sm:text-[15px] ${isOpen ? (darkMode ? 'text-emerald-300' : 'text-emerald-800') : ''}`}>
+                            {cat.title}
                           </span>
-                          <ChevronDown className={`w-4 h-4 ${darkMode ? 'text-slate-500' : 'text-slate-400'} transition-transform duration-300 ${isOpen ? 'rotate-180 text-emerald-600' : ''}`} />
-                        </div>
+                        </span>
+
+                        <span className="flex items-center gap-2.5 flex-shrink-0">
+                          <span className={`${t.countChip} text-[11px] px-2 py-0.5 rounded-md font-medium tabular-nums`}>
+                            {cat.subItems.length}
+                          </span>
+                          <ChevronDown className={`w-4 h-4 ${t.muted} transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                        </span>
                       </button>
-                      
+
                       {isOpen && (
-                        <div className={`p-4 pt-2 border-t ${darkMode ? 'border-slate-800 bg-slate-900/90' : 'border-slate-100 bg-white'} animate-in fade-in duration-200`}>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-2.5 pt-2">
+                        <div className={`nb-pop px-3 pb-3 pt-1 border-t ${t.divider}`}>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-1 pt-2">
                             {cat.subItems.map((sub, sIdx) => (
-                              <Link 
+                              <Link
                                 key={sIdx}
                                 to={sub.path}
                                 onClick={() => setShowExploreMenu(false)}
-                                className={`flex items-center gap-2 p-2.5 rounded-xl ${darkMode ? 'bg-slate-800/80 border-slate-700 text-slate-200 hover:border-emerald-500 hover:text-emerald-400' : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-emerald-500 hover:text-emerald-600'} font-bold text-xs border shadow-sm transition-all duration-150 hover:scale-[1.02]`}
+                                className={`${t.subLink} ${focus} group flex items-center gap-2 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-colors`}
                               >
-                                <span className="text-emerald-600 font-black">›</span>
+                                <ChevronRight className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0 transition-transform duration-150 group-hover:translate-x-0.5" />
                                 <span className="truncate">{sub.name}</span>
                               </Link>
                             ))}
@@ -132,104 +219,132 @@ const Navbar = ({ content, user, darkMode, setDarkMode, handleLogout }) => {
                   );
                 })}
               </div>
-
             </div>
           )}
         </div>
 
         {/* Center Section: Navigation Links */}
-        <nav className={`hidden lg:flex items-center gap-6 text-xs font-black tracking-widest uppercase ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
-          <Link to="/" className="hover:text-emerald-600 transition flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Home</Link>
-          <Link to="/about-us" className="hover:text-emerald-600 transition">About Club</Link>
-          <Link to="/team" className="hover:text-emerald-600 transition">Team</Link>
-          <Link to="/events" className="hover:text-emerald-600 transition">Events</Link>
-          <Link to="/contact" className="hover:text-emerald-600 transition">Contact Us</Link>
-          <Link to="/news" className="hover:text-emerald-600 transition">Newsfeed</Link>
+        <nav className="hidden lg:flex items-center gap-1" aria-label="Primary">
+          {NAV_LINKS.map(({ to, label, end }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              className={({ isActive }) =>
+                `${focus} relative px-3.5 py-2 text-sm font-semibold transition-colors rounded-md ${isActive ? t.linkActive : t.link} ` +
+                `after:absolute after:inset-x-3.5 after:bottom-0 after:h-0.5 after:rounded-full after:bg-emerald-500 after:origin-left after:transition-transform after:duration-200 ` +
+                (isActive ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100')
+              }
+            >
+              {label}
+            </NavLink>
+          ))}
         </nav>
 
         {/* Right Section: Theme Toggle & User Auth Buttons */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <button 
+        <div className="flex items-center gap-2">
+          <button
             onClick={() => setDarkMode(!darkMode)}
-            className={`p-2 rounded-xl border ${darkMode ? 'bg-slate-800 border-slate-700 text-amber-400 hover:bg-slate-700' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'} transition shadow-sm focus:outline-none flex items-center justify-center flex-shrink-0`}
-            title="Toggle Theme"
+            className={`${t.iconBtn} ${focus} w-10 h-10 rounded-lg border transition-colors flex items-center justify-center flex-shrink-0`}
+            title="Toggle theme"
+            aria-label="Toggle theme"
           >
             {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
 
           {user ? (
             <div className="relative">
-              <button 
+              <button
                 onClick={() => setShowDropdown(!showDropdown)}
-                className={`flex items-center gap-2 ${darkMode ? 'bg-slate-800 border-slate-700 hover:bg-slate-700 text-white' : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-800'} py-1.5 px-3 rounded-full border transition focus:outline-none shadow-sm`}
+                aria-expanded={showDropdown}
+                aria-haspopup="true"
+                className={`${t.userBtn} ${focus} flex items-center gap-2.5 h-10 pl-1.5 pr-3 rounded-full border transition-colors`}
               >
-                <div className="w-7 h-7 bg-gradient-to-tr from-emerald-600 to-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shadow-sm flex-shrink-0">
+                <div className="w-7 h-7 bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">
                   {user.name ? user.name.charAt(0).toUpperCase() : <User className="w-3.5 h-3.5" />}
                 </div>
-                <span className={`font-extrabold ${darkMode ? 'text-slate-200' : 'text-slate-800'} text-xs hidden sm:inline`}>
+                <span className="font-semibold text-sm hidden sm:inline max-w-[140px] truncate">
                   {user.name}
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
+                <ChevronDown className={`w-3.5 h-3.5 ${t.muted} flex-shrink-0 transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`} />
               </button>
 
               {showDropdown && (
-                <div className={`absolute right-0 mt-2 w-64 ${darkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'} border rounded-2xl shadow-xl py-3 px-4 z-50 animate-in fade-in`}>
-                  <div className={`pb-2 border-b ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
-                    <p className={`font-black ${darkMode ? 'text-white' : 'text-slate-900'} text-sm truncate`}>{user.name}</p>
-                    <p className="text-[11px] text-emerald-600 font-bold truncate mt-0.5">{user.email}</p>
-                    <div className="flex gap-2 text-[10px] font-semibold text-slate-500 mt-2">
-                      <span className={`${darkMode ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-600'} px-2 py-0.5 rounded-md border`}>Dept: {user.dept || 'N/A'}</span>
-                      <span className={`${darkMode ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-600'} px-2 py-0.5 rounded-md border`}>Batch: {user.batch || 'N/A'}</span>
+                <div className={`nb-pop absolute right-0 mt-3 w-72 ${t.dropdown} border rounded-2xl p-2 z-50`} style={{ transformOrigin: 'top right' }}>
+                  <div className={`px-3 pt-3 pb-3.5 border-b ${t.divider}`}>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">
+                        {user.name ? user.name.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-bold text-sm truncate">{user.name}</p>
+                        <p className={`text-xs ${t.muted} truncate`}>{user.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2 text-[11px] font-medium mt-3">
+                      <span className={`${t.chip} px-2.5 py-1 rounded-md border`}>Dept: {user.dept || 'N/A'}</span>
+                      <span className={`${t.chip} px-2.5 py-1 rounded-md border`}>Batch: {user.batch || 'N/A'}</span>
                     </div>
                   </div>
 
                   <div className="pt-2">
-                    <button 
+                    <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-2 text-red-600 hover:bg-red-50 p-2 rounded-lg text-xs font-extrabold transition"
+                      className={`${t.logout} ${focus} w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors`}
                     >
-                      <LogOut className="w-3.5 h-3.5" /> Logout Account
+                      <LogOut className="w-4 h-4" /> Log out
                     </button>
                   </div>
                 </div>
               )}
             </div>
           ) : (
-            <div className="flex items-center gap-1.5">
-              <Link 
-                to="/admin" 
-                className="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-black px-2.5 sm:px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1 sm:gap-1.5 transition hover:scale-105 active:scale-95 flex-shrink-0"
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Link
+                to="/admin"
+                aria-label="Admin"
+                className={`${t.ghostBtn} ${focus} h-10 px-2.5 sm:px-3.5 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-colors flex-shrink-0`}
               >
-                <Lock className="w-3.5 h-3.5" /> Admin
+                <Lock className="w-4 h-4" /> <span className="hidden sm:inline">Admin</span>
               </Link>
 
-              <Link 
-                to="/login" 
-                className={`${darkMode ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700' : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200'} text-[11px] font-black px-2.5 sm:px-3 py-1.5 rounded-xl border flex items-center gap-1 sm:gap-1.5 transition hover:scale-105 active:scale-95 shadow-sm flex-shrink-0`}
+              <Link
+                to="/login"
+                className={`${t.outlineBtn} ${focus} h-10 px-3 sm:px-4 rounded-lg border text-sm font-semibold flex items-center gap-1.5 transition-colors flex-shrink-0`}
               >
-                <LogIn className="w-3.5 h-3.5 text-emerald-600" /> Login
+                <LogIn className="w-4 h-4 text-emerald-500" /> Login
               </Link>
 
-              <Link 
-                to="/register" 
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-[11px] font-black px-2.5 sm:px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1 sm:gap-1.5 transition hover:scale-105 active:scale-95 flex-shrink-0"
+              <Link
+                to="/register"
+                className={`${focus} h-10 px-3 sm:px-4 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold shadow-sm shadow-emerald-900/20 flex items-center gap-1.5 transition-colors flex-shrink-0`}
               >
-                <UserPlus className="w-3.5 h-3.5" /> Register
+                <UserPlus className="w-4 h-4" /> Register
               </Link>
             </div>
           )}
         </div>
-
       </div>
 
       {/* Mobile/Responsive Navigation Links Row */}
-      <div className={`lg:hidden flex items-center justify-between sm:justify-center gap-2 sm:gap-4 py-1.5 px-3 text-[11px] font-black tracking-wider uppercase border-t overflow-x-auto custom-scrollbar ${darkMode ? 'bg-slate-900/90 border-slate-800 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
-        <Link to="/" className="hover:text-emerald-600 transition whitespace-nowrap">Home</Link>
-        <Link to="/about-us" className="hover:text-emerald-600 transition whitespace-nowrap">About</Link>
-        <Link to="/team" className="hover:text-emerald-600 transition whitespace-nowrap">Team</Link>
-        <Link to="/events" className="hover:text-emerald-600 transition whitespace-nowrap">Events</Link>
-        <Link to="/contact" className="hover:text-emerald-600 transition whitespace-nowrap">Contact</Link>
-        <Link to="/news" className="hover:text-emerald-600 transition whitespace-nowrap">News</Link>
+      <div className={`lg:hidden ${t.mobileRow} border-t`}>
+        <nav
+          aria-label="Primary mobile"
+          className="flex items-center sm:justify-center gap-1 py-1.5 px-3 overflow-x-auto custom-scrollbar"
+        >
+          {NAV_LINKS.map(({ to, short, end }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              className={({ isActive }) =>
+                `${focus} px-3.5 py-1.5 rounded-md text-[13px] font-semibold whitespace-nowrap transition-colors ${isActive ? t.mobileLinkActive : t.mobileLink}`
+              }
+            >
+              {short}
+            </NavLink>
+          ))}
+        </nav>
       </div>
     </header>
   );
