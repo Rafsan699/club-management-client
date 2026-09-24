@@ -1,5 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import API from '../services/api';
+import { ArrowUpRight, Mail, Phone, X } from 'lucide-react';
+
+/*
+  Palette (shared with Navbar)
+  ink    #0e2b22  deep bottle green
+  green  #14684e  actions, links
+  brass  #b08a4e  single accent (ledger rule, timeline markers, name underline)
+  wash   #f7f8f6  page background
+  line   #dfe3dd  hairlines
+*/
+
+const MILESTONES = [
+  { year: '2026', title: 'Club founded', text: 'Official establishment of BRIU Sports Club to promote campus athletics.' },
+  { year: '2026', title: 'Founding Panel established', text: 'Core founding committee takes charge of organizational structure and vision.' },
+  { year: '2026', title: 'First major activities', text: 'Initiation of departmental sports events and recruitment drives.' },
+  { year: 'Future', title: 'Growth & development', text: 'Continuous expansion toward premier inter-university sports participation.' },
+];
+
+const focusRing =
+  'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14684e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f7f8f6]';
+
+const telHref = (phone) => `tel:${String(phone).replace(/[^\d+]/g, '')}`;
 
 const Founders = () => {
   const [founders, setFounders] = useState([]);
@@ -20,12 +42,38 @@ const Founders = () => {
       });
   }, []);
 
+  // While a profile is open: Escape closes it and the page behind stays put.
+  useEffect(() => {
+    if (!selectedFounder) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setSelectedFounder(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [selectedFounder]);
+
+  const styles = (
+    <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap');
+      .fd-serif { font-family: 'Newsreader', Georgia, 'Times New Roman', serif; }
+      @keyframes fd-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+      .fd-rise { animation: fd-rise .22s ease-out; }
+      @media (prefers-reduced-motion: reduce) { .fd-rise { animation: none; } }
+    `}</style>
+  );
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] px-4">
-        <div className="space-y-4 text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-xs font-black tracking-[0.25em] uppercase text-slate-500 animate-pulse">Loading Founding Panel...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#f7f8f6] px-4">
+        {styles}
+        <div className="text-center" role="status" aria-live="polite">
+          <div className="w-10 h-10 border-[3px] border-[#dfe3dd] border-t-[#14684e] rounded-full animate-spin mx-auto motion-reduce:animate-none" />
+          <p className="mt-5 text-sm font-medium text-slate-500">Loading founding panel</p>
         </div>
       </div>
     );
@@ -33,14 +81,17 @@ const Founders = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] px-4">
-        <div className="bg-red-50 border border-red-200 p-6 sm:p-8 rounded-[2rem] text-center max-w-md w-full space-y-4 shadow-xl">
-          <p className="text-red-600 font-bold text-sm tracking-wide">{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="w-full py-3 bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95"
+      <div className="min-h-screen flex items-center justify-center bg-[#f7f8f6] px-4">
+        {styles}
+        <div className="w-full max-w-md bg-white border border-[#dfe3dd] rounded-2xl p-7 sm:p-8 text-center shadow-[0_24px_60px_-30px_rgba(14,43,34,0.35)]" role="alert">
+          <span className="block w-10 h-0.5 bg-[#b08a4e] mx-auto mb-5" />
+          <h2 className="fd-serif text-2xl font-semibold text-[#0e2b22]">Founders could not be loaded</h2>
+          <p className="mt-2 text-sm text-slate-600">{error} Check your connection and try again.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className={`${focusRing} mt-6 w-full h-12 rounded-lg bg-[#14684e] hover:bg-[#0f5540] text-white text-sm font-semibold transition-colors`}
           >
-            Retry Connection
+            Try again
           </button>
         </div>
       </div>
@@ -48,210 +99,241 @@ const Founders = () => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-[#f8fafc] text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white overflow-x-hidden">
-      
-      {/* Ultra-Modern Professional Light Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-b from-white to-[#f1f5f9] text-slate-900 pt-20 pb-16 sm:pt-28 sm:pb-24 px-4 sm:px-8 lg:px-16 border-b border-slate-200">
-        <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
-        <div className="absolute -top-32 -right-32 w-72 sm:w-96 h-72 sm:h-96 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none"></div>
-        
-        <div className="max-w-6xl mx-auto relative z-10 space-y-5 text-center sm:text-left">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-600 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.3em] mx-auto sm:mx-0 shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-ping"></span>
-            <span>BRIUSC</span>
+    <div className="min-h-screen w-full bg-[#f7f8f6] text-[#0e2b22] font-sans antialiased selection:bg-[#14684e] selection:text-white overflow-x-hidden">
+      {styles}
+
+      {/* Hero */}
+      <section className="bg-white border-b border-[#dfe3dd] pt-32 sm:pt-36 lg:pt-40 pb-14 sm:pb-20 px-4 sm:px-8 lg:px-16">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-10 lg:gap-16 items-end">
+          <div className="lg:col-span-7">
+            <h1 className="fd-serif text-[40px] sm:text-[56px] lg:text-[64px] leading-[1.06] tracking-tight font-semibold text-[#0e2b22]">
+              The Founding Panel of BRIU Sports Club
+            </h1>
+
+            <div className="mt-6 sm:mt-8 max-w-[62ch] space-y-4 text-[15px] sm:text-base leading-[1.75] text-slate-600">
+              <p>
+                Founded in 2026, BRIU Sports Club was established with a vision to foster sportsmanship, leadership, teamwork, and a strong athletic culture within the university community.
+              </p>
+              <p>
+                The Founding Panel represents the dedicated individuals who laid the foundation of the club and shaped its early vision, values, and direction. Their commitment marks the beginning of a journey toward excellence in university sports and a lasting legacy for future generations.
+              </p>
+            </div>
           </div>
-          
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 uppercase leading-[1.15]">
-            BRIU Sports Club  <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700">
-              Founders Panel
-            </span>
-          </h1>
 
-          <p className="text-slate-600 text-xs sm:text-sm lg:text-base max-w-2xl font-normal leading-relaxed mx-auto sm:mx-0">
-            Founding Panel — BRIU Sports Club
-
-Founded in 2026, BRIU Sports Club was established with a vision to foster sportsmanship, leadership, teamwork, and a strong athletic culture within the university community. The Founding Panel represents the dedicated individuals who laid the foundation of the club and shaped its early vision, values, and direction. Their commitment marks the beginning of a journey toward excellence in university sports and a lasting legacy for future generations.
-          </p>
+          <dl className="lg:col-span-5 border-t-2 border-[#b08a4e] divide-y divide-[#e6e9e3]">
+            <div className="flex items-baseline justify-between gap-4 py-4">
+              <dt className="text-sm text-slate-500">Established</dt>
+              <dd className="fd-serif text-[28px] font-semibold text-[#0e2b22] tabular-nums">2026</dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-4 py-4">
+              <dt className="text-sm text-slate-500">Founding members</dt>
+              <dd className="fd-serif text-[28px] font-semibold text-[#0e2b22] tabular-nums">{founders.length}</dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-4 py-4">
+              <dt className="text-sm text-slate-500">Club</dt>
+              <dd className="fd-serif text-[28px] font-semibold text-[#0e2b22]">BRIUSC</dd>
+            </div>
+          </dl>
         </div>
-      </div>
+      </section>
 
-      {/* Main Content Layout */}
-      <div className="w-full px-4 sm:px-8 lg:px-16 py-12 sm:py-20 space-y-16 sm:space-y-28 max-w-6xl mx-auto">
-        
-        {/* Editorial Alternating Leadership Stream */}
-        <div className="space-y-16 sm:space-y-24">
-          {founders.map((founder, index) => {
-            const isEven = index % 2 === 0;
-            const sequenceNum = String(index + 1).padStart(2, '0');
+      {/* Founders */}
+      <section className="px-4 sm:px-8 lg:px-16 py-14 sm:py-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-end justify-between gap-4 mb-10 sm:mb-14">
+            <h2 className="fd-serif text-[30px] sm:text-[36px] leading-tight font-semibold text-[#0e2b22]">
+              Founding members
+            </h2>
+            <p className="text-sm text-slate-500 pb-1.5">Tap a portrait to view the full profile</p>
+          </div>
 
-            return (
-              <div 
-                key={founder._id}
-                className={`flex flex-col lg:flex-row items-center gap-6 sm:gap-10 lg:gap-16 ${
-                  isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'
-                }`}
-              >
-                {/* Responsive Portrait Component */}
-                <div className="w-full lg:w-5/12 relative group">
-                  <div className="absolute -inset-1.5 bg-gradient-to-r from-blue-600/15 to-indigo-600/15 rounded-[2.2rem] blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                  
-                  <div 
+          {founders.length === 0 ? (
+            <p className="text-slate-600 text-[15px]">No founding members have been added yet.</p>
+          ) : (
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
+              {founders.map((founder) => (
+                <li key={founder._id} className="min-w-0">
+                  <button
+                    type="button"
                     onClick={() => setSelectedFounder(founder)}
-                    className="relative cursor-pointer overflow-hidden rounded-[2rem] bg-white border border-slate-200 shadow-lg aspect-[4/5] w-full"
+                    aria-label={`View profile of ${founder.name}`}
+                    className={`${focusRing} group block w-full text-left rounded-xl`}
                   >
-                    {/* Editorial Index Badge */}
-                    <div className="absolute top-3.5 left-3.5 z-25 bg-slate-900/90 backdrop-blur-md border border-slate-700 text-white font-black text-[10px] px-3 py-1 rounded-full tracking-widest shadow-md">
-                      {sequenceNum} // FOUNDER
-                    </div>
-
-                    <img 
-                      src={founder.img} 
-                      alt={founder.name} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                    />
-                    
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/10 to-transparent opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5 sm:p-6">
-                      <span className="w-full text-center sm:text-left text-white text-[11px] font-bold tracking-wider uppercase bg-blue-600 hover:bg-blue-700 py-2.5 px-4 rounded-xl shadow-md transition-colors">
-                        View Full Profile →
+                    <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-[#dfe3dd] bg-[#e9ede7]">
+                      {founder.img ? (
+                        <img
+                          src={founder.img}
+                          alt={founder.name}
+                          loading="lazy"
+                          className="w-full h-full object-cover object-top"
+                        />
+                      ) : (
+                        <span className="fd-serif absolute inset-0 flex items-center justify-center text-7xl font-semibold text-[#14684e]/40">
+                          {founder.name ? founder.name.charAt(0).toUpperCase() : '?'}
+                        </span>
+                      )}
+                      <span className="absolute left-3 bottom-3 inline-flex items-center gap-1.5 h-9 pl-3.5 pr-3 rounded-full bg-white/95 text-[13px] font-semibold text-[#0e2b22] shadow-sm">
+                        View profile
+                        <ArrowUpRight className="w-4 h-4 text-[#14684e]" />
                       </span>
                     </div>
-                  </div>
-                </div>
 
-                {/* Content Block */}
-                <div className="w-full lg:w-7/12 space-y-5 text-center sm:text-left">
-                  <div className="space-y-2.5">
-                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                    <h3 className="fd-serif mt-5 text-[26px] leading-snug font-semibold text-[#0e2b22] break-words underline decoration-transparent decoration-2 underline-offset-[6px] group-hover:decoration-[#b08a4e] transition-colors">
+                      {founder.name}
+                    </h3>
+                  </button>
+
+                  {(founder.dept || founder.batch) && (
+                    <dl className="mt-4 border-t border-[#dfe3dd] divide-y divide-[#e6e9e3] text-[14px]">
                       {founder.dept && (
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 px-3 py-1 rounded-lg border border-slate-200 inline-block">
-                          Dept. of {founder.dept}
-                        </span>
+                        <div className="flex items-baseline justify-between gap-4 py-2.5">
+                          <dt className="text-slate-500">Department</dt>
+                          <dd className="font-medium text-[#0e2b22] text-right">{founder.dept}</dd>
+                        </div>
                       )}
                       {founder.batch && (
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 bg-blue-50 px-3 py-1 rounded-lg border border-blue-200 inline-block shadow-sm">
-                          Batch: {founder.batch}
-                        </span>
-                      )}
-                    </div>
-
-                    <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight break-words">
-                      {founder.name}
-                    </h2>
-                  </div>
-
-                  <div className="border-t border-slate-200 pt-5 space-y-5">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {founder.email && (
-                        <div className="bg-white/80 backdrop-blur border border-slate-200 p-3.5 rounded-xl space-y-0.5 text-left shadow-sm">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Email Address</p>
-                          <p className="text-xs font-semibold text-blue-600 break-all">{founder.email}</p>
+                        <div className="flex items-baseline justify-between gap-4 py-2.5">
+                          <dt className="text-slate-500">Batch</dt>
+                          <dd className="font-medium text-[#0e2b22] text-right">{founder.batch}</dd>
                         </div>
+                      )}
+                    </dl>
+                  )}
+
+                  {(founder.email || founder.phone) && (
+                    <div className="mt-2 space-y-1">
+                      {founder.email && (
+                        <a
+                          href={`mailto:${founder.email}`}
+                          className={`${focusRing} flex items-start gap-2.5 py-1.5 text-[14px] font-medium text-[#14684e] hover:text-[#0f5540] rounded`}
+                        >
+                          <Mail className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                          <span className="break-all">{founder.email}</span>
+                        </a>
                       )}
                       {founder.phone && (
-                        <div className="bg-white/80 backdrop-blur border border-slate-200 p-3.5 rounded-xl space-y-0.5 text-left shadow-sm">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Contact Number</p>
-                          <p className="text-xs font-semibold text-slate-800 break-all">{founder.phone}</p>
-                        </div>
+                        <a
+                          href={telHref(founder.phone)}
+                          className={`${focusRing} flex items-start gap-2.5 py-1.5 text-[14px] font-medium text-[#0e2b22] hover:text-[#14684e] rounded`}
+                        >
+                          <Phone className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#14684e]" />
+                          <span className="break-all">{founder.phone}</span>
+                        </a>
                       )}
                     </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
+      </section>
 
-        {/* Founding Legacy Section */}
-        <div className="border-t border-slate-200 pt-16 sm:pt-24 space-y-10">
-          <div className="text-center space-y-2.5 max-w-lg mx-auto">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200 shadow-sm inline-block">
-              Historical Timeline
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 uppercase">
-              Our Founding Legacy
-            </h2>
-            <p className="text-slate-600 text-xs">
-              Milestones that shaped the foundation of BRIU Sports Club.
-            </p>
-          </div>
+      {/* Founding legacy — a real sequence, so it is drawn as a timeline */}
+      <section className="bg-white border-t border-[#dfe3dd] px-4 sm:px-8 lg:px-16 py-14 sm:py-20">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="fd-serif text-[30px] sm:text-[36px] leading-tight font-semibold text-[#0e2b22]">
+            Our founding legacy
+          </h2>
+          <p className="mt-3 text-[15px] text-slate-600 max-w-[52ch]">
+            Milestones that shaped the foundation of BRIU Sports Club.
+          </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-2.5 hover:border-blue-300 transition-colors shadow-sm">
-              <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200 inline-block">2026</span>
-              <h3 className="text-sm font-bold text-slate-900">Club Founded</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">Official establishment of BRIU Sports Club to promote campus athletics.</p>
-            </div>
-            <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-2.5 hover:border-blue-300 transition-colors shadow-sm">
-              <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200 inline-block">2026</span>
-              <h3 className="text-sm font-bold text-slate-900">Founding Panel Established</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">Core founding committee takes charge of organizational structure and vision.</p>
-            </div>
-            <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-2.5 hover:border-blue-300 transition-colors shadow-sm">
-              <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200 inline-block">2026</span>
-              <h3 className="text-sm font-bold text-slate-900">First Major Activities</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">Initiation of departmental sports events and recruitment drives.</p>
-            </div>
-            <div className="bg-white border border-slate-200 p-5 rounded-2xl space-y-2.5 hover:border-blue-300 transition-colors shadow-sm">
-              <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200 inline-block">Future</span>
-              <h3 className="text-sm font-bold text-slate-900">Growth & Development</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">Continuous expansion toward premier inter-university sports participation.</p>
-            </div>
-          </div>
+          <ol className="mt-12 grid grid-cols-1 lg:grid-cols-4 lg:gap-8 border-l lg:border-l-0 lg:border-t border-[#dfe3dd] ml-1.5 lg:ml-0">
+            {MILESTONES.map((m, i) => (
+              <li key={i} className="relative pl-8 pb-10 last:pb-0 lg:pl-0 lg:pt-8 lg:pb-0">
+                <span
+                  className="absolute left-0 top-1.5 -translate-x-1/2 lg:translate-x-0 lg:top-0 lg:-translate-y-1/2 w-3 h-3 rounded-full bg-[#b08a4e] ring-4 ring-white"
+                  aria-hidden="true"
+                />
+                <p className="fd-serif text-[22px] font-semibold text-[#14684e]">{m.year}</p>
+                <h3 className="mt-1 text-[16px] font-semibold text-[#0e2b22]">{m.title}</h3>
+                <p className="mt-2 text-[14px] leading-relaxed text-slate-600 max-w-[36ch]">{m.text}</p>
+              </li>
+            ))}
+          </ol>
         </div>
+      </section>
 
-      </div>
-
-      {/* 100% Mobile Responsive Profile Modal */}
+      {/* Profile: bottom sheet on phones, centered dialog on larger screens */}
       {selectedFounder && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-white border border-slate-200 rounded-[2rem] sm:rounded-[2.5rem] p-5 sm:p-7 max-w-sm sm:max-w-md w-full relative space-y-5 shadow-2xl my-auto">
-            <button 
-              onClick={() => setSelectedFounder(null)}
-              className="absolute top-4 right-4 sm:top-5 sm:right-5 font-bold text-xs w-8 h-8 rounded-full flex items-center justify-center bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-colors border border-slate-200"
-            >
-              ✕
-            </button>
-            
-            <div className="text-center space-y-3 pt-1">
-              <img 
-                src={selectedFounder.img} 
-                alt={selectedFounder.name} 
-                className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl sm:rounded-3xl object-cover mx-auto shadow-md border-2 border-slate-100" 
-              />
-              <div className="space-y-1">
-                <h3 className="text-xl sm:text-2xl font-black text-slate-900 break-words">{selectedFounder.name}</h3>
-                <p className="font-extrabold text-[11px] uppercase tracking-wider text-blue-600">
-                  {selectedFounder.batch ? `Batch: ${selectedFounder.batch}` : ''}
-                </p>
-              </div>
+        <div
+          className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-[#0e2b22]/55 sm:p-6"
+          onClick={() => setSelectedFounder(null)}
+          role="presentation"
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${selectedFounder.name} profile`}
+            onClick={(e) => e.stopPropagation()}
+            className="fd-rise relative w-full sm:max-w-md max-h-[92vh] overflow-y-auto overscroll-contain bg-white rounded-t-2xl sm:rounded-2xl shadow-[0_30px_80px_-20px_rgba(14,43,34,0.6)]"
+          >
+            <div className="relative aspect-[4/3] sm:aspect-[5/4] bg-[#e9ede7]">
+              {selectedFounder.img ? (
+                <img
+                  src={selectedFounder.img}
+                  alt={selectedFounder.name}
+                  className="w-full h-full object-cover object-top"
+                />
+              ) : (
+                <span className="fd-serif absolute inset-0 flex items-center justify-center text-8xl font-semibold text-[#14684e]/40">
+                  {selectedFounder.name ? selectedFounder.name.charAt(0).toUpperCase() : '?'}
+                </span>
+              )}
+              <button
+                onClick={() => setSelectedFounder(null)}
+                aria-label="Close profile"
+                className="absolute top-3 right-3 w-11 h-11 rounded-full bg-white/95 text-[#0e2b22] hover:bg-white flex items-center justify-center shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14684e]"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl p-4 space-y-3 text-xs">
-              <div className="flex justify-between items-center border-b border-slate-200 pb-2.5">
-                <span className="text-slate-500 font-medium">Department</span>
-                <span className="font-bold text-slate-800 uppercase text-right">{selectedFounder.dept || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between items-center border-b border-slate-200 pb-2.5">
-                <span className="text-slate-500 font-medium">Batch</span>
-                <span className="font-bold text-blue-600 text-right">{selectedFounder.batch || 'N/A'}</span>
-              </div>
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center border-b border-slate-200 pb-2.5 gap-1">
-                <span className="text-slate-500 font-medium">Email</span>
-                <span className="font-semibold text-blue-600 break-all sm:text-right">{selectedFounder.email || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500 font-medium">Phone</span>
-                <span className="font-semibold text-slate-800 text-right">{selectedFounder.phone || 'N/A'}</span>
-              </div>
-            </div>
+            <div className="px-5 sm:px-7 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+              <h3 className="fd-serif text-[30px] leading-tight font-semibold text-[#0e2b22] break-words">
+                {selectedFounder.name}
+              </h3>
+              <span className="block w-10 h-0.5 bg-[#b08a4e] mt-3" />
 
-            <button 
-              onClick={() => setSelectedFounder(null)}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95"
-            >
-              Close Profile
-            </button>
+              <dl className="mt-5 divide-y divide-[#e6e9e3] border-y border-[#e6e9e3] text-[14px]">
+                <div className="flex items-baseline justify-between gap-4 py-3">
+                  <dt className="text-slate-500">Department</dt>
+                  <dd className="font-medium text-[#0e2b22] text-right">{selectedFounder.dept || 'N/A'}</dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-4 py-3">
+                  <dt className="text-slate-500">Batch</dt>
+                  <dd className="font-medium text-[#0e2b22] text-right">{selectedFounder.batch || 'N/A'}</dd>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-4 py-3">
+                  <dt className="text-slate-500">Email</dt>
+                  <dd className="font-medium sm:text-right break-all">
+                    {selectedFounder.email ? (
+                      <a href={`mailto:${selectedFounder.email}`} className="text-[#14684e] hover:text-[#0f5540] underline underline-offset-4 decoration-[#14684e]/30">
+                        {selectedFounder.email}
+                      </a>
+                    ) : 'N/A'}
+                  </dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-4 py-3">
+                  <dt className="text-slate-500">Phone</dt>
+                  <dd className="font-medium text-right">
+                    {selectedFounder.phone ? (
+                      <a href={telHref(selectedFounder.phone)} className="text-[#0e2b22] hover:text-[#14684e]">
+                        {selectedFounder.phone}
+                      </a>
+                    ) : 'N/A'}
+                  </dd>
+                </div>
+              </dl>
+
+              <button
+                onClick={() => setSelectedFounder(null)}
+                className="mt-6 w-full h-12 rounded-lg bg-[#0e2b22] hover:bg-[#153a2f] text-white text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14684e] focus-visible:ring-offset-2"
+              >
+                Close profile
+              </button>
+            </div>
           </div>
         </div>
       )}
