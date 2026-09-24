@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { exploreMenuTree } from '../data/exploreMenuData';
+import logoImage from './logo.jpg';
 import { 
-  Trophy, Lock, LogIn, UserPlus, User, LogOut, ChevronDown, Compass, ChevronRight, X, Sun, Moon 
+  Trophy, Lock, LogIn, UserPlus, User, LogOut, ChevronDown, Compass, ChevronRight, X 
 } from 'lucide-react';
 
 const Navbar = ({ content, user, darkMode, setDarkMode, handleLogout }) => {
@@ -38,8 +39,8 @@ const Navbar = ({ content, user, darkMode, setDarkMode, handleLogout }) => {
     <header className={`${darkMode ? 'bg-slate-900/90 border-slate-800' : 'bg-white/90 border-slate-200/85'} backdrop-blur-2xl border-b fixed inset-x-0 z-50 shadow-sm transition-all duration-300 ${showNavbar ? 'top-0' : '-translate-y-full'}`}>
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-2 sm:gap-4">
         
-        {/* Left Section: Menu Button */}
-        <div className="flex items-center relative">
+        {/* Left Section: Menu Button & Club Logo Box */}
+        <div className="flex items-center gap-3 relative">
           <button 
             onClick={() => setShowExploreMenu(!showExploreMenu)}
             className="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-650 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-all duration-300 focus:outline-none hover:scale-105 active:scale-95"
@@ -48,6 +49,17 @@ const Navbar = ({ content, user, darkMode, setDarkMode, handleLogout }) => {
             <span>Menu</span>
             <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showExploreMenu ? 'rotate-180' : ''}`} />
           </button>
+
+          {/* Club Logo Box replacing Dark Mode Button */}
+          <Link to="/" className="flex items-center gap-2 focus:outline-none group">
+            <div className={`w-9 h-9 rounded-xl overflow-hidden border ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-slate-100'} shadow-sm flex items-center justify-center transition-transform duration-300 group-hover:scale-105`}>
+              <img 
+                src={logoImage} 
+                alt="Club Logo" 
+                className="w-full h-full object-cover" 
+              />
+            </div>
+          </Link>
 
           {showExploreMenu && (
             <div className={`absolute top-12 left-0 w-[94vw] sm:w-[900px] max-w-[95vw] ${darkMode ? 'bg-slate-900/98 border-slate-800 text-slate-100' : 'bg-white/98 border-slate-200/80 text-slate-900'} backdrop-blur-2xl border rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.15)] p-4 sm:p-8 z-50 max-h-[82vh] overflow-y-auto custom-scrollbar`}>
@@ -147,16 +159,8 @@ const Navbar = ({ content, user, darkMode, setDarkMode, handleLogout }) => {
           <Link to="/news" className="hover:text-emerald-600 transition">Newsfeed</Link>
         </nav>
 
-        {/* Right Section: Theme Toggle & User Auth Buttons */}
+        {/* Right Section: User Auth Buttons */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <button 
-            onClick={() => setDarkMode(!darkMode)}
-            className={`p-2 rounded-xl border ${darkMode ? 'bg-slate-800 border-slate-700 text-amber-400 hover:bg-slate-700' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'} transition shadow-sm focus:outline-none flex items-center justify-center flex-shrink-0`}
-            title="Toggle Theme"
-          >
-            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
-
           {user ? (
             <div className="relative">
               <button 
