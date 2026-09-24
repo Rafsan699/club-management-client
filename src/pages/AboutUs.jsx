@@ -37,9 +37,9 @@ const AboutUs = () => {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center font-medium text-sm transition-colors duration-300 ${darkMode ? 'bg-[#0A0D14] text-slate-400' : 'bg-[#FAFAFB] text-slate-500'}`}>
+      <div className={`min-h-screen flex items-center justify-center font-medium text-sm transition-colors duration-300 ${darkMode ? 'bg-[#0F141C] text-slate-400' : 'bg-[#F6F4EF] text-slate-500'}`}>
         <div className="flex items-center gap-3">
-          <div className="w-4 h-4 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin"></div>
+          <div className="w-4 h-4 rounded-full border-2 border-blue-700 border-t-transparent animate-spin"></div>
           Loading Profile...
         </div>
       </div>
@@ -48,278 +48,327 @@ const AboutUs = () => {
 
   if (!about) {
     return (
-      <div className={`min-h-screen flex items-center justify-center font-medium text-sm transition-colors duration-300 ${darkMode ? 'bg-[#0A0D14] text-rose-400' : 'bg-[#FAFAFB] text-rose-600'}`}>
+      <div className={`min-h-screen flex items-center justify-center font-medium text-sm px-6 text-center transition-colors duration-300 ${darkMode ? 'bg-[#0F141C] text-rose-400' : 'bg-[#F6F4EF] text-rose-700'}`}>
         Failed to load About Us data.
       </div>
     );
   }
 
+  const pad = (n) => String(n).padStart(2, '0');
+  let chapterNo = 0;
+  const chapter = (label) => (
+    <div className="md:sticky md:top-10 self-start flex md:block items-baseline gap-3">
+      <span className="ab-serif text-3xl sm:text-4xl ab-acc leading-none">{pad(++chapterNo)}</span>
+      <p className="md:mt-3 text-sm font-semibold ab-mute">{label}</p>
+    </div>
+  );
+
+  const hasBanners = about.banners && about.banners.length > 0;
+
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-[#0A0D14] text-slate-100 selection:bg-indigo-500 selection:text-white' : 'bg-[#FAFAFB] text-slate-900 selection:bg-indigo-600 selection:text-white'} relative pb-32 font-sans overflow-x-hidden antialiased transition-colors duration-500`}>
+    <div className={`ab ${darkMode ? 'dark' : ''} min-h-screen relative antialiased selection:bg-blue-700 selection:text-white transition-colors duration-500`} style={{ overflowX: 'clip' }}>
 
-      {/* Cinematic Hero Banner - Increased Size & Height */}
-      {about.banners && about.banners.length > 0 ? (
-        <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[2.1/1] max-h-[92vh] overflow-hidden bg-slate-950 shadow-2xl flex items-center justify-center">
-          
-          {/* Enhanced Background Blurred Shadow / Glow */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center filter blur-2xl opacity-75 scale-125 pointer-events-none transition-all duration-1000"
-            style={{ backgroundImage: `url(${about.banners[currentBanner]})` }}
-          ></div>
-          
-          <div className="absolute inset-0 bg-black/45 pointer-events-none"></div>
+      <div className="ab-progress" aria-hidden="true"></div>
 
-          {/* Main Full Image */}
-          <img 
-            src={about.banners[currentBanner]} 
-            alt="Club Banner" 
-            className="relative w-full h-full object-contain object-center z-10 transition-all duration-1000 ease-out drop-shadow-[0_25px_60px_rgba(0,0,0,0.85)]"
-          />
-          
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0D14] via-[#0A0D14]/30 to-transparent z-20 pointer-events-none"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0A0D14]/60 via-transparent to-[#0A0D14]/60 z-20 pointer-events-none"></div>
-          
-          <div className="absolute inset-0 flex items-end pb-8 sm:pb-12 md:pb-16 px-4 sm:px-8 md:px-16 z-30 pointer-events-none">
-            <div className="max-w-6xl mx-auto w-full relative space-y-2 sm:space-y-4 pointer-events-auto">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xl border border-white/15 text-white text-[10px] sm:text-xs font-semibold tracking-wider uppercase shadow-lg">
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span> 
-                Official Club Profile
-              </div>
-              <h1 className="text-xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white max-w-4xl leading-[1.1]">
+      {/* ============ HERO ============ */}
+      <section>
+        <div className="max-w-[1160px] mx-auto px-5 sm:px-8 pt-10 sm:pt-16 pb-12 sm:pb-20">
+          <p className="ab-rise text-sm font-semibold ab-acc flex items-center gap-2.5">
+            <i className="w-1.5 h-1.5 bg-current inline-block"></i> Official Club Profile
+          </p>
+
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 mt-6 items-end">
+            <div className={hasBanners ? 'lg:col-span-6' : 'lg:col-span-9'}>
+              <h1 className="ab-rise ab-serif text-[clamp(2.5rem,8.5vw,5.75rem)] font-medium leading-[1.02] break-words" style={{ animationDelay: '.08s' }}>
                 {about.title}
               </h1>
-              <p className="text-slate-300 text-xs sm:text-base md:text-lg font-normal max-w-2xl leading-relaxed">
+              <p className="ab-rise text-lg sm:text-xl ab-mute leading-relaxed max-w-xl mt-6" style={{ animationDelay: '.16s' }}>
                 {about.subtitle || about.description}
               </p>
             </div>
+
+            {hasBanners && (
+              <figure className="lg:col-span-6 ab-rise" style={{ animationDelay: '.22s' }}>
+                <div className="ab-clip relative rounded-md border ab-line ab-surf2 aspect-[4/3]">
+                  <img
+                    key={`img-${currentBanner}`}
+                    src={about.banners[currentBanner]}
+                    alt="Club Banner"
+                    className="ab-swap absolute inset-0 w-full h-full object-contain object-center"
+                  />
+                </div>
+                {about.banners.length > 1 && (
+                  <figcaption className="flex items-center gap-4 mt-3 text-sm ab-mute tabular-nums">
+                    <span>{currentBanner + 1} / {about.banners.length}</span>
+                    <span className="flex-1 h-px bg-[var(--line)] relative ab-clip">
+                      <i key={`bar-${currentBanner}`} className="ab-bar absolute inset-y-0 left-0 bg-[var(--ink)]"></i>
+                    </span>
+                  </figcaption>
+                )}
+              </figure>
+            )}
           </div>
         </div>
-      ) : (
-        <div className={`w-full py-32 md:py-40 text-center shadow-inner relative overflow-hidden ${darkMode ? 'bg-gradient-to-b from-indigo-950/40 to-slate-950 border-b border-slate-800/50' : 'bg-gradient-to-b from-indigo-50/60 to-white border-b border-indigo-100/50'}`}>
-          <div className="max-w-4xl mx-auto px-6 relative z-10 space-y-4">
-            <h1 className={`text-4xl md:text-6xl font-semibold tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>{about.title}</h1>
-            <p className={`text-base md:text-lg font-normal max-w-2xl mx-auto leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>{about.subtitle || about.description}</p>
+      </section>
+
+      {/* ============ OVERVIEW ============ */}
+      {about.description && (
+        <section className="py-14 sm:py-24">
+          <div className="max-w-[1160px] mx-auto px-5 sm:px-8">
+            <div className="ab-rule mb-10 sm:mb-14"></div>
+            <div className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16">
+              {chapter('Overview')}
+              <div>
+                <h3 className="ab-item ab-serif text-xl sm:text-2xl ab-mute">Welcome to {about.title}</h3>
+                <p className="ab-fill ab-serif text-[clamp(1.5rem,4vw,2.75rem)] leading-[1.28] mt-5 break-words">
+                  {about.description}
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
       )}
 
-      {/* Main Content Container */}
-      <div className="max-w-6xl mx-auto px-5 sm:px-6 md:px-12 pt-16 sm:pt-20 md:pt-28 space-y-20 sm:space-y-24 md:space-y-32 relative z-10">
-        
-        {/* Overview Description Box with Phone-Friendly Formatting */}
-        {about.description && (
-          <div className={`max-w-4xl mx-auto p-6 sm:p-8 md:p-12 rounded-[2rem] sm:rounded-[2.5rem] shadow-xl backdrop-blur-2xl border transition-all duration-300 relative ${
-            darkMode 
-              ? 'bg-slate-900/60 border-slate-800/80 text-slate-200 shadow-black/40' 
-              : 'bg-white/80 border-slate-200/80 text-slate-700 shadow-slate-200/50'
-          }`}>
-            <div className="absolute -top-3.5 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full bg-indigo-600 text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-widest shadow-md">
-              Overview
-            </div>
-            
-            <div className="space-y-3 sm:space-y-4 pt-2 sm:pt-3 text-center">
-              <h3 className={`text-lg sm:text-xl md:text-2xl font-semibold tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                Welcome to {about.title}
-              </h3>
-              <p className="text-sm sm:text-base md:text-lg font-normal leading-relaxed sm:leading-loose max-w-3xl mx-auto opacity-90 px-1">
-                {about.description}
-              </p>
-            </div>
-          </div>
-        )}
+      {/* ============ MISSION & VISION ============ */}
+      <section className="py-14 sm:py-24">
+        <div className="max-w-[1160px] mx-auto px-5 sm:px-8">
+          <div className="ab-rule mb-10 sm:mb-14"></div>
+          <div className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16">
+            {chapter('Mission & Vision')}
 
-        {/* Mission & Vision Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-          
-          {/* Mission Panel */}
-          <div className={`p-6 sm:p-8 md:p-10 rounded-[2rem] sm:rounded-[2.5rem] shadow-xl backdrop-blur-2xl border transition-all duration-300 group relative overflow-hidden ${
-            darkMode 
-              ? 'bg-slate-900/60 border-slate-800/80 hover:border-indigo-500/40 shadow-black/40' 
-              : 'bg-white/80 border-slate-200/80 hover:border-indigo-300 shadow-slate-200/50'
-          }`}>
-            <div className="absolute -right-12 -top-12 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition-all duration-500"></div>
-            <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold mb-5 sm:mb-6 shadow-lg shadow-indigo-500/25 group-hover:scale-110 transition-transform duration-300">
-              <Target size={22} />
-            </div>
-            <h3 className={`text-xl sm:text-2xl font-semibold tracking-tight mb-2 sm:mb-3 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-              Our Mission
-            </h3>
-            <p className={`leading-relaxed text-sm sm:text-base md:text-lg font-normal ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              {about.mission}
-            </p>
-          </div>
-
-          {/* Vision Panel */}
-          <div className={`p-6 sm:p-8 md:p-10 rounded-[2rem] sm:rounded-[2.5rem] shadow-xl backdrop-blur-2xl border transition-all duration-300 group relative overflow-hidden ${
-            darkMode 
-              ? 'bg-slate-900/60 border-slate-800/80 hover:border-blue-500/40 shadow-black/40' 
-              : 'bg-white/80 border-slate-200/80 hover:border-blue-300 shadow-slate-200/50'
-          }`}>
-            <div className="absolute -right-12 -top-12 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all duration-500"></div>
-            <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold mb-5 sm:mb-6 shadow-lg shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300">
-              <Compass size={22} />
-            </div>
-            <h3 className={`text-xl sm:text-2xl font-semibold tracking-tight mb-2 sm:mb-3 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-              Our Vision
-            </h3>
-            <p className={`leading-relaxed text-sm sm:text-base md:text-lg font-normal ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-              {about.vision}
-            </p>
-          </div>
-
-        </div>
-
-        {/* Stats Counter Section */}
-        {about.features && about.features.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {about.features.map((feat, index) => (
-              <div 
-                key={index} 
-                className={`p-5 sm:p-6 md:p-8 rounded-[1.8rem] sm:rounded-[2rem] border backdrop-blur-xl shadow-lg transition-all duration-300 hover:scale-[1.02] text-center group ${
-                  darkMode 
-                    ? 'bg-slate-900/50 border-slate-800/80 hover:border-indigo-500/40 shadow-black/30 text-slate-100' 
-                    : 'bg-white/70 border-slate-200/80 hover:border-indigo-300 shadow-slate-200/40 text-slate-900'
-                }`}
-              >
-                <h4 className="text-2xl sm:text-3xl md:text-4xl font-bold text-indigo-600 tracking-tight group-hover:scale-105 transition-transform duration-300">{feat.title}</h4>
-                <p className={`text-xs sm:text-sm font-medium mt-1 sm:mt-2 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{feat.subtitle}</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+              {/* Mission Panel */}
+              <div className="ab-wipe rounded-md p-7 sm:p-10 lg:min-h-[400px] flex flex-col justify-between gap-12 bg-[var(--ink)] text-[color:var(--bg)]" style={{ '--wf': 'inset(0 100% 0 0)' }}>
+                <span className="w-11 h-11 rounded-md ab-iconbox grid place-items-center"><Target size={20} /></span>
+                <div>
+                  <h3 className="ab-serif text-3xl sm:text-4xl font-medium">Our Mission</h3>
+                  <p className="text-base sm:text-lg leading-relaxed opacity-80 mt-4 break-words">{about.mission}</p>
+                </div>
               </div>
-            ))}
-          </div>
-        )}
 
-        {/* Journey / Timeline Section */}
-        {about.detailsSections && about.detailsSections.length > 0 && (
-          <div className="space-y-12 sm:space-y-16">
-            <div className="text-center space-y-3">
-              <span className={`inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border shadow-sm ${
-                darkMode ? 'bg-indigo-950/50 border-indigo-800/60 text-indigo-400' : 'bg-indigo-50 border-indigo-200/60 text-indigo-600'
-              }`}>
-                Milestones
-              </span>
-              <h2 className={`text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                Our Journey
-              </h2>
+              {/* Vision Panel */}
+              <div className="ab-wipe rounded-md p-7 sm:p-10 lg:min-h-[400px] flex flex-col justify-between gap-12 bg-[var(--acc)] text-[color:var(--on-acc)]" style={{ '--wf': 'inset(0 0 0 100%)' }}>
+                <span className="w-11 h-11 rounded-md ab-iconbox grid place-items-center"><Compass size={20} /></span>
+                <div>
+                  <h3 className="ab-serif text-3xl sm:text-4xl font-medium">Our Vision</h3>
+                  <p className="text-base sm:text-lg leading-relaxed opacity-90 mt-4 break-words">{about.vision}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ NUMBERS ============ */}
+      {about.features && about.features.length > 0 && (
+        <section className="py-14 sm:py-24">
+          <div className="max-w-[1160px] mx-auto px-5 sm:px-8">
+            <div className="ab-rule mb-10 sm:mb-14"></div>
+            <div className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16">
+              {chapter('At a glance')}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+                {about.features.map((feat, index) => (
+                  <div key={index} className="ab-item">
+                    <h4 className="ab-serif text-[clamp(2.5rem,7vw,4.5rem)] font-medium leading-none break-words">{feat.title}</h4>
+                    <div className="h-[3px] w-8 bg-[var(--acc)] mt-4"></div>
+                    <p className="text-sm sm:text-base ab-mute mt-3">{feat.subtitle}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ============ JOURNEY ============ */}
+      {about.detailsSections && about.detailsSections.length > 0 && (
+        <section className="py-14 sm:py-24">
+          <div className="max-w-[1160px] mx-auto px-5 sm:px-8">
+            <div className="ab-rule mb-10 sm:mb-14"></div>
+            <div className="grid md:grid-cols-[200px_1fr] gap-6 md:gap-16">
+              {chapter('Milestones')}
+              <h2 className="ab-item ab-serif text-[clamp(2.5rem,7vw,4.75rem)] font-medium leading-[1.02]">Our Journey</h2>
             </div>
 
-            {/* Central Timeline Container */}
-            <div className="relative max-w-4xl mx-auto">
-              <div className={`absolute left-4 md:left-1/2 transform md:-translate-x-1/2 top-0 bottom-0 w-0.5 ${darkMode ? 'bg-slate-800' : 'bg-slate-200'} rounded-full`}></div>
+            <div className="mt-12 sm:mt-16">
+              {about.detailsSections.map((sec, idx) => (
+                <article key={sec.id || idx} className="pb-12 sm:pb-16">
+                  <div className="ab-rule mb-6 sm:mb-8 opacity-40"></div>
+                  <div className="grid md:grid-cols-[200px_1fr] gap-3 md:gap-16">
+                    <p className="ab-serif text-xl sm:text-2xl font-medium ab-acc md:sticky md:top-10 self-start break-words">{sec.heading}</p>
 
-              <div className="space-y-8 md:space-y-12">
-                {about.detailsSections.map((sec, idx) => {
-                  const isEven = idx % 2 === 0;
-                  return (
-                    <div key={sec.id || idx} className={`relative flex items-center w-full pl-10 md:pl-0 ${isEven ? 'md:justify-start' : 'md:justify-end'}`}>
-                      
-                      <div className={`absolute left-4 md:left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-indigo-600 border-4 ${darkMode ? 'border-[#0A0D14]' : 'border-[#FAFAFB]'} shadow-md z-10`}></div>
-
-                      <div className={`w-full md:w-[calc(50%-32px)] ${isEven ? 'md:pr-2' : 'md:pl-2'}`}>
-                        <div className={`p-6 md:p-8 rounded-[2rem] sm:rounded-[2.5rem] shadow-xl backdrop-blur-2xl transition-all duration-300 hover:scale-[1.01] border ${
-                          darkMode 
-                            ? 'bg-slate-900/60 border-slate-800/80 hover:border-indigo-500/40 shadow-black/40' 
-                            : 'bg-white/80 border-slate-200/80 hover:border-indigo-300 shadow-slate-200/50'
-                        }`}>
-                          <span className={`inline-block px-3 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold tracking-wider uppercase mb-3 border ${
-                            darkMode ? 'bg-indigo-950/60 border-indigo-800/60 text-indigo-400' : 'bg-indigo-50 border-indigo-100 text-indigo-600'
-                          }`}>
-                            {sec.heading}
-                          </span>
-                          <h3 className={`text-base sm:text-lg md:text-xl font-semibold tracking-tight mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                            {sec.subheading}
-                          </h3>
-                          <p className={`text-xs sm:text-sm md:text-base leading-relaxed font-normal ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                            {sec.text}
-                          </p>
-                          {sec.imageUrl && (
-                            <div className={`pt-4 overflow-hidden rounded-2xl relative flex items-center justify-center bg-slate-950/40 ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
-                              <img 
-                                src={sec.imageUrl} 
-                                alt="Journey visual" 
-                                className="h-44 sm:h-48 md:h-64 w-full object-contain rounded-2xl shadow-sm" 
-                              />
-                            </div>
-                          )}
+                    <div className="ab-item max-w-3xl">
+                      <h3 className="ab-serif text-2xl sm:text-4xl font-medium leading-tight break-words">
+                        {sec.subheading}
+                      </h3>
+                      <p className="text-base sm:text-lg ab-mute leading-relaxed mt-4 break-words">
+                        {sec.text}
+                      </p>
+                      {sec.imageUrl && (
+                        <div className="ab-clip mt-7 rounded-md border ab-line ab-surf2 flex items-center justify-center">
+                          <img
+                            src={sec.imageUrl}
+                            alt="Journey visual"
+                            className="ab-img h-56 sm:h-72 md:h-80 w-full object-contain"
+                          />
                         </div>
-                      </div>
-
+                      )}
                     </div>
-                  );
-                })}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ============ FOOTER PANEL ============ */}
+      <footer className="bg-[var(--foot)] text-[#F1EEE7] mt-10">
+        <div className="max-w-[1160px] mx-auto px-5 sm:px-8 pt-14 sm:pt-20 pb-8">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+
+            {/* Club Info */}
+            <div className="md:col-span-5">
+              <h3 className="ab-serif text-3xl sm:text-4xl font-medium leading-tight break-words">
+                {about.contact?.companyName || about.title || "Club Info"}
+              </h3>
+              <p className="text-base leading-relaxed text-white/65 mt-4 max-w-md">
+                {about.contact?.shortDescription || about.subtitle || about.description || "Empowering members through sports and physical fitness."}
+              </p>
+            </div>
+
+            {/* Contact Us Details */}
+            <div className="md:col-span-4">
+              <h3 className="text-sm font-semibold text-white/55 flex items-center gap-2">
+                <Phone size={14} /> Contact Us
+              </h3>
+              <div className="space-y-4 text-base mt-5">
+                <p className="flex items-start gap-3">
+                  <MapPin size={18} className="text-white/55 shrink-0 mt-0.5" />
+                  <span className="leading-relaxed">{about.contact?.address || 'N/A'}</span>
+                </p>
+                <p className="flex items-center gap-3">
+                  <Mail size={18} className="text-white/55 shrink-0" />
+                  <span className="break-all">{about.contact?.email || 'N/A'}</span>
+                </p>
+                <p className="flex items-center gap-3">
+                  <Phone size={18} className="text-white/55 shrink-0" />
+                  <span>{about.contact?.phone || 'N/A'}</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Follow Us & Social Links */}
+            <div className="md:col-span-3">
+              <h3 className="text-sm font-semibold text-white/55">Follow Us</h3>
+              <div className="flex flex-wrap gap-2.5 mt-5">
+                {about.contact?.socialLinks && about.contact.socialLinks.length > 0 ? (
+                  about.contact.socialLinks.map((social, idx) => (
+                    <a
+                      key={idx}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="min-h-[44px] inline-flex items-center px-4 rounded-md border border-white/25 text-sm hover:bg-[#F1EEE7] hover:text-[#16202E] transition active:scale-95"
+                    >
+                      {social.platform}
+                    </a>
+                  ))
+                ) : (
+                  <span className="text-sm text-white/50">No social links added yet.</span>
+                )}
               </div>
             </div>
 
           </div>
-        )}
 
-      </div>
-
-      {/* Full-Width Premium Footer Panel */}
-      <div className={`w-full border-t backdrop-blur-2xl py-12 sm:py-16 px-6 md:px-16 mt-24 sm:mt-32 shadow-2xl relative z-20 transition-colors duration-500 ${
-        darkMode ? 'bg-slate-950/90 border-slate-800/80 text-slate-100' : 'bg-slate-900 text-white border-slate-800'
-      }`}>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-12">
-          
-          {/* Column 1: Club Info */}
-          <div className="space-y-3 sm:space-y-4">
-            <h3 className="text-xs font-bold text-indigo-400 tracking-widest uppercase">
-              {about.contact?.companyName || about.title || "Club Info"}
-            </h3>
-            <p className="text-sm text-slate-400 leading-relaxed font-normal">
-              {about.contact?.shortDescription || about.subtitle || about.description || "Empowering members through sports and physical fitness."}
-            </p>
+          {/* Bottom Copyright */}
+          <div className="border-t border-white/15 mt-14 pt-6 text-sm text-white/50">
+            {about.contact?.copyright || `© ${new Date().getFullYear()} ${about.title || "Club"}. All rights reserved.`}
           </div>
-
-          {/* Column 2: Contact Us Details */}
-          <div className="space-y-3 sm:space-y-4">
-            <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-widest flex items-center gap-2">
-              <Phone size={14} /> Contact Us
-            </h3>
-            <div className="space-y-2.5 sm:space-y-3 text-sm text-slate-300 font-normal">
-              <p className="flex items-start gap-2.5">
-                <MapPin size={16} className="text-indigo-400 shrink-0 mt-0.5" />
-                <span className="leading-relaxed">{about.contact?.address || 'N/A'}</span>
-              </p>
-              <p className="flex items-center gap-2.5">
-                <Mail size={16} className="text-indigo-400 shrink-0" />
-                <span>{about.contact?.email || 'N/A'}</span>
-              </p>
-              <p className="flex items-center gap-2.5">
-                <Phone size={16} className="text-indigo-400 shrink-0" />
-                <span>{about.contact?.phone || 'N/A'}</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Column 3: Follow Us & Social Links */}
-          <div className="space-y-3 sm:space-y-4">
-            <h3 className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Follow Us</h3>
-            <div className="flex flex-wrap gap-2.5 pt-1">
-              {about.contact?.socialLinks && about.contact.socialLinks.length > 0 ? (
-                about.contact.socialLinks.map((social, idx) => (
-                  <a 
-                    key={idx} 
-                    href={social.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="px-3.5 py-2 rounded-xl bg-slate-800/80 border border-slate-700/60 text-slate-200 text-xs font-medium hover:bg-indigo-600 hover:border-indigo-500 hover:text-white transition-all duration-300 shadow-sm flex items-center justify-center active:scale-95"
-                  >
-                    {social.platform}
-                  </a>
-                ))
-              ) : (
-                <span className="text-xs text-slate-500">No social links added yet.</span>
-              )}
-            </div>
-          </div>
-
         </div>
+      </footer>
 
-        {/* Bottom Copyright */}
-        <div className="max-w-7xl mx-auto border-t border-slate-800/80 mt-10 sm:mt-12 pt-6 sm:pt-8 text-center text-xs text-slate-500 font-normal">
-          {about.contact?.copyright || `© ${new Date().getFullYear()} ${about.title || "Club"}. All rights reserved.`}
-        </div>
-      </div>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400..700&family=Public+Sans:wght@400;500;600&display=swap');
+
+        @property --p { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+
+        .ab {
+          --bg: #F6F4EF; --surf: #FFFFFF; --surf2: #ECE9E1;
+          --ink: #16202E; --mute: #5C6472; --line: #D9D5CB;
+          --acc: #1F4FBF; --on-acc: #FFFFFF; --foot: #16202E;
+          font-family: 'Public Sans', system-ui, sans-serif;
+          background: var(--bg); color: var(--ink);
+          -webkit-text-size-adjust: 100%;
+        }
+        .ab.dark {
+          --bg: #0F141C; --surf: #171D28; --surf2: #1E2634;
+          --ink: #EDEAE3; --mute: #98A1B0; --line: #2A3242;
+          --acc: #7EA2FF; --on-acc: #0F141C; --foot: #0A0E14;
+        }
+        .ab .ab-serif { font-family: 'Newsreader', Georgia, 'Times New Roman', serif; letter-spacing: -0.015em; font-variant-numeric: lining-nums; }
+        .ab .ab-surf2 { background: var(--surf2); }
+        .ab .ab-line { border-color: var(--line); }
+        .ab .ab-mute { color: var(--mute); }
+        .ab .ab-acc { color: var(--acc); }
+        .ab .ab-iconbox { border: 1px solid color-mix(in srgb, currentColor 40%, transparent); }
+        .ab .ab-rule { height: 1px; background: var(--ink); transform-origin: left; }
+        .ab h1, .ab h2, .ab h3, .ab h4, .ab p { overflow-wrap: break-word; }
+        .ab a:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
+        /* overflow:clip (not hidden) so scroll-driven timelines inside still bind to the page scroll */
+        .ab .ab-clip { overflow: hidden; overflow: clip; }
+
+        .ab-rise { animation: abRise .8s cubic-bezier(.2,.7,.2,1) both; }
+        @keyframes abRise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+        .ab-swap { animation: abSwap .9s cubic-bezier(.2,.7,.2,1) both; }
+        @keyframes abSwap { from { opacity: 0; scale: 1.03; } to { opacity: 1; scale: 1; } }
+
+        .ab-bar { width: 100%; animation: abBar 4s linear both; transform-origin: left; }
+        @keyframes abBar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+        .ab-progress { display: none; }
+
+        /* ===== Scroll-driven reveals (progressive enhancement: without support everything is simply visible) ===== */
+        @supports (animation-timeline: view()) {
+          .ab-progress {
+            display: block; position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 60;
+            background: var(--acc); transform-origin: 0 50%;
+            animation: abProg linear both; animation-timeline: scroll(root);
+          }
+          @keyframes abProg { from { scale: 0 1; } to { scale: 1 1; } }
+
+          /* hairline rules draw across the page */
+          .ab-rule { animation: abRule linear both; animation-timeline: view(); animation-range: entry 0% entry 90%; }
+          @keyframes abRule { from { scale: 0 1; } to { scale: 1 1; } }
+
+          /* mission / vision panels wipe open from opposite sides */
+          .ab-wipe { animation: abWipe linear both; animation-timeline: view(); animation-range: entry 0% entry 75%; }
+          @keyframes abWipe { from { clip-path: var(--wf, inset(100% 0 0 0)); } to { clip-path: inset(0 0 0 0); } }
+
+          /* items lift into place */
+          .ab-item { animation: abItem linear both; animation-timeline: view(); animation-range: entry 0% entry 55%; }
+          @keyframes abItem { from { opacity: 0; translate: 0 32px; } to { opacity: 1; translate: 0 0; } }
+
+          /* overview statement fills with ink as you scroll */
+          .ab-fill {
+            background: linear-gradient(to bottom, var(--ink) 0 var(--p), color-mix(in srgb, var(--ink) 16%, transparent) var(--p) 100%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            animation: abFill linear both; animation-timeline: view(); animation-range: entry 30% cover 60%;
+          }
+          @keyframes abFill { from { --p: 0%; } to { --p: 100%; } }
+
+          .ab-img { animation: abImg linear both; animation-timeline: view(); animation-range: cover 0% cover 65%; }
+          @keyframes abImg { from { scale: 1.12; } to { scale: 1; } }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .ab-rise, .ab-swap, .ab-bar { animation: none !important; }
+          .ab-progress, .ab-rule, .ab-wipe, .ab-item, .ab-fill, .ab-img { animation: none !important; }
+          .ab-fill { background: none; color: var(--ink); -webkit-background-clip: border-box; background-clip: border-box; }
+        }
+      `}</style>
 
     </div>
   );

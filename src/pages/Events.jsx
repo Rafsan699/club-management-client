@@ -45,135 +45,106 @@ const Events = () => {
       <div 
         role="status" 
         aria-live="polite"
-        className={`flex justify-center items-center h-[60vh] font-bold tracking-widest text-xs ${darkMode ? 'bg-[#090d16] text-blue-400' : 'bg-[#f8fafc] text-blue-600'}`}
+        className={`flex justify-center items-center h-[60vh] text-sm font-medium ${darkMode ? 'bg-[#0B111C] text-blue-400' : 'bg-[#F7F8FA] text-blue-700'}`}
+        style={{ fontFamily: "'IBM Plex Sans', system-ui, sans-serif" }}
       >
         <RefreshCw className="w-4 h-4 animate-spin mr-2" aria-hidden="true" />
-        <span>LOADING EVENTS...</span>
+        <span>Loading events...</span>
       </div>
     );
   }
 
-  return (
-    <div className={`min-h-screen w-full transition-colors duration-500 font-sans relative antialiased selection:bg-blue-600 selection:text-white ${
-      darkMode 
-        ? 'bg-[#090d16] text-slate-100' 
-        : 'bg-[#f8fafc] text-slate-900'
-    }`}
-    style={{
-      backgroundImage: darkMode 
-        ? 'radial-gradient(rgba(30, 58, 138, 0.12) 1px, transparent 1px)' 
-        : 'radial-gradient(rgba(148, 163, 184, 0.2) 1px, transparent 1px)',
-      backgroundSize: '20px 20px',
-      paddingTop: 'env(safe-area-inset-top)',
-      paddingBottom: 'env(safe-area-inset-bottom)'
-    }}>
+  const renderPoster = (ev, cls, zoom = false) => (
+    ev.imageUrl ? (
+      <div className={`ev-surf2 overflow-hidden flex items-center justify-center ${cls}`}>
+        <img
+          src={ev.imageUrl}
+          alt={ev.title}
+          loading="lazy"
+          className={`w-full h-full object-contain object-center ${zoom ? 'transition-transform duration-500 ease-out group-hover:scale-[1.03]' : ''}`}
+        />
+      </div>
+    ) : (
+      <div className={`ev-surf2 ev-mute flex items-center justify-center ${cls}`}>
+        <ImageIcon className="w-10 h-10" aria-hidden="true" />
+      </div>
+    )
+  );
 
-      <div className="w-full px-3 sm:px-4 lg:px-8 py-6 sm:py-10 space-y-6 sm:space-y-10 max-w-[1200px] mx-auto overflow-x-hidden">
+  const btn = 'ev-btn min-h-[40px] inline-flex items-center justify-center gap-1.5 px-4 rounded-lg text-sm font-medium border ev-line ev-surf transition active:scale-[.98]';
+
+  return (
+    <div className={`ev ${darkMode ? 'dark' : ''} min-h-screen w-full antialiased selection:bg-blue-700 selection:text-white relative transition-colors duration-300`}
+    style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+
+      <div className="h-1 bg-[var(--navy)]"></div>
+
+      <div className="w-full px-5 sm:px-8 py-10 sm:py-14 max-w-[1080px] mx-auto overflow-x-hidden">
 
         {/* --- DETAIL VIEW --- */}
         {selectedEvent ? (
-          <div className="space-y-4 max-w-3xl mx-auto animate-in fade-in duration-300 px-1">
+          <article className="ev-fade max-w-[820px] mx-auto">
             <button
               onClick={() => setSelectedEvent(null)}
               aria-label="Back to Events List"
-              className={`min-h-[38px] flex items-center gap-1.5 px-3 py-2 rounded-lg font-semibold text-[11px] tracking-wide shadow-sm transition-all duration-300 border backdrop-blur-xl group active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                darkMode 
-                  ? 'bg-[#111827]/80 border-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-700' 
-                  : 'bg-white/90 border-slate-200/90 text-slate-700 hover:bg-white hover:text-slate-900 hover:border-slate-300 shadow-slate-200/50'
-              }`}
+              className={`${btn} group`}
             >
-              <ArrowLeft className="w-3.5 h-3.5 transition-transform duration-300 group-hover:-translate-x-0.5" aria-hidden="true" /> Back to Events List
+              <ArrowLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-0.5" aria-hidden="true" /> Back to Events List
             </button>
 
-            <div className={`rounded-2xl border shadow-xl overflow-hidden p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 backdrop-blur-2xl ${
-              darkMode 
-                ? 'bg-[#111827]/95 border-slate-800/80 shadow-black/60 text-white' 
-                : 'bg-white/95 border-slate-200/90 shadow-xl shadow-slate-900/10 text-slate-900'
-            }`}>
-              {selectedEvent.imageUrl ? (
-                /* সম্পূর্ণ ছবি কোনো ক্রপ বা কাটা ছাড়াই দেখানোর জন্য object-contain ব্যবহার করা হয়েছে */
-                <div className="w-full max-h-[450px] min-h-[250px] overflow-hidden rounded-xl relative bg-slate-950/90 flex items-center justify-center shadow-md">
-                  <img 
-                    src={selectedEvent.imageUrl} 
-                    alt={selectedEvent.title} 
-                    loading="lazy" 
-                    className="w-full h-full max-h-[450px] object-contain object-center" 
-                  />
-                </div>
-              ) : (
-                <div className={`w-full h-48 sm:h-64 md:h-[340px] rounded-xl flex items-center justify-center ${
-                  darkMode ? 'bg-slate-800/80 text-slate-600' : 'bg-slate-100 text-slate-400'
-                }`}>
-                  <ImageIcon className="w-12 h-12" aria-hidden="true" />
-                </div>
-              )}
+            <p className="text-sm font-medium ev-acc mt-10">BRIU Sports Club</p>
+            <h2 className="ev-serif text-3xl sm:text-5xl font-semibold leading-[1.12] mt-3 break-words">
+              {selectedEvent.title}
+            </h2>
 
-              <div className="space-y-3">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight leading-snug break-words">
-                  {selectedEvent.title}
-                </h2>
-                
-                <div className="flex flex-wrap gap-2 text-[11px] font-bold">
-                  <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border shadow-sm ${
-                    darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'
-                  }`}>
-                    <Calendar className="w-3.5 h-3.5 shrink-0" aria-hidden="true" /> {selectedEvent.date}
-                  </span>
-                  <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border shadow-sm break-all ${
-                    darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'
-                  }`}>
-                    <MapPin className="w-3.5 h-3.5 shrink-0" aria-hidden="true" /> {selectedEvent.location}
-                  </span>
-                </div>
-
-                <div className={`pt-3 border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
-                  <p className={`text-xs sm:text-sm leading-relaxed font-normal whitespace-pre-line break-words ${
-                    darkMode ? 'text-slate-300' : 'text-slate-600'
-                  }`}>
-                    {selectedEvent.description}
-                  </p>
-                </div>
-              </div>
+            <div className="flex flex-wrap gap-x-8 gap-y-3 mt-6 pb-8 border-b ev-line text-sm sm:text-base">
+              <span className="flex items-center gap-2.5">
+                <Calendar className="w-4 h-4 ev-acc shrink-0" aria-hidden="true" /> {selectedEvent.date}
+              </span>
+              <span className="flex items-center gap-2.5 break-words min-w-0">
+                <MapPin className="w-4 h-4 ev-acc shrink-0" aria-hidden="true" /> {selectedEvent.location}
+              </span>
             </div>
-          </div>
+
+            <div className="mt-8 rounded-xl overflow-hidden border ev-line">
+              {renderPoster(selectedEvent, 'w-full min-h-[240px] max-h-[520px] h-[300px] sm:h-[460px]')}
+            </div>
+
+            <div className="mt-10">
+              <h3 className="text-sm font-semibold ev-mute mb-3">About this event</h3>
+              <p className="text-base sm:text-lg leading-[1.75] whitespace-pre-line break-words">
+                {selectedEvent.description}
+              </p>
+            </div>
+          </article>
         ) : (
           /* --- LIST & SEARCH VIEW --- */
-          <div className="space-y-6 sm:space-y-8">
-            
+          <div className="ev-fade">
+
             {/* Header Title Section */}
-            <div className="text-center space-y-2.5 max-w-xl mx-auto px-2">
-              <span className={`text-[10px] font-bold uppercase tracking-[0.15em] px-3 py-1 rounded-full border shadow-sm inline-block transition-colors duration-300 ${
-                darkMode ? 'bg-blue-950/40 border-blue-800/60 text-blue-400 shadow-blue-950/20' : 'bg-blue-50/80 border-blue-200 text-blue-700 shadow-blue-100/50'
-              }`}>
-                Club Activities
-              </span>
-              <h1 className={`text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight ${
-                darkMode ? 'text-white' : 'text-slate-900'
-              }`}>
+            <div className="pb-8 border-b ev-line">
+              <p className="text-sm font-medium ev-acc">Club Activities</p>
+              <h1 className="ev-serif text-4xl sm:text-6xl font-semibold leading-[1.05] mt-3">
                 BRIU Sports Club Events
               </h1>
-              <p className="text-slate-500 dark:text-slate-400 font-normal text-xs sm:text-sm leading-relaxed max-w-md mx-auto">
+              <p className="ev-mute text-base sm:text-lg leading-relaxed max-w-2xl mt-4">
                 Explore championships, workshops, and sports tournaments hosted by BRIU Sports Club.
               </p>
             </div>
 
             {/* Search Bar & Back Button */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 max-w-2xl mx-auto px-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 py-6">
               <button
                 onClick={() => window.history.back()}
                 aria-label="Back"
-                className={`min-h-[38px] flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl font-semibold text-[11px] tracking-wide shadow-sm transition-all duration-300 border backdrop-blur-xl group active:scale-95 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                  darkMode 
-                    ? 'bg-[#111827]/80 border-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-700' 
-                    : 'bg-white/90 border-slate-200/90 text-slate-700 hover:bg-white hover:text-slate-900 hover:border-slate-300 shadow-slate-200/50'
-                }`}
+                className={`${btn} group shrink-0`}
               >
-                <ArrowLeft className="w-3.5 h-3.5 transition-transform duration-300 group-hover:-translate-x-0.5" aria-hidden="true" /> Back
+                <ArrowLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-0.5" aria-hidden="true" /> Back
               </button>
 
               <div className="relative w-full">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-                  <Search className="w-3.5 h-3.5" aria-hidden="true" />
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none ev-mute">
+                  <Search className="w-4 h-4" aria-hidden="true" />
                 </span>
                 <input
                   type="text"
@@ -181,122 +152,85 @@ const Events = () => {
                   placeholder="Search events..."
                   value={searchTerm}
                   onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                  className={`w-full min-h-[38px] pl-10 pr-3.5 py-2.5 rounded-xl border text-xs font-medium outline-none transition-all duration-300 shadow-sm ${
-                    darkMode 
-                      ? 'bg-[#111827]/80 border-slate-800/80 text-white placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20' 
-                      : 'bg-white/90 border-slate-200/90 text-slate-800 placeholder-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-100'
-                  }`}
+                  className="ev-input w-full min-h-[40px] pl-10 pr-4 py-2 rounded-lg border ev-line ev-surf text-sm outline-none transition"
                 />
               </div>
+
+              <span className="text-sm ev-mute shrink-0 sm:pl-2">
+                {filteredEvents.length} {filteredEvents.length === 1 ? 'event' : 'events'}
+              </span>
             </div>
 
-            {/* Events Grid */}
+            {/* Events List */}
             {currentEvents.length === 0 ? (
-              <div role="status" className={`text-center py-12 px-4 rounded-2xl border shadow-md max-w-xl mx-auto ${
-                darkMode ? 'bg-[#111827]/80 border-slate-800/80 text-slate-400' : 'bg-white/90 border-slate-200/90 text-slate-500'
-              }`}>
-                <p className="font-bold text-xs tracking-wide">No events found matching your search criteria.</p>
+              <div role="status" className="text-center py-16 px-4 rounded-xl border ev-line ev-surf ev-mute">
+                <p className="font-medium">No events found matching your search criteria.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-[1200px] mx-auto px-1">
+              <div className="border-t ev-line">
                 {currentEvents.map((ev) => (
-                  <div 
-                    key={ev._id} 
-                    className={`w-full max-w-[340px] sm:max-w-none mx-auto rounded-2xl overflow-hidden shadow-md cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border backdrop-blur-xl group flex flex-col justify-between ${
-                      darkMode 
-                        ? 'bg-gradient-to-b from-blue-950/30 via-slate-900/60 to-slate-900/90 border-blue-500/30 shadow-blue-950/40 hover:border-blue-500/60' 
-                        : 'bg-gradient-to-b from-white via-blue-50/30 to-white border-slate-200/90 shadow-slate-200/50 hover:border-blue-300'
-                    }`}
-                  >
-                    <div>
-                      {/* Image Banner - পুরো ছবি নিখুঁতভাবে দেখানোর জন্য object-contain এবং ডার্ক ব্যাকগ্রাউন্ড ফ্রেম */}
-                      {ev.imageUrl ? (
-                        <div className="h-48 sm:h-52 w-full overflow-hidden relative bg-slate-950/90 flex items-center justify-center">
-                          <img 
-                            src={ev.imageUrl} 
-                            alt={ev.title} 
-                            loading="lazy" 
-                            className="w-full h-full object-contain object-center transition-transform duration-500 ease-out group-hover:scale-105" 
-                          />
-                        </div>
-                      ) : (
-                        <div className={`w-full h-48 sm:h-52 flex items-center justify-center ${darkMode ? 'bg-slate-800 text-slate-600' : 'bg-slate-100 text-slate-400'}`}>
-                          <ImageIcon className="w-8 h-8" aria-hidden="true" />
-                        </div>
-                      )}
-                      
-                      {/* Content Area */}
-                      <div className="p-3.5 sm:p-4 space-y-2.5">
-                        <div className="space-y-1.5">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border max-w-full truncate ${
-                              darkMode ? 'bg-blue-950/60 border-blue-800/50 text-blue-300' : 'bg-blue-50 border-blue-200/80 text-blue-700'
-                            }`}>
-                              <Calendar className="w-2.5 h-2.5 inline-block mr-1 -mt-0.5 shrink-0" aria-hidden="true" />
-                              <span className="truncate">{ev.date}</span>
-                            </span>
-                          </div>
-                          <h3 className={`text-xs sm:text-sm font-bold tracking-tight line-clamp-2 break-words ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                            {ev.title}
-                          </h3>
-                        </div>
-
-                        <p className={`text-[11px] line-clamp-2 leading-relaxed font-normal break-words ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                          {ev.description}
-                        </p>
-                      </div>
+                  <article key={ev._id} className="ev-row group grid sm:grid-cols-[260px_1fr] gap-5 sm:gap-8 py-8 border-b ev-line">
+                    <div className="rounded-lg overflow-hidden border ev-line self-start">
+                      {renderPoster(ev, 'w-full h-48 sm:h-44', true)}
                     </div>
 
-                    {/* Bottom Location and Details Button Row */}
-                    <div className={`p-3.5 sm:p-4 pt-2.5 flex items-center justify-between gap-2 border-t ${darkMode ? 'border-slate-800/80' : 'border-slate-100'}`}>
-                      <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400 text-[10px] font-semibold min-w-0 flex-1">
-                        <MapPin className="w-3 h-3 text-blue-500 shrink-0" aria-hidden="true" />
-                        <span className="truncate">{ev.location}</span>
+                    <div className="flex flex-col min-w-0">
+                      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm ev-mute">
+                        <span className="flex items-center gap-1.5 min-w-0">
+                          <Calendar className="w-3.5 h-3.5 ev-acc shrink-0" aria-hidden="true" />
+                          <span className="truncate">{ev.date}</span>
+                        </span>
+                        <span className="flex items-center gap-1.5 min-w-0">
+                          <MapPin className="w-3.5 h-3.5 ev-acc shrink-0" aria-hidden="true" />
+                          <span className="truncate">{ev.location}</span>
+                        </span>
                       </div>
 
-                      <button 
-                        onClick={() => setSelectedEvent(ev)}
-                        aria-label={`View details for ${ev.title}`}
-                        className={`min-h-[36px] min-w-[36px] inline-flex items-center justify-center text-[10px] font-bold tracking-wide gap-0.5 group-hover:translate-x-0.5 transition-transform duration-300 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg px-1.5 ${
-                          darkMode ? 'text-blue-400' : 'text-blue-600'
-                        }`}
-                      >
-                        Details <span className="text-[9px]" aria-hidden="true">→</span>
-                      </button>
-                    </div>
+                      <h3 className="ev-serif ev-title text-xl sm:text-2xl font-semibold leading-snug line-clamp-2 break-words mt-3 transition-colors">
+                        {ev.title}
+                      </h3>
+                      <p className="ev-mute leading-relaxed line-clamp-2 break-words mt-2">
+                        {ev.description}
+                      </p>
 
-                  </div>
+                      <div className="mt-4 sm:mt-auto pt-2">
+                        <button 
+                          onClick={() => setSelectedEvent(ev)}
+                          aria-label={`View details for ${ev.title}`}
+                          className="ev-link min-h-[40px] inline-flex items-center gap-1.5 text-sm font-semibold ev-acc rounded"
+                        >
+                          View details <span aria-hidden="true" className="ev-arrow">→</span>
+                        </button>
+                      </div>
+                    </div>
+                  </article>
                 ))}
               </div>
             )}
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <nav aria-label="Pagination Navigation" className="flex justify-center items-center gap-1.5 sm:gap-2 pt-4 flex-wrap overflow-x-auto max-w-full px-2">
+              <nav aria-label="Pagination Navigation" className="flex justify-center items-center gap-2 pt-10 flex-wrap overflow-x-auto max-w-full">
                 <button
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                   aria-label="Previous page"
-                  className={`min-h-[38px] px-3 py-2 rounded-xl border text-[11px] font-bold flex items-center gap-1 disabled:opacity-30 transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                    darkMode ? 'bg-[#111827]/80 border-slate-800/80 text-white hover:bg-slate-800' : 'bg-white/90 border-slate-200/90 text-slate-700 hover:bg-white'
-                  }`}
+                  className={`${btn} disabled:opacity-40 disabled:pointer-events-none`}
                 >
-                  <ChevronLeft className="w-3.5 h-3.5 shrink-0" aria-hidden="true" /> Prev
+                  <ChevronLeft className="w-4 h-4 shrink-0" aria-hidden="true" /> Prev
                 </button>
 
-                <div className="flex items-center gap-1 flex-wrap justify-center">
+                <div className="flex items-center gap-1.5 flex-wrap justify-center">
                   {[...Array(totalPages)].map((_, index) => (
                     <button
                       key={index + 1}
                       onClick={() => setCurrentPage(index + 1)}
                       aria-label={`Page ${index + 1}`}
                       aria-current={currentPage === index + 1 ? 'page' : undefined}
-                      className={`min-h-[38px] min-w-[38px] w-9 h-9 rounded-xl text-[11px] font-bold border transition-all shadow-sm inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                        currentPage === index + 1 
-                          ? 'bg-blue-600 text-white border-transparent shadow-blue-500/30 scale-105' 
-                          : darkMode 
-                            ? 'bg-[#111827]/80 border-slate-800/80 text-slate-300 hover:bg-slate-800' 
-                            : 'bg-white/90 border-slate-200/90 text-slate-700 hover:bg-white'
+                      className={`min-h-[40px] min-w-[40px] rounded-lg text-sm font-medium border transition inline-flex items-center justify-center ${
+                        currentPage === index + 1
+                          ? 'bg-[var(--navy)] text-white border-transparent'
+                          : 'ev-surf ev-line ev-btn'
                       }`}
                     >
                       {index + 1}
@@ -308,11 +242,9 @@ const Events = () => {
                   onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
                   aria-label="Next page"
-                  className={`min-h-[38px] px-3 py-2 rounded-xl border text-[11px] font-bold flex items-center gap-1 disabled:opacity-30 transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                    darkMode ? 'bg-[#111827]/80 border-slate-800/80 text-white hover:bg-slate-800' : 'bg-white/90 border-slate-200/90 text-slate-700 hover:bg-white'
-                  }`}
+                  className={`${btn} disabled:opacity-40 disabled:pointer-events-none`}
                 >
-                  Next <ChevronRight className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                  Next <ChevronRight className="w-4 h-4 shrink-0" aria-hidden="true" />
                 </button>
               </nav>
             )}
@@ -323,18 +255,53 @@ const Events = () => {
       </div>
 
       {/* Footer */}
-      <footer className={`w-full border-t mt-16 py-8 px-4 backdrop-blur-xl ${
-        darkMode ? 'bg-[#0b101b]/95 border-slate-800 text-slate-300' : 'bg-white/90 border-slate-200/80 text-slate-700 shadow-sm'
-      }`}>
-        <div className="max-w-[1200px] mx-auto text-center space-y-2">
-          <h3 className={`text-[10px] font-bold uppercase tracking-[0.15em] ${darkMode ? 'text-blue-400' : 'text-blue-900'}`}>
-            Contact Information
-          </h3>
-          <p className="text-xs font-medium break-words">
-            Email: <a href="mailto:briu.sportsclub@gmail.com" className={`underline underline-offset-4 font-semibold transition-colors duration-200 break-all ${darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-700 hover:text-blue-900'}`}>briu.sportsclub@gmail.com</a>
-          </p>
+      <footer className="w-full bg-[var(--navy)] text-white mt-10">
+        <div className="max-w-[1080px] mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-sm font-semibold text-white/60">Contact Information</h3>
+            <p className="text-base mt-1.5 break-words">
+              Email: <a href="mailto:briu.sportsclub@gmail.com" className="underline underline-offset-4 decoration-white/40 hover:decoration-white transition break-all">briu.sportsclub@gmail.com</a>
+            </p>
+          </div>
+          <p className="text-sm text-white/50">BRIU Sports Club</p>
         </div>
       </footer>
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500..700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+        .ev {
+          --bg: #F7F8FA; --surf: #FFFFFF; --surf2: #EEF1F5;
+          --ink: #111827; --mute: #5B6472; --line: #E2E6EC;
+          --acc: #1D4ED8; --navy: #0F2A4A;
+          font-family: 'IBM Plex Sans', system-ui, sans-serif;
+          background: var(--bg); color: var(--ink);
+        }
+        .ev.dark {
+          --bg: #0B111C; --surf: #121A28; --surf2: #1A2436;
+          --ink: #EDF1F7; --mute: #93A0B5; --line: #243149;
+          --acc: #6B9BFF; --navy: #0A1424;
+        }
+        .ev .ev-serif { font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif; letter-spacing: -0.01em; }
+        .ev .ev-surf { background: var(--surf); }
+        .ev .ev-surf2 { background: var(--surf2); }
+        .ev .ev-line { border-color: var(--line); }
+        .ev .ev-mute { color: var(--mute); }
+        .ev .ev-acc { color: var(--acc); }
+        .ev h1, .ev h2, .ev h3, .ev p { overflow-wrap: break-word; }
+        .ev a:focus-visible, .ev button:focus-visible, .ev input:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+
+        .ev-btn:hover:not(:disabled) { background: var(--surf2); }
+        .ev-input:focus { border-color: var(--acc); box-shadow: 0 0 0 3px color-mix(in srgb, var(--acc) 18%, transparent); }
+        .ev-input::placeholder { color: var(--mute); }
+        .ev-row:hover .ev-title { color: var(--acc); }
+        .ev-arrow { transition: transform .25s ease; }
+        .ev-link:hover .ev-arrow, .ev-row:hover .ev-arrow { transform: translateX(4px); }
+
+        .ev-fade { animation: evFade .35s ease both; }
+        @keyframes evFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+        @media (prefers-reduced-motion: reduce) { .ev-fade { animation: none; } }
+      `}</style>
 
     </div>
   );
