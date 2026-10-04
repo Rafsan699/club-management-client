@@ -4,80 +4,27 @@ import API from '../../services/api';
 import Header from './header';
 
 /* ------------------------------------------------------------------ */
-/*  Reveal: scroll-in animation wrapper (no dependencies)             */
-/*  Adds .pc-visible once the element enters the viewport.            */
+/*  Reveal: plain wrapper. Kept so the markup and props stay unchanged.   */
 /* ------------------------------------------------------------------ */
-const Reveal = ({ children, delay = 0, className = '', as: Tag = 'div', style, ...rest }) => {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return undefined;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.unobserve(node);
-        }
-      },
-      { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <Tag
-      ref={ref}
-      className={`pc-reveal ${visible ? 'pc-visible' : ''} ${className}`}
-      style={{ animationDelay: `${delay}ms`, ...style }}
-      {...rest}
-    >
-      {children}
-    </Tag>
-  );
-};
+// eslint-disable-next-line no-unused-vars
+const Reveal = ({ children, delay = 0, className = '', as: Tag = 'div', style, ...rest }) => (
+  <Tag className={`pc-reveal pc-visible ${className}`} style={style} {...rest}>
+    {children}
+  </Tag>
+);
 
 /* ------------------------------------------------------------------ */
-/*  StatNumber: counts up from 0 to value once it scrolls into view.   */
+/*  StatNumber: shows the value, zero-padded.                          */
 /* ------------------------------------------------------------------ */
-const StatNumber = ({ value }) => {
-  const ref = useRef(null);
-  const [display, setDisplay] = useState(0);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return undefined;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          const start = performance.now();
-          const duration = 900;
-          const step = (now) => {
-            const progress = Math.min((now - start) / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setDisplay(Math.round(eased * value));
-            if (progress < 1) requestAnimationFrame(step);
-          };
-          requestAnimationFrame(step);
-          observer.unobserve(node);
-        }
-      },
-      { threshold: 0.4 }
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [value]);
-
-  return <span ref={ref} className="pc-stat-value">{String(display).padStart(2, '0')}</span>;
-};
+const StatNumber = ({ value }) => (
+  <span className="pc-stat-value">{String(value).padStart(2, '0')}</span>
+);
 
 /* ------------------------------------------------------------------ */
 /*  ScrollProgress: glowing bar showing how far down the page.         */
 /* ------------------------------------------------------------------ */
 const ScrollProgress = () => {
-  const [pct, setPct] = useState(0);
+  const fillRef = useRef(null);
 
   useEffect(() => {
     let ticking = false;
@@ -85,7 +32,7 @@ const ScrollProgress = () => {
       const doc = document.documentElement;
       const scrollable = doc.scrollHeight - doc.clientHeight;
       const value = scrollable > 0 ? (doc.scrollTop / scrollable) * 100 : 0;
-      setPct(value);
+      if (fillRef.current) fillRef.current.style.width = `${value}%`;
       ticking = false;
     };
     const onScroll = () => {
@@ -105,7 +52,7 @@ const ScrollProgress = () => {
 
   return (
     <div className="pc-progress-track">
-      <div className="pc-progress-fill" style={{ width: `${pct}%` }} />
+      <div ref={fillRef} className="pc-progress-fill" />
     </div>
   );
 };
@@ -255,7 +202,7 @@ const CHome = () => {
     >
       <div className="pc-media">
         {player.imageUrl ? (
-          <img src={player.imageUrl} alt={player.name} loading="lazy" />
+          <img src={player.imageUrl} alt={player.name} loading="lazy" decoding="async" />
         ) : (
           <div className="pc-media-fallback">{initials(player.name)}</div>
         )}
@@ -278,7 +225,7 @@ const CHome = () => {
     >
       <div className="pc-media pc-media-logo">
         {team.logoUrl ? (
-          <img src={team.logoUrl} alt={team.name} loading="lazy" />
+          <img src={team.logoUrl} alt={team.name} loading="lazy" decoding="async" />
         ) : (
           <div className="pc-media-fallback">{initials(team.name)}</div>
         )}
@@ -323,10 +270,10 @@ const CHome = () => {
 
         /* ---------- Ambient background ---------- */
         .pc-ambient { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-        .pc-amb-orb { position: absolute; border-radius: 50%; filter: blur(100px); }
-        .pc-amb-1 { width: 560px; height: 560px; top: -180px; left: -140px; background: var(--pc-gold); opacity: .18; animation: pcFloatA 20s ease-in-out infinite; }
-        .pc-amb-2 { width: 520px; height: 520px; top: 35%; right: -180px; background: #3348ff; opacity: .22; animation: pcFloatB 24s ease-in-out infinite; }
-        .pc-amb-3 { width: 480px; height: 480px; bottom: -180px; left: 20%; background: var(--pc-violet); opacity: .16; animation: pcFloatA 28s ease-in-out infinite reverse; }
+        .pc-amb-orb { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, var(--c) 35%, transparent 100%); }
+        .pc-amb-1 { width: 560px; height: 560px; top: -180px; left: -140px; --c: var(--pc-gold); opacity: .18; }
+        .pc-amb-2 { width: 520px; height: 520px; top: 35%; right: -180px; --c: #3348ff; opacity: .22; }
+        .pc-amb-3 { width: 480px; height: 480px; bottom: -180px; left: 20%; --c: var(--pc-violet); opacity: .16; }
         .pc-amb-grid {
           position: absolute; inset: 0;
           background-image: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
@@ -334,63 +281,48 @@ const CHome = () => {
           -webkit-mask-image: radial-gradient(ellipse at 50% 20%, #000, transparent 72%);
           mask-image: radial-gradient(ellipse at 50% 20%, #000, transparent 72%);
         }
-        @keyframes pcFloatA { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(90px,70px) scale(1.15); } }
-        @keyframes pcFloatB { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-100px,-60px) scale(1.1); } }
-        @keyframes pcSpin { to { --ang: 360deg; } }
-        @keyframes pcShine { 0% { left: -80%; } 45%,100% { left: 160%; } }
 
         .pc-sticky-header { position: sticky; top: 0; z-index: 59; }
 
         .pc-progress-track { position: fixed; top: 0; left: 0; width: 100%; height: 3px; background: rgba(255,255,255,0.05); z-index: 60; }
-        .pc-progress-fill { height: 100%; background: linear-gradient(90deg, var(--pc-gold), var(--pc-cyan), var(--pc-violet)); box-shadow: 0 0 14px var(--pc-cyan); transition: width 0.1s linear; }
+        .pc-progress-fill { width: 0; height: 100%; background: linear-gradient(90deg, var(--pc-gold), var(--pc-cyan), var(--pc-violet)); box-shadow: 0 0 14px var(--pc-cyan); transition: width 0.1s linear; }
 
-        /* ---------- Reveal (animation-based so hover transforms still work) ---------- */
-        .pc-reveal { opacity: 0; }
-        .pc-reveal.pc-visible { opacity: 1; animation: pcRise .85s cubic-bezier(.16,.84,.44,1) backwards; }
-        @keyframes pcRise { from { opacity: 0; transform: translateY(34px) scale(.97); filter: blur(8px); } to { opacity: 1; transform: none; filter: blur(0); } }
 
         /* ---------- Hero ---------- */
         .pc-hero { position: relative; padding: clamp(3.5rem, 8vw, 6.5rem) 1.25rem clamp(3rem, 6vw, 5rem); overflow: hidden; border-bottom: 1px solid var(--pc-line); }
-        .pc-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; background-color: #0a1022; animation: pcKen 24s ease-in-out infinite alternate; }
+        .pc-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; background-color: #0a1022; }
         .pc-hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(120deg, rgba(6,9,18,.92), rgba(6,9,18,.6)), linear-gradient(to top, var(--pc-bg), transparent 45%); }
-        @keyframes pcKen { from { transform: scale(1); } to { transform: scale(1.08); } }
 
-        .pc-orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; animation: pcFloatA 16s ease-in-out infinite; }
-        .pc-orb-a { width: 400px; height: 400px; background: var(--pc-gold); opacity: .22; top: -140px; left: -80px; }
-        .pc-orb-b { width: 360px; height: 360px; background: var(--pc-cyan); opacity: .2; bottom: -150px; right: -80px; animation-duration: 20s; animation-delay: 1.5s; }
+        .pc-orb { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, var(--c) 35%, transparent 100%); pointer-events: none; }
+        .pc-orb-a { width: 400px; height: 400px; --c: var(--pc-gold); opacity: .22; top: -140px; left: -80px; }
+        .pc-orb-b { width: 360px; height: 360px; --c: var(--pc-cyan); opacity: .2; bottom: -150px; right: -80px; }
 
         .pc-hero-inner { position: relative; z-index: 2; max-width: 76rem; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
         @media (min-width: 960px) { .pc-hero-inner { grid-template-columns: 1.4fr 1fr; align-items: center; } }
 
-        .pc-kicker { display: inline-flex; align-items: center; gap: .65rem; margin-bottom: 1.4rem; padding: .4rem .95rem .4rem .75rem; border-radius: 999px; border: 1px solid var(--pc-line); background: var(--pc-glass); backdrop-filter: blur(10px); animation: pcRise .8s cubic-bezier(.16,.84,.44,1) both; }
+        .pc-kicker { display: inline-flex; align-items: center; gap: .65rem; margin-bottom: 1.4rem; padding: .4rem .95rem .4rem .75rem; border-radius: 999px; border: 1px solid var(--pc-line); background: var(--pc-glass); backdrop-filter: blur(10px); }
         .pc-kicker-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--pc-live); }
-        .pc-kicker-dot::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--pc-live); animation: pcPing 1.8s ease-out infinite; }
-        @keyframes pcPing { from { transform: scale(.6); opacity: 1; } to { transform: scale(2.2); opacity: 0; } }
         .pc-kicker span { font-size: .8rem; color: var(--pc-soft); font-weight: 600; }
 
         .pc-hero h1 {
           font-size: clamp(2.3rem, 5.6vw, 4rem); font-weight: 800; line-height: 1.04; max-width: 36rem;
           background: linear-gradient(100deg, #fff 15%, var(--pc-gold) 42%, var(--pc-cyan) 62%, #fff 88%);
           background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
-          animation: pcRise .9s .1s cubic-bezier(.16,.84,.44,1) both, pcSheen 7s ease-in-out infinite;
+          background-position: 50% 0;
           filter: drop-shadow(0 0 28px rgba(242,193,78,.25));
         }
-        @keyframes pcSheen { 0%,100% { background-position: 100% 0; } 50% { background-position: 0 0; } }
-        .pc-hero p { margin-top: 1.3rem; max-width: 34rem; color: var(--pc-soft); font-size: 1.02rem; line-height: 1.75; animation: pcRise .9s .2s cubic-bezier(.16,.84,.44,1) both; }
+        .pc-hero p { margin-top: 1.3rem; max-width: 34rem; color: var(--pc-soft); font-size: 1.02rem; line-height: 1.75; }
 
         .pc-cta {
           position: relative; overflow: hidden; margin-top: 2.2rem; display: inline-flex; align-items: center; gap: .6rem;
           padding: .95rem 1.8rem; border-radius: 999px; border: none; cursor: pointer; font: 700 .94rem 'Figtree', sans-serif; color: #0a0e1c;
           background: linear-gradient(100deg, var(--pc-gold), #ffdf8a 50%, var(--pc-cyan));
           box-shadow: 0 0 0 1px rgba(255,255,255,.2) inset, 0 12px 40px -8px rgba(242,193,78,.55);
-          animation: pcRise .9s .3s cubic-bezier(.16,.84,.44,1) both, pcGlow 3s ease-in-out infinite;
           transition: transform .25s ease;
         }
-        .pc-cta::after { content: ''; position: absolute; top: 0; left: -80%; width: 50%; height: 100%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.7), transparent); transform: skewX(-20deg); animation: pcShine 3.6s ease-in-out infinite; }
         .pc-cta:hover { transform: translateY(-3px) scale(1.02); }
         .pc-cta svg { width: 16px; height: 16px; transition: transform .25s ease; }
         .pc-cta:hover svg { transform: translateX(5px); }
-        @keyframes pcGlow { 0%,100% { box-shadow: 0 0 0 1px rgba(255,255,255,.2) inset, 0 12px 40px -8px rgba(242,193,78,.5); } 50% { box-shadow: 0 0 0 1px rgba(255,255,255,.2) inset, 0 14px 56px -4px rgba(61,214,208,.6); } }
 
         /* ---------- Glass + glowing border ---------- */
         .pc-glass {
@@ -404,7 +336,6 @@ const CHome = () => {
           background: conic-gradient(from var(--ang), transparent 0 60%, var(--accent) 82%, transparent 100%);
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
           mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-          animation: pcSpin 4s linear infinite;
         }
 
         .pc-stat-card { padding: 1.7rem 1.8rem; --accent: var(--pc-cyan); box-shadow: 0 30px 80px -30px rgba(61,214,208,.35); }
@@ -419,7 +350,7 @@ const CHome = () => {
         .pc-ticker::before, .pc-ticker::after { content: ''; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 2; pointer-events: none; }
         .pc-ticker::before { left: 0; background: linear-gradient(to right, var(--pc-bg), transparent); }
         .pc-ticker::after { right: 0; background: linear-gradient(to left, var(--pc-bg), transparent); }
-        .pc-ticker-track { display: flex; width: max-content; gap: 3rem; padding: .85rem 0; animation: pcMarquee 50s linear infinite; }
+        .pc-ticker-track { display: flex; width: max-content; gap: 3rem; padding: .85rem 0; animation: pcMarquee 50s linear infinite; will-change: transform; }
         .pc-ticker:hover .pc-ticker-track { animation-play-state: paused; }
         .pc-ticker-item { display: inline-flex; align-items: center; gap: .7rem; font-size: .84rem; color: var(--pc-soft); white-space: nowrap; }
         .pc-ticker-item i { width: 6px; height: 6px; border-radius: 50%; background: var(--pc-gold); box-shadow: 0 0 10px var(--pc-gold); }
@@ -430,8 +361,7 @@ const CHome = () => {
         .pc-section { max-width: 76rem; margin: 0 auto; padding: clamp(2.6rem, 6vw, 4.2rem) 1.25rem; }
         .pc-section-head { margin-bottom: 2.1rem; }
         .pc-eyebrow { display: flex; align-items: center; gap: .7rem; font-size: .76rem; font-weight: 700; letter-spacing: .04em; color: var(--accent); margin-bottom: .6rem; text-shadow: 0 0 16px var(--accent); }
-        .pc-eyebrow::after { content: ''; height: 2px; width: 0; border-radius: 2px; background: linear-gradient(90deg, var(--accent), transparent); box-shadow: 0 0 10px var(--accent); transition: width 1s .3s cubic-bezier(.16,.84,.44,1); }
-        .pc-section-head.pc-visible .pc-eyebrow::after { width: 64px; }
+        .pc-eyebrow::after { content: ''; height: 2px; width: 64px; border-radius: 2px; background: linear-gradient(90deg, var(--accent), transparent); box-shadow: 0 0 10px var(--accent); }
         .pc-section-head h3 { font-family: 'Bricolage Grotesque', sans-serif; letter-spacing: -.02em; font-weight: 800; font-size: clamp(1.5rem, 3.2vw, 2.1rem); color: var(--pc-ink); }
         .pc-section-head p { font-size: .92rem; color: var(--pc-soft); margin-top: .4rem; max-width: 34rem; line-height: 1.6; }
         .pc-sec-gold { --accent: var(--pc-gold); }
@@ -465,15 +395,17 @@ const CHome = () => {
           background: conic-gradient(from var(--ang), transparent 0 60%, var(--accent) 82%, transparent 100%);
           -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
           mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-          animation: pcSpin 3.4s linear infinite;
         }
-        .pc-card:hover { transform: translateY(-8px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 26px 60px -22px color-mix(in srgb, var(--accent) 70%, transparent); }
-        .pc-card:hover::before, .pc-card:hover::after { opacity: 1; }
+        @media (hover: hover) {
+          .pc-card:hover { transform: translateY(-8px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 26px 60px -22px color-mix(in srgb, var(--accent) 70%, transparent); }
+          .pc-card:hover::before { opacity: 1; }
+          .pc-card:hover::after { opacity: 1; }
+        }
         .pc-card:focus-visible, .pc-page :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
         .pc-media { position: relative; width: 100%; aspect-ratio: 4 / 5; background: #0d1530; overflow: hidden; }
         .pc-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .7s cubic-bezier(.2,.8,.2,1); }
-        .pc-card:hover .pc-media img { transform: scale(1.08); }
+        @media (hover: hover) { .pc-card:hover .pc-media img { transform: scale(1.08); } }
         .pc-media-shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(6,9,18,.85), transparent 60%); }
         .pc-media-fallback {
           position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
@@ -490,8 +422,8 @@ const CHome = () => {
         .pc-pill { display: inline-block; margin-top: .65rem; font-size: .7rem; font-weight: 700; padding: .25rem .7rem; border-radius: 999px; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
 
         /* ---------- Modal ---------- */
-        .pc-modal-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(3,5,12,.75); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; padding: 1rem; animation: pcFade .25s ease forwards; }
-        .pc-modal-box { position: relative; overflow: hidden; max-width: 480px; width: 100%; border-radius: 26px; background: linear-gradient(180deg, #121a36, #0a1022); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 40px 90px -20px rgba(0,0,0,.8), 0 0 80px -20px var(--accent); animation: pcPop .4s cubic-bezier(.16,.84,.44,1) both; }
+        .pc-modal-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(3,5,12,.75); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+        .pc-modal-box { position: relative; overflow: hidden; max-width: 480px; width: 100%; border-radius: 26px; background: linear-gradient(180deg, #121a36, #0a1022); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 40px 90px -20px rgba(0,0,0,.8), 0 0 80px -20px var(--accent); }
         .pc-modal-close { position: absolute; top: 1rem; right: 1rem; z-index: 10; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--pc-line); background: rgba(6,9,18,.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; transition: background .2s, transform .3s, box-shadow .2s; }
         .pc-modal-close:hover { background: var(--accent); color: #0a0e1c; transform: rotate(90deg); box-shadow: 0 0 20px var(--accent); }
         .pc-modal-banner { position: relative; width: 100%; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--accent) 45%, #10183a), #0a1024 75%); overflow: hidden; }
@@ -504,8 +436,6 @@ const CHome = () => {
         .pc-modal-content p strong { color: var(--pc-ink); }
         .pc-modal-btn { margin-top: 1.6rem; padding: .7rem 1.7rem; border: none; border-radius: 999px; cursor: pointer; font: 700 .9rem 'Figtree', sans-serif; color: #0a0e1c; background: var(--accent); box-shadow: 0 10px 30px -8px var(--accent); transition: transform .2s; }
         .pc-modal-btn:hover { transform: translateY(-2px); }
-        @keyframes pcFade { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes pcPop { from { transform: scale(.88) translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 
         /* ---------- Report + feed ---------- */
         .pc-report-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
@@ -513,11 +443,10 @@ const CHome = () => {
         .pc-report { padding: 1.4rem; --accent: var(--pc-live); }
         .pc-report-media { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: radial-gradient(circle at 30% 20%, #1a2550, #0a1024 75%); }
         .pc-report-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.8,.2,1); }
-        .pc-report:hover .pc-report-media img { transform: scale(1.05); }
+        @media (hover: hover) { .pc-report:hover .pc-report-media img { transform: scale(1.05); } }
         .pc-report-media-shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(6,9,18,.85), transparent 60%); }
         .pc-report-badge { position: absolute; left: 1.1rem; bottom: 1.1rem; display: inline-flex; align-items: center; gap: .5rem; background: rgba(6,9,18,.7); border: 1px solid color-mix(in srgb, var(--pc-live) 55%, transparent); color: #ff9db0; backdrop-filter: blur(8px); font-size: .74rem; font-weight: 700; padding: .38rem .9rem; border-radius: 999px; box-shadow: 0 0 22px -4px var(--pc-live); }
-        .pc-report-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--pc-live); animation: pcBlink 1.2s ease-in-out infinite; }
-        @keyframes pcBlink { 50% { opacity: .25; } }
+        .pc-report-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--pc-live); }
         .pc-report-title { font-family: 'Bricolage Grotesque', sans-serif; letter-spacing: -.02em; font-weight: 800; font-size: clamp(1.3rem, 2.6vw, 1.85rem); line-height: 1.22; margin-top: 1.3rem; cursor: pointer; transition: color .25s, text-shadow .25s; color: var(--pc-ink); }
         .pc-report-title:hover { color: var(--pc-gold); text-shadow: 0 0 26px rgba(242,193,78,.5); }
         .pc-report-desc { color: var(--pc-soft); font-size: .93rem; line-height: 1.7; margin-top: .75rem; }
@@ -541,18 +470,27 @@ const CHome = () => {
         @media (min-width: 768px) { .pc-hub-grid { grid-template-columns: repeat(3,1fr); } }
         .pc-hub-card { padding: 1.8rem; display: flex; flex-direction: column; justify-content: space-between; transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s, box-shadow .35s; }
         .pc-hub-card::before { content: ''; position: absolute; inset: 0; z-index: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 30%), color-mix(in srgb, var(--accent) 24%, transparent), transparent 62%); opacity: 0; transition: opacity .35s; }
-        .pc-hub-card:hover { transform: translateY(-8px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 26px 60px -22px color-mix(in srgb, var(--accent) 70%, transparent); }
-        .pc-hub-card:hover::before { opacity: 1; }
+        @media (hover: hover) {
+          .pc-hub-card:hover { transform: translateY(-8px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 26px 60px -22px color-mix(in srgb, var(--accent) 70%, transparent); }
+          .pc-hub-card:hover::before { opacity: 1; }
+        }
         .pc-hub-card.a { --accent: var(--pc-cyan); }
         .pc-hub-card.b { --accent: var(--pc-live); }
         .pc-hub-card.c { --accent: var(--pc-gold); }
         .pc-hub-card > div, .pc-hub-card > button { position: relative; z-index: 2; }
         .pc-hub-icon { width: 3rem; height: 3rem; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 1.2rem; background: color-mix(in srgb, var(--accent) 16%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); box-shadow: 0 0 28px -4px var(--accent); transition: transform .4s cubic-bezier(.2,.8,.2,1); }
-        .pc-hub-card:hover .pc-hub-icon { transform: scale(1.12) rotate(-6deg); }
+        @media (hover: hover) { .pc-hub-card:hover .pc-hub-icon { transform: scale(1.12) rotate(-6deg); } }
         .pc-hub-card h4 { font-family: 'Bricolage Grotesque', sans-serif; letter-spacing: -.01em; font-weight: 800; font-size: 1.2rem; color: var(--pc-ink); }
         .pc-hub-card p { color: var(--pc-soft); font-size: .88rem; line-height: 1.65; margin: .6rem 0 1.7rem; }
         .pc-hub-btn { align-self: flex-start; font: 700 .82rem 'Figtree', sans-serif; color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); padding: .7rem 1.25rem; border-radius: 999px; cursor: pointer; transition: background .25s, color .25s, box-shadow .25s; }
         .pc-hub-btn:hover { background: var(--accent); color: #0a0e1c; box-shadow: 0 0 28px -2px var(--accent); }
+
+        /* ---------- Phones & touch: skip costly blur effects for smooth scrolling ---------- */
+        @media (max-width: 900px), (pointer: coarse) {
+          .pc-glass, .pc-card, .pc-kicker, .pc-report-badge { backdrop-filter: none; -webkit-backdrop-filter: none; }
+          .pc-sticky-header header { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background-color: rgba(10,18,36,.97) !important; }
+          .pc-modal-overlay { backdrop-filter: none; background: rgba(3,5,12,.88); }
+        }
 
         @media (prefers-reduced-motion: reduce) {
           .pc-root *, .pc-root *::before, .pc-root *::after { animation: none !important; transition: none !important; }
@@ -689,7 +627,7 @@ const CHome = () => {
         <div className="pc-report-grid" style={hasReport ? undefined : { gridTemplateColumns: '1fr' }}>
           <Reveal className="pc-glass pc-glow-border pc-report" style={hide(hasReport)}>
             <div className="pc-report-media">
-              {homeData.matchReportBannerUrl && <img src={homeData.matchReportBannerUrl} alt={homeData.matchReportTitle} loading="lazy" />}
+              {homeData.matchReportBannerUrl && <img src={homeData.matchReportBannerUrl} alt={homeData.matchReportTitle} loading="lazy" decoding="async" />}
               <div className="pc-report-media-shade" />
               <span className="pc-report-badge">{homeData.matchReportBadge}</span>
             </div>
