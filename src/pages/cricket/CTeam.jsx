@@ -15,28 +15,10 @@ const trackGlow = (e) => {
   e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`);
 };
 
-// Animated number count-up
-function CountUp({ value, duration = 1000 }) {
+// Number display (thousands separators)
+function CountUp({ value }) {
   const n = Number(value);
-  const valid = Number.isFinite(n);
-  const [v, setV] = useState(0);
-
-  useEffect(() => {
-    if (!valid) return;
-    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) { setV(n); return; }
-    let raf, start;
-    const step = (t) => {
-      if (!start) start = t;
-      const p = Math.min((t - start) / duration, 1);
-      setV(Math.round(n * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [n, valid, duration]);
-
-  return <>{valid ? v.toLocaleString() : (value ?? '-')}</>;
+  return <>{Number.isFinite(n) ? n.toLocaleString() : (value ?? '-')}</>;
 }
 
 function Avatar({ src, name, size = 56 }) {
@@ -123,7 +105,7 @@ function CTeam() {
   const accent = selectedCategory ? categoryDetails[selectedCategory].themeColor : '#f2c14e';
   const atRoot = !selectedCategory && !selectedTeam && !selectedPlayer;
 
-  // Key so each level replays its entrance animation on change
+  // Key so each level renders as a fresh view
   const viewKey = `${selectedCategory}-${selectedTeam?._id || ''}-${selectedPlayer?._id || selectedPlayer?.id || ''}`;
 
   return (
@@ -159,10 +141,10 @@ function CTeam() {
 
           /* ---------- Ambient background ---------- */
           .ct-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-          .ct-orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .5; transition: background 1s ease; }
-          .ct-orb-1 { width: 520px; height: 520px; top: -160px; left: -120px; background: var(--accent); opacity: .28; animation: ctFloatA 18s ease-in-out infinite; }
-          .ct-orb-2 { width: 460px; height: 460px; top: 30%; right: -160px; background: #3348ff; opacity: .25; animation: ctFloatB 22s ease-in-out infinite; }
-          .ct-orb-3 { width: 420px; height: 420px; bottom: -160px; left: 25%; background: var(--accent); opacity: .16; animation: ctFloatA 26s ease-in-out infinite reverse; }
+          .ct-orb { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, var(--c) 35%, transparent 100%); opacity: .5; }
+          .ct-orb-1 { width: 520px; height: 520px; top: -160px; left: -120px; --c: var(--accent); opacity: .28; }
+          .ct-orb-2 { width: 460px; height: 460px; top: 30%; right: -160px; --c: #3348ff; opacity: .25; }
+          .ct-orb-3 { width: 420px; height: 420px; bottom: -160px; left: 25%; --c: var(--accent); opacity: .16; }
           .ct-grid {
             position: absolute; inset: 0;
             background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
@@ -170,16 +152,10 @@ function CTeam() {
             -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 0%, transparent 70%);
             mask-image: radial-gradient(ellipse at 50% 30%, #000 0%, transparent 70%);
           }
-          @keyframes ctFloatA { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(90px, 70px) scale(1.15); } }
-          @keyframes ctFloatB { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-100px, -60px) scale(1.1); } }
 
-          /* ---------- Entrance animations ---------- */
-          .ct-in { animation: ctRise .7s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * 80ms); }
-          @keyframes ctRise { from { opacity: 0; transform: translateY(22px) scale(.98); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
-          @keyframes ctSpin { to { --ang: 360deg; } }
 
           /* ---------- Breadcrumb bar ---------- */
-          .ct-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; min-height: 42px; animation: ctRise .5s cubic-bezier(.2,.8,.2,1) both; }
+          .ct-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; min-height: 42px; }
           .ct-back {
             flex: none; display: inline-flex; align-items: center; gap: 6px;
             height: 42px; padding: 0 18px 0 12px; border-radius: 999px;
@@ -203,9 +179,8 @@ function CTeam() {
             background: linear-gradient(100deg, #fff 20%, var(--accent) 45%, #fff 70%);
             background-size: 220% 100%; -webkit-background-clip: text; background-clip: text;
             -webkit-text-fill-color: transparent; color: transparent;
-            animation: ctSheen 6s ease-in-out infinite;
+            background-position: 50% 0;
           }
-          @keyframes ctSheen { 0%,100% { background-position: 100% 0; } 50% { background-position: 0 0; } }
           .ct-h1-glow { color: var(--accent); text-shadow: 0 0 32px color-mix(in srgb, var(--accent) 60%, transparent); }
           .ct-lead { margin: 0 0 28px; color: var(--muted); font-size: 15.5px; line-height: 1.6; max-width: 58ch; }
 
@@ -230,20 +205,21 @@ function CTeam() {
             background: conic-gradient(from var(--ang), transparent 0 62%, var(--accent) 82%, transparent 100%);
             -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
             mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-            animation: ctSpin 3.5s linear infinite;
           }
-          .ct-row:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-            box-shadow: 0 18px 50px -18px color-mix(in srgb, var(--accent) 65%, transparent), 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent); }
-          .ct-row:hover::before, .ct-row:hover::after { opacity: 1; }
+          @media (hover: hover) {
+            .ct-row:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+              box-shadow: 0 18px 50px -18px color-mix(in srgb, var(--accent) 65%, transparent), 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent); }
+            .ct-row:hover::before, .ct-row:hover::after { opacity: 1; }
+          }
           .ct-row:active { transform: translateY(-1px) scale(.995); }
           .ct-page :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
           .ct-chevron { flex: none; color: var(--muted); transition: transform .3s, color .3s, filter .3s; }
-          .ct-row:hover .ct-chevron { color: var(--accent); transform: translateX(5px); filter: drop-shadow(0 0 8px var(--accent)); }
+          @media (hover: hover) { .ct-row:hover .ct-chevron { color: var(--accent); transform: translateX(5px); filter: drop-shadow(0 0 8px var(--accent)); } }
 
           /* ---------- Avatar ---------- */
           .ct-avatar { flex: none; border-radius: 50%; object-fit: cover; display: block; background: #121a30; border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent); transition: box-shadow .35s, transform .35s; }
-          .ct-row:hover .ct-avatar { box-shadow: 0 0 22px color-mix(in srgb, var(--accent) 70%, transparent); transform: scale(1.06); }
+          @media (hover: hover) { .ct-row:hover .ct-avatar { box-shadow: 0 0 22px color-mix(in srgb, var(--accent) 70%, transparent); transform: scale(1.06); } }
           .ct-avatar-fallback { display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--accent); background: radial-gradient(circle at 30% 25%, #1c2748, #0c1226); font-family: 'Bricolage Grotesque', sans-serif; }
 
           /* ---------- Level 1: tiers ---------- */
@@ -255,10 +231,6 @@ function CTeam() {
             color: #070b16; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
             box-shadow: 0 0 44px -6px var(--accent);
           }
-          .ct-tier-num::after { content: ''; position: absolute; top: 0; left: -80%; width: 60%; height: 100%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent); transform: skewX(-20deg); animation: ctShine 4.5s ease-in-out infinite; }
-          .ct-row:nth-child(2) .ct-tier-num::after { animation-delay: 1.2s; }
-          .ct-row:nth-child(3) .ct-tier-num::after { animation-delay: 2.4s; }
-          @keyframes ctShine { 0% { left: -80%; } 45%,100% { left: 160%; } }
           .ct-tier-num b { font-family: 'Bricolage Grotesque', sans-serif; font-size: 42px; line-height: 1; font-weight: 800; }
           .ct-tier-num span { font-size: 12px; font-weight: 700; opacity: .75; }
           .ct-tier-body { flex: 1; padding: 18px 0; min-width: 0; }
@@ -288,7 +260,7 @@ function CTeam() {
           .ct-mini { display: flex; gap: 20px; flex: none; }
           .ct-mini div { text-align: right; min-width: 46px; }
           .ct-mini b { display: block; font-family: 'Bricolage Grotesque', sans-serif; font-size: 21px; font-weight: 800; line-height: 1.1; }
-          .ct-row:hover .ct-mini b { color: var(--accent); text-shadow: 0 0 14px var(--accent); }
+          @media (hover: hover) { .ct-row:hover .ct-mini b { color: var(--accent); text-shadow: 0 0 14px var(--accent); } }
           .ct-mini span { font-size: 11px; color: var(--muted); font-weight: 600; }
           .ct-player-sub { display: none; gap: 12px; margin-top: 8px; font-size: 12px; color: var(--muted); }
           .ct-player-sub b { color: var(--ink); }
@@ -304,11 +276,10 @@ function CTeam() {
           .ct-profile { position: relative; overflow: hidden; border-radius: 26px; border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); background: var(--glass), #0a1022; backdrop-filter: blur(16px); box-shadow: 0 30px 80px -30px color-mix(in srgb, var(--accent) 55%, transparent); }
           .ct-cover { position: relative; height: 130px; overflow: hidden;
             background: radial-gradient(520px 180px at 18% 0%, color-mix(in srgb, var(--accent) 60%, transparent), transparent 70%), linear-gradient(135deg, #111a36, #0a1022); }
-          .ct-cover::after { content: ''; position: absolute; top: 0; left: -40%; width: 40%; height: 100%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.12), transparent); transform: skewX(-20deg); animation: ctShine 5s ease-in-out infinite; }
           .ct-profile-body { padding: 0 26px 30px; }
           .ct-profile-top { display: flex; align-items: flex-end; gap: 20px; margin-top: -54px; flex-wrap: wrap; }
           .ct-orbit { position: relative; flex: none; padding: 5px; border-radius: 50%; }
-          .ct-orbit::before, .ct-orbit::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from var(--ang), var(--accent), transparent 35%, var(--accent) 70%, transparent); animation: ctSpin 3.2s linear infinite; }
+          .ct-orbit::before, .ct-orbit::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from var(--ang), var(--accent), transparent 35%, var(--accent) 70%, transparent); }
           .ct-orbit::after { filter: blur(16px); opacity: .75; }
           .ct-orbit .ct-avatar { position: relative; z-index: 1; border: 4px solid #0a1022; }
           .ct-profile-name { padding-bottom: 6px; min-width: 0; }
@@ -323,8 +294,13 @@ function CTeam() {
 
           /* ---------- Empty + loading ---------- */
           .ct-empty { padding: 40px 22px; text-align: center; border: 1px dashed rgba(255,255,255,.18); border-radius: 18px; color: var(--muted); font-size: 15px; background: var(--glass); }
-          .ct-skel { height: 110px; border-radius: 18px; border: 1px solid var(--line); background: linear-gradient(90deg, rgba(255,255,255,.03) 25%, rgba(255,255,255,.09) 50%, rgba(255,255,255,.03) 75%); background-size: 220% 100%; animation: ctShimmer 1.4s linear infinite; }
-          @keyframes ctShimmer { to { background-position: -220% 0; } }
+          .ct-skel { height: 110px; border-radius: 18px; border: 1px solid var(--line); background: rgba(255,255,255,.05); }
+
+          /* ---------- Phones & touch: skip costly blur effects for smooth scrolling ---------- */
+          @media (max-width: 900px), (pointer: coarse) {
+            .ct-back, .ct-row, .ct-profile { backdrop-filter: none; -webkit-backdrop-filter: none; }
+            .ct-page > header { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background-color: rgba(10,18,36,.97) !important; }
+          }
 
           @media (prefers-reduced-motion: reduce) {
             .ct-page *, .ct-page *::before, .ct-page *::after { animation: none !important; transition: none !important; }
