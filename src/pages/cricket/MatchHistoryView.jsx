@@ -1965,7 +1965,7 @@ const MatchHistoryView = ({
               {inningsList.map((i) => tabBtn(i.name, i.name))}
               {tabBtn('insights', 'Insights')}
               {tabBtn('broadcast', 'Broadcast')}
-              {squads && tabBtn('squads', 'Squads')}
+              {squads && tabBtn('squads', 'Playing XI')}
             </div>
 
             {tab === 'summary' && <div key="sum">{renderSummary()}</div>}
