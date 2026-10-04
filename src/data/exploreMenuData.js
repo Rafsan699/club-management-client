@@ -17,12 +17,12 @@ export const exploreMenuTree = [
       
     ]
   },
-  /*{
+  {
     title: 'Sports',
     subItems: [
       //{ name: 'E-Sports', path: '/sports/e-sports' },
       { name: 'Cricket', path: '/sports/cricket' },
-      //{ name: 'Football', path: '/sports/football' },
+      { name: 'Football', path: '/sports/football' },
       //{ name: 'Volleyball', path: '/sports/volleyball' },
      // { name: 'Table Tennis & Badminton', path: '/sports/table-tennis' },
       //{ name: 'Chess & Ludo', path: '/sports/chess' },
@@ -30,7 +30,7 @@ export const exploreMenuTree = [
       //{ name: 'Athletics', path: '/sports/athletics' },
       
     ]
-  },*/
+  },
   {
     title: 'Club Room',
     subItems: [

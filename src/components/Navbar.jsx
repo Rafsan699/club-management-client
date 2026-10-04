@@ -1,241 +1,409 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { exploreMenuTree } from '../data/exploreMenuData';
 import logoImage from './logo.jpg';
-import { 
-  Trophy, Lock, LogIn, UserPlus, User, LogOut, ChevronDown, Compass, ChevronRight, X 
+import {
+  Menu as MenuIcon, X, ChevronDown, Compass, Lock, LogIn, UserPlus, LogOut, ChevronRight,
 } from 'lucide-react';
 
-const Navbar = ({ content, user, darkMode, setDarkMode, handleLogout }) => {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [showExploreMenu, setShowExploreMenu] = useState(false);
-  const [expandedCategory, setExpandedCategory] = useState(null);
-  
-  const [showNavbar, setShowNavbar] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+const NAV_ITEMS = [
+  { to: '/', label: 'Home' },
+  { to: '/about-us', label: 'About' },
+  { to: '/team', label: 'Team' },
+  { to: '/events', label: 'Events' },
+  { to: '/contact', label: 'Contact' },
+  { to: '/news', label: 'Newsfeed' },
+];
 
-  const toggleCategory = (title) => {
-    setExpandedCategory(prev => (prev === title ? null : title));
+// App.jsx e props pass kora ache, tai signature same rakhlam (darkMode ekhane use hocche na,
+// header sob mode-e dark navy neon theme-e thakbe)
+const Navbar = ({ user, handleLogout }) => {
+  const location = useLocation();
+  const headerRef = useRef(null);
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [exploreOpen, setExploreOpen] = useState(false);
+  const [userOpen, setUserOpen] = useState(false);
+  const [openCat, setOpenCat] = useState(null); // mobile accordion
+  const [scrolled, setScrolled] = useState(false);
+
+  const closeAll = () => {
+    setMobileOpen(false);
+    setExploreOpen(false);
+    setUserOpen(false);
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        setShowNavbar(false);
-        setShowExploreMenu(false);
-        setShowDropdown(false);
-      } else {
-        setShowNavbar(true);
-      }
-      setLastScrollY(currentScrollY);
-    };
+  // Logged in thakle "Account" (Login/Register) category dekhano dorkar nai
+  const categories = useMemo(
+    () =>
+      exploreMenuTree.filter(
+        (c) => c.title && c.subItems?.length && !(user && c.title === 'Account')
+      ),
+    [user]
+  );
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  const isActive = (to) =>
+    to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
+
+  // Route change hole sob menu bondho
+  useEffect(() => {
+    closeAll();
+    setOpenCat(null);
+  }, [location.pathname]);
+
+  // Scroll korle header compact
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Baire click / Esc chaple bondho
+  useEffect(() => {
+    const onDown = (e) => {
+      if (headerRef.current && !headerRef.current.contains(e.target)) closeAll();
+    };
+    const onKey = (e) => e.key === 'Escape' && closeAll();
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('touchstart', onDown, { passive: true });
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('touchstart', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, []);
+
+  // Mobile menu khola thakle background scroll lock
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
+
+  // Desktop size-e gele mobile menu auto bondho
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1280px)');
+    const onChange = (e) => e.matches && setMobileOpen(false);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  const initial = user?.name ? user.name.charAt(0).toUpperCase() : 'U';
+
+  const AuthButtons = ({ stretch = false }) => (
+    <div className={stretch ? 'grid grid-cols-3 gap-2' : 'flex items-center gap-2'}>
+      <Link
+        to="/admin"
+        className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 px-3 py-2 text-xs font-bold text-[#0a1224] shadow-[0_0_14px_rgba(251,191,36,0.35)] transition hover:brightness-110 active:scale-95"
+      >
+        <Lock className="h-3.5 w-3.5" /> Admin
+      </Link>
+      <Link
+        to="/login"
+        className="flex items-center justify-center gap-1.5 rounded-xl border border-sky-400/40 bg-sky-500/10 px-3 py-2 text-xs font-bold text-sky-100 transition hover:border-amber-300/60 hover:text-amber-200 active:scale-95"
+      >
+        <LogIn className="h-3.5 w-3.5 text-sky-300" /> Login
+      </Link>
+      <Link
+        to="/register"
+        className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 px-3 py-2 text-xs font-bold text-white shadow-[0_0_14px_rgba(56,189,248,0.35)] transition hover:brightness-110 active:scale-95"
+      >
+        <UserPlus className="h-3.5 w-3.5" /> Register
+      </Link>
+    </div>
+  );
 
   return (
-    <header className={`${darkMode ? 'bg-slate-900/90 border-slate-800' : 'bg-white/90 border-slate-200/85'} backdrop-blur-2xl border-b fixed inset-x-0 z-50 shadow-sm transition-all duration-300 ${showNavbar ? 'top-0' : '-translate-y-full'}`}>
-      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-2 sm:gap-4">
-        
-        {/* Left Section: Menu Button & Club Logo Box */}
-        <div className="flex items-center gap-3 relative">
-          <button 
-            onClick={() => setShowExploreMenu(!showExploreMenu)}
-            className="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-650 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-all duration-300 focus:outline-none hover:scale-105 active:scale-95"
-          >
-            <Compass className={`w-4 h-4 text-white ${showExploreMenu ? 'rotate-90' : ''} transition-transform duration-300`} />
-            <span>Menu</span>
-            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showExploreMenu ? 'rotate-180' : ''}`} />
-          </button>
+    <>
+      <style>{`
+        @keyframes hdr-drop { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+        .hdr-line { background: linear-gradient(90deg, transparent, #38bdf8, #fbbf24, #38bdf8, transparent); }
+        .hdr-link { position: relative; transition: color .3s ease, text-shadow .3s ease; }
+        .hdr-link::after {
+          content:''; position:absolute; left:50%; bottom:-6px; height:2px; width:0; border-radius:2px;
+          background: linear-gradient(90deg,#fbbf24,#fcd34d);
+          box-shadow: 0 0 8px rgba(251,191,36,.7);
+          transform: translateX(-50%); transition: width .3s ease;
+        }
+        .hdr-link:hover { color:#fde68a; text-shadow: 0 0 12px rgba(251,191,36,.5); }
+        .hdr-link:hover::after, .hdr-link[data-active='true']::after { width:100%; }
+        .hdr-link[data-active='true'] { color:#fcd34d; text-shadow: 0 0 12px rgba(251,191,36,.45); }
+        .hdr-menu { animation: hdr-drop .25s ease both; }
+        .hdr-scroll { scrollbar-width: thin; scrollbar-color: rgba(56,189,248,.4) transparent; }
+        @media (prefers-reduced-motion: reduce) { .hdr-menu { animation: none !important; } }
+      `}</style>
 
-          {/* Club Logo Box replacing Dark Mode Button */}
-          <Link to="/" className="flex items-center gap-2 focus:outline-none group">
-            <div className={`w-9 h-9 rounded-xl overflow-hidden border ${darkMode ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-slate-100'} shadow-sm flex items-center justify-center transition-transform duration-300 group-hover:scale-105`}>
-              <img 
-                src={logoImage} 
-                alt="Club Logo" 
-                className="w-full h-full object-cover" 
-              />
+      <header
+        ref={headerRef}
+        className={`fixed inset-x-0 top-0 z-50 backdrop-blur-xl transition-all duration-300 ${
+          scrolled
+            ? 'bg-[#0a1224]/95 shadow-[0_10px_30px_-12px_rgba(56,189,248,0.35)]'
+            : 'bg-[#0a1224]/85 shadow-[0_6px_24px_-14px_rgba(56,189,248,0.25)]'
+        }`}
+      >
+        {/* Ambient glows */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-10 top-1/2 h-24 w-56 -translate-y-1/2 rounded-full bg-sky-500/15 blur-3xl" />
+          <div className="absolute -right-10 top-1/2 h-24 w-56 -translate-y-1/2 rounded-full bg-amber-400/10 blur-3xl" />
+        </div>
+
+        <div
+          className={`relative mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 transition-all duration-300 ${
+            scrolled ? 'py-2' : 'py-3.5'
+          }`}
+        >
+          {/* Logo */}
+          <Link to="/" className="group flex min-w-0 items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 rounded-xl">
+            <div className="relative h-11 w-11 flex-shrink-0">
+              <span className="absolute -inset-1.5 rounded-full bg-amber-400/25 blur-md transition-opacity duration-300 group-hover:bg-amber-400/40" />
+              <span className="absolute -inset-[2px] rounded-full bg-gradient-to-br from-amber-300 via-amber-500 to-sky-400" />
+              <div className="relative h-full w-full rounded-full bg-[#0a1224] p-[2px] transition-transform duration-300 group-hover:scale-105">
+                <img src={logoImage} alt="BRIU Sports Club logo" className="h-full w-full rounded-full object-cover" />
+              </div>
+            </div>
+            <div className="flex min-w-0 flex-col leading-tight">
+              <span className="truncate text-lg font-extrabold tracking-wide text-slate-50 sm:text-xl [text-shadow:0_0_16px_rgba(56,189,248,0.35)]">
+                BRIU Sports Club
+              </span>
+              <span className="flex items-center gap-1.5 text-xs font-medium text-amber-300/90">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_#fbbf24]" />
+                Official Club Portal
+              </span>
             </div>
           </Link>
 
-          {showExploreMenu && (
-            <div className={`absolute top-12 left-0 w-[94vw] sm:w-[900px] max-w-[95vw] ${darkMode ? 'bg-slate-900/98 border-slate-800 text-slate-100' : 'bg-white/98 border-slate-200/80 text-slate-900'} backdrop-blur-2xl border rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.15)] p-4 sm:p-8 z-50 max-h-[82vh] overflow-y-auto custom-scrollbar`}>
-              
-              <div className={`flex items-center justify-between pb-4 mb-5 border-b ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
-                <div className="flex items-center gap-3">
-                  <div className={`p-2.5 ${darkMode ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-emerald-50 border-emerald-100'} rounded-2xl border shadow-sm`}>
-                    <Trophy className="w-6 h-6 text-emerald-600" />
-                  </div>
-                  <div>
-                    <h3 className={`font-black ${darkMode ? 'text-white' : 'text-slate-900'} text-base sm:text-xl uppercase tracking-wider`}>
-                      Club Directory & Navigation
-                    </h3>
-                    <p className={`text-[11px] sm:text-xs font-bold ${darkMode ? 'text-slate-400' : 'text-slate-500'} mt-0.5`}>Browse all club resources, committees and portals instantly</p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setShowExploreMenu(false)}
-                  className={`p-2.5 ${darkMode ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'} rounded-2xl transition`}
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="mb-5">
-                <Link 
-                  to="/"
-                  onClick={() => setShowExploreMenu(false)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-black text-xs sm:text-sm shadow-md shadow-emerald-600/20 transition-all duration-200 hover:scale-[1.02]"
-                >
-                  <ChevronRight className="w-4 h-4" /> Home Page Dashboard
-                </Link>
-              </div>
-
-              {/* All Categories Listed Clearly */}
-              <div className="space-y-3">
-                {exploreMenuTree.map((cat, idx) => {
-                  const isOpen = expandedCategory === cat.title;
-
-                  return (
-                    <div 
-                      key={idx} 
-                      className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
-                        darkMode ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-50/80 border-slate-200/80'
-                      }`}
-                    >
-                      <button
-                        onClick={() => toggleCategory(cat.title)}
-                        className={`w-full text-left p-4 flex items-center justify-between font-black ${darkMode ? 'text-white' : 'text-slate-900'} text-xs sm:text-base uppercase tracking-wide transition-all hover:bg-emerald-500/5`}
-                      >
-                        <span className="flex items-center gap-3 truncate pr-2">
-                          <span className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-300 ${isOpen ? 'bg-emerald-600 shadow-md shadow-emerald-600/40 scale-110' : `${darkMode ? 'bg-slate-700' : 'bg-slate-300'}`}`}></span>
-                          <span className={`truncate ${isOpen ? 'text-emerald-600' : ''}`}>{cat.title}</span>
-                        </span>
-                        
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-200 text-slate-600'}`}>
-                            {cat.subItems.length} items
-                          </span>
-                          <ChevronDown className={`w-4 h-4 ${darkMode ? 'text-slate-500' : 'text-slate-400'} transition-transform duration-300 ${isOpen ? 'rotate-180 text-emerald-600' : ''}`} />
-                        </div>
-                      </button>
-                      
-                      {isOpen && (
-                        <div className={`p-4 pt-2 border-t ${darkMode ? 'border-slate-800 bg-slate-900/90' : 'border-slate-100 bg-white'} animate-in fade-in duration-200`}>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-2.5 pt-2">
-                            {cat.subItems.map((sub, sIdx) => (
-                              <Link 
-                                key={sIdx}
-                                to={sub.path}
-                                onClick={() => setShowExploreMenu(false)}
-                                className={`flex items-center gap-2 p-2.5 rounded-xl ${darkMode ? 'bg-slate-800/80 border-slate-700 text-slate-200 hover:border-emerald-500 hover:text-emerald-400' : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-emerald-500 hover:text-emerald-600'} font-bold text-xs border shadow-sm transition-all duration-150 hover:scale-[1.02]`}
-                              >
-                                <span className="text-emerald-600 font-black">›</span>
-                                <span className="truncate">{sub.name}</span>
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-
-            </div>
-          )}
-        </div>
-
-        {/* Center Section: Navigation Links */}
-        <nav className={`hidden lg:flex items-center gap-6 text-xs font-black tracking-widest uppercase ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
-          <Link to="/" className="hover:text-emerald-600 transition flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Home</Link>
-          <Link to="/about-us" className="hover:text-emerald-600 transition">About Club</Link>
-          <Link to="/team" className="hover:text-emerald-600 transition">Team</Link>
-          <Link to="/events" className="hover:text-emerald-600 transition">Events</Link>
-          <Link to="/contact" className="hover:text-emerald-600 transition">Contact Us</Link>
-          <Link to="/news" className="hover:text-emerald-600 transition">Newsfeed</Link>
-        </nav>
-
-        {/* Right Section: User Auth Buttons */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          {user ? (
-            <div className="relative">
-              <button 
-                onClick={() => setShowDropdown(!showDropdown)}
-                className={`flex items-center gap-2 ${darkMode ? 'bg-slate-800 border-slate-700 hover:bg-slate-700 text-white' : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-800'} py-1.5 px-3 rounded-full border transition focus:outline-none shadow-sm`}
+          {/* Desktop navigation */}
+          <nav aria-label="Main" className="hidden items-center gap-7 font-medium text-slate-300 xl:flex">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                data-active={isActive(item.to)}
+                aria-current={isActive(item.to) ? 'page' : undefined}
+                className="hdr-link py-1"
               >
-                <div className="w-7 h-7 bg-gradient-to-tr from-emerald-600 to-teal-500 text-white rounded-full flex items-center justify-center font-black text-xs shadow-sm flex-shrink-0">
-                  {user.name ? user.name.charAt(0).toUpperCase() : <User className="w-3.5 h-3.5" />}
-                </div>
-                <span className={`font-extrabold ${darkMode ? 'text-slate-200' : 'text-slate-800'} text-xs hidden sm:inline`}>
-                  {user.name}
-                </span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
-              </button>
+                {item.label}
+              </Link>
+            ))}
+          </nav>
 
-              {showDropdown && (
-                <div className={`absolute right-0 mt-2 w-64 ${darkMode ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-white border-slate-200 text-slate-800'} border rounded-2xl shadow-xl py-3 px-4 z-50 animate-in fade-in`}>
-                  <div className={`pb-2 border-b ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
-                    <p className={`font-black ${darkMode ? 'text-white' : 'text-slate-900'} text-sm truncate`}>{user.name}</p>
-                    <p className="text-[11px] text-emerald-600 font-bold truncate mt-0.5">{user.email}</p>
-                    <div className="flex gap-2 text-[10px] font-semibold text-slate-500 mt-2">
-                      <span className={`${darkMode ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-600'} px-2 py-0.5 rounded-md border`}>Dept: {user.dept || 'N/A'}</span>
-                      <span className={`${darkMode ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-600'} px-2 py-0.5 rounded-md border`}>Batch: {user.batch || 'N/A'}</span>
+          {/* Desktop right side */}
+          <div className="hidden items-center gap-3 xl:flex">
+            <button
+              onClick={() => { setExploreOpen((v) => !v); setUserOpen(false); }}
+              aria-expanded={exploreOpen}
+              aria-controls="explore-panel"
+              className={`flex items-center gap-2 rounded-xl border px-3.5 py-2 text-sm font-semibold text-slate-100 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 ${
+                exploreOpen
+                  ? 'border-amber-300/60 bg-amber-400/15 shadow-[0_0_16px_rgba(251,191,36,0.4)]'
+                  : 'border-sky-400/30 bg-sky-500/10 hover:shadow-[0_0_16px_rgba(251,191,36,0.4)]'
+              }`}
+            >
+              <Compass className={`h-4 w-4 transition-transform duration-300 ${exploreOpen ? 'rotate-90 text-amber-300' : 'text-sky-300'}`} />
+              Explore
+              <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-300 ${exploreOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => { setUserOpen((v) => !v); setExploreOpen(false); }}
+                  aria-expanded={userOpen}
+                  className="flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-500/10 py-1.5 pl-1.5 pr-3 text-slate-100 transition hover:border-amber-300/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-amber-300 to-amber-500 text-sm font-bold text-[#0a1224]">
+                    {initial}
+                  </span>
+                  <span className="max-w-[110px] truncate text-sm font-semibold">{user.name}</span>
+                  <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
+                </button>
+
+                {userOpen && (
+                  <div className="hdr-menu absolute right-0 mt-3 w-64 rounded-2xl border border-sky-400/25 bg-[#0a1224]/95 p-4 shadow-[0_20px_40px_-15px_rgba(56,189,248,0.4)] backdrop-blur-xl">
+                    <p className="truncate text-sm font-bold text-slate-50">{user.name}</p>
+                    <p className="mt-0.5 truncate text-xs text-amber-300">{user.email}</p>
+                    <div className="mt-2.5 flex flex-wrap gap-2 text-xs text-slate-300">
+                      <span className="rounded-md border border-sky-400/25 bg-sky-500/10 px-2 py-0.5">Dept: {user.dept || 'N/A'}</span>
+                      <span className="rounded-md border border-sky-400/25 bg-sky-500/10 px-2 py-0.5">Batch: {user.batch || 'N/A'}</span>
                     </div>
-                  </div>
-
-                  <div className="pt-2">
-                    <button 
+                    <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-2 text-red-600 hover:bg-red-50 p-2 rounded-lg text-xs font-extrabold transition"
+                      className="mt-3 flex w-full items-center gap-2 rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-sm font-semibold text-red-300 transition hover:bg-red-500/20"
                     >
-                      <LogOut className="w-3.5 h-3.5" /> Logout Account
+                      <LogOut className="h-4 w-4" /> Logout
                     </button>
                   </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="flex items-center gap-1.5">
-              <Link 
-                to="/admin" 
-                className="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-black px-2.5 sm:px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1 sm:gap-1.5 transition hover:scale-105 active:scale-95 flex-shrink-0"
-              >
-                <Lock className="w-3.5 h-3.5" /> Admin
-              </Link>
+                )}
+              </div>
+            ) : (
+              <AuthButtons />
+            )}
+          </div>
 
-              <Link 
-                to="/login" 
-                className={`${darkMode ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700' : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200'} text-[11px] font-black px-2.5 sm:px-3 py-1.5 rounded-xl border flex items-center gap-1 sm:gap-1.5 transition hover:scale-105 active:scale-95 shadow-sm flex-shrink-0`}
-              >
-                <LogIn className="w-3.5 h-3.5 text-emerald-600" /> Login
-              </Link>
-
-              <Link 
-                to="/register" 
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-[11px] font-black px-2.5 sm:px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1 sm:gap-1.5 transition hover:scale-105 active:scale-95 flex-shrink-0"
-              >
-                <UserPlus className="w-3.5 h-3.5" /> Register
-              </Link>
-            </div>
-          )}
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => { setMobileOpen((v) => !v); setExploreOpen(false); }}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-panel"
+            className={`relative flex-shrink-0 rounded-xl border p-2 text-slate-100 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 xl:hidden ${
+              mobileOpen
+                ? 'border-amber-300/60 bg-amber-400/15 shadow-[0_0_16px_rgba(251,191,36,0.4)]'
+                : 'border-sky-400/30 bg-sky-500/10 shadow-[0_0_10px_rgba(56,189,248,0.25)]'
+            }`}
+          >
+            {mobileOpen ? <X className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+          </button>
         </div>
 
-      </div>
+        {/* Desktop explore panel: topic-wise columns */}
+        {exploreOpen && (
+          <div
+            id="explore-panel"
+            className="hdr-menu absolute left-0 right-0 top-full hidden border-t border-sky-400/20 bg-[#0a1224]/95 shadow-[0_25px_50px_-15px_rgba(56,189,248,0.35)] backdrop-blur-xl xl:block"
+          >
+            <div className="hdr-scroll mx-auto max-h-[70vh] max-w-7xl overflow-y-auto px-8 py-7">
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-x-8 gap-y-7">
+                {categories.map((cat) => (
+                  <div key={cat.title}>
+                    <h3 className="mb-3 flex items-center gap-2 border-b border-sky-400/15 pb-2 text-base font-bold text-amber-300">
+                      <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_#fbbf24]" />
+                      {cat.title}
+                    </h3>
+                    <ul className="space-y-1">
+                      {cat.subItems.map((sub) => (
+                        <li key={sub.path}>
+                          <Link
+                            to={sub.path}
+                            aria-current={isActive(sub.path) ? 'page' : undefined}
+                            className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${
+                              isActive(sub.path)
+                                ? 'bg-gradient-to-r from-amber-400/20 to-transparent text-amber-300 shadow-[inset_3px_0_0_#fbbf24]'
+                                : 'text-slate-300 hover:bg-sky-500/10 hover:text-amber-200'
+                            }`}
+                          >
+                            <ChevronRight className="h-3.5 w-3.5 text-sky-400" />
+                            {sub.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
-      {/* Mobile/Responsive Navigation Links Row */}
-      <div className={`lg:hidden flex items-center justify-between sm:justify-center gap-2 sm:gap-4 py-1.5 px-3 text-[11px] font-black tracking-wider uppercase border-t overflow-x-auto custom-scrollbar ${darkMode ? 'bg-slate-900/90 border-slate-800 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
-        <Link to="/" className="hover:text-emerald-600 transition whitespace-nowrap">Home</Link>
-        <Link to="/about-us" className="hover:text-emerald-600 transition whitespace-nowrap">About</Link>
-        <Link to="/team" className="hover:text-emerald-600 transition whitespace-nowrap">Team</Link>
-        <Link to="/events" className="hover:text-emerald-600 transition whitespace-nowrap">Events</Link>
-        <Link to="/contact" className="hover:text-emerald-600 transition whitespace-nowrap">Contact</Link>
-        <Link to="/news" className="hover:text-emerald-600 transition whitespace-nowrap">News</Link>
-      </div>
-    </header>
+        {/* Mobile panel: nav links + topic accordions + account, sob ekhane */}
+        {mobileOpen && (
+          <div
+            id="mobile-panel"
+            className="hdr-menu hdr-scroll relative max-h-[calc(100dvh-4.5rem)] overflow-y-auto overscroll-contain border-t border-sky-400/20 bg-[#0a1224]/95 px-4 pb-6 pt-4 shadow-[0_20px_40px_-15px_rgba(56,189,248,0.35)] xl:hidden"
+          >
+            {/* Main links */}
+            <nav aria-label="Main mobile" className="grid grid-cols-2 gap-2">
+              {NAV_ITEMS.map((item) => {
+                const active = isActive(item.to);
+                return (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    aria-current={active ? 'page' : undefined}
+                    className={`rounded-xl px-4 py-2.5 text-sm font-medium transition-colors ${
+                      active
+                        ? 'bg-gradient-to-r from-amber-400/20 to-transparent text-amber-300 shadow-[inset_3px_0_0_#fbbf24]'
+                        : 'border border-sky-400/15 text-slate-300 hover:bg-sky-500/10 hover:text-amber-200'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Topic-wise accordions */}
+            <p className="mb-2 mt-5 px-1 text-sm font-semibold text-slate-400">Explore the club</p>
+            <div className="space-y-2">
+              {categories.map((cat) => {
+                const open = openCat === cat.title;
+                return (
+                  <div key={cat.title} className="overflow-hidden rounded-xl border border-sky-400/20 bg-sky-500/5">
+                    <button
+                      onClick={() => setOpenCat(open ? null : cat.title)}
+                      aria-expanded={open}
+                      className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-sky-500/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-300"
+                    >
+                      <span className={`flex items-center gap-2.5 text-sm font-bold ${open ? 'text-amber-300' : 'text-slate-100'}`}>
+                        <span className={`h-2 w-2 rounded-full transition-all ${open ? 'bg-amber-400 shadow-[0_0_8px_#fbbf24]' : 'bg-slate-600'}`} />
+                        {cat.title}
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <span className="rounded-full bg-sky-500/15 px-2 py-0.5 text-xs text-sky-200">{cat.subItems.length}</span>
+                        <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-300 ${open ? 'rotate-180 text-amber-300' : ''}`} />
+                      </span>
+                    </button>
+                    {open && (
+                      <ul className="hdr-menu border-t border-sky-400/15 p-2">
+                        {cat.subItems.map((sub) => (
+                          <li key={sub.path}>
+                            <Link
+                              to={sub.path}
+                              aria-current={isActive(sub.path) ? 'page' : undefined}
+                              className={`flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                                isActive(sub.path)
+                                  ? 'bg-amber-400/15 text-amber-300'
+                                  : 'text-slate-300 hover:bg-sky-500/10 hover:text-amber-200'
+                              }`}
+                            >
+                              <ChevronRight className="h-3.5 w-3.5 text-sky-400" />
+                              {sub.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Account */}
+            <div className="mt-5 border-t border-sky-400/15 pt-4">
+              {user ? (
+                <div className="rounded-xl border border-sky-400/20 bg-sky-500/5 p-4">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-300 to-amber-500 font-bold text-[#0a1224]">
+                      {initial}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-bold text-slate-50">{user.name}</p>
+                      <p className="truncate text-xs text-amber-300">{user.email}</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-300">
+                    <span className="rounded-md border border-sky-400/25 bg-sky-500/10 px-2 py-0.5">Dept: {user.dept || 'N/A'}</span>
+                    <span className="rounded-md border border-sky-400/25 bg-sky-500/10 px-2 py-0.5">Batch: {user.batch || 'N/A'}</span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2.5 text-sm font-semibold text-red-300 transition hover:bg-red-500/20"
+                  >
+                    <LogOut className="h-4 w-4" /> Logout
+                  </button>
+                </div>
+              ) : (
+                <AuthButtons stretch />
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Neon bottom line */}
+        <div className="hdr-line pointer-events-none absolute bottom-0 left-0 h-[2px] w-full shadow-[0_0_10px_rgba(251,191,36,0.6)]" />
+      </header>
+    </>
   );
 };
 

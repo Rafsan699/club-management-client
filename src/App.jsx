@@ -25,6 +25,29 @@ import MeetingDetailsUser from './pages/MeetingDetailsUser';
 // প্রিভিয়াস কমিটি পেজ কম্পোনেন্টসমূহ আমদানি
 import PreviousCommitteesList from './pages/PreviousCommitteesList';
 import CommitteeDetails from './pages/CommitteeDetails';
+import CHome from './pages/cricket/CHome';
+import CTeam from './pages/cricket/CTeam';
+import Tournament from './pages/cricket/Tournament';
+import InterTournament from './pages/cricket/InterTournament';
+import CentralTournament from './pages/cricket/CentralTournament';
+import FranchiseTournament from './pages/cricket/FranchiseTournament';
+import InterSchedule from './pages/cricket/InterSchedule';
+import CentralSchedule from './pages/cricket/CentralSchedule';
+import FranchiseSchedule from './pages/cricket/FranchiseSchedule';
+import Players from './pages/cricket/Players';
+import LiveMatchCenter from './pages/cricket/LiveMatchCenter';
+import Auction from './pages/cricket/Auction';
+import LiveMatch from './pages/cricket/LiveMatch';
+import PointTable from './pages/cricket/PointTable';
+
+// Football pages
+import FootballHeader from './pages/Football/FootballHeader';
+import FootballHome from './pages/Football/FootballHome';
+import FootballTeam from './pages/Football/FootballTeam';
+import FootballTournament from './pages/Football/FootballTournament';
+import FootballSchedule from './pages/Football/FootballSchedule';
+import FootballAuction from './pages/Football/FootballAuction';
+import FootballPointTable from './pages/Football/PointTable';
 
 // কমন লেআউট কম্পোনেন্ট
 const Layout = ({ darkMode, setDarkMode, user, content, handleLogout }) => {
@@ -46,6 +69,15 @@ const Layout = ({ darkMode, setDarkMode, user, content, handleLogout }) => {
     </div>
   );
 };
+
+// Football er alada layout: FootballHeader (logo + BRIU Sports Club) shob football page e
+const FootballLayout = ({ darkMode, setDarkMode }) => (
+  <div className={darkMode ? 'dark bg-slate-950 text-slate-100 min-h-screen' : 'bg-[#f3f6f1] text-slate-800 min-h-screen'}>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" />
+    <FootballHeader darkMode={darkMode} setDarkMode={setDarkMode} />
+    <Outlet />
+  </div>
+);
 
 function App() {
   const [content, setContent] = useState(null);
@@ -130,6 +162,30 @@ function App() {
         {/* পাথ এক করার জন্য এখানে /dynamic-form এবং /Access-Form দুটোই সাপোর্ট রাখা হলো */}
         <Route path="/dynamic-form" element={<DynamicFormView />} />
         <Route path="/Access-Form" element={<DynamicFormView />} />
+        <Route path="/sports/cricket" element={<CHome />} />
+        <Route path="/sports/cricket/team" element={<CTeam />} />
+        <Route path="/sports/cricket/tournament" element={<Tournament />} />
+        <Route path="/sports/cricket/inter-tournament" element={<InterTournament />} />
+        <Route path="/sports/cricket/central-tournament" element={<CentralTournament />} />
+        <Route path="/sports/cricket/franchise-tournament" element={<FranchiseTournament />} />
+        <Route path="/sports/cricket/inter-schedule" element={<InterSchedule />} />
+        <Route path="/sports/cricket/central-schedule" element={<CentralSchedule />} />
+        <Route path="/sports/cricket/franchise-schedule" element={<FranchiseSchedule />} />
+        <Route path="/sports/cricket/player" element={<Players />} />
+        <Route path="/sports/cricket/match/:matchId" element={<LiveMatchCenter />} />
+        <Route path="/sports/cricket/auction" element={<Auction />} />
+        <Route path="/sports/cricket/live" element={<LiveMatch />} />
+        <Route path="/sports/cricket/point-table" element={<PointTable />} />
+
+        {/* Football: shob page FootballLayout (FootballHeader) er vitore */}
+        <Route element={<FootballLayout darkMode={darkMode} setDarkMode={setDarkMode} />}>
+          <Route path="/sports/football" element={<FootballHome />} />
+          <Route path="/sports/football/team" element={<FootballTeam />} />
+          <Route path="/sports/football/tournament" element={<FootballTournament />} />
+          <Route path="/sports/football/schedule" element={<FootballSchedule />} />
+          <Route path="/sports/football/point-table" element={<FootballPointTable />} />
+          <Route path="/sports/football/auction" element={<FootballAuction />} />
+        </Route>
       </Routes>
     </Router>
   );

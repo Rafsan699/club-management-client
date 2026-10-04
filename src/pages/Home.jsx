@@ -187,8 +187,8 @@ const Home = () => {
                 Explore more <ArrowRight className="w-4 h-4" />
               </a>
             ) : (
-              <Link to="/news" className="px-7 py-3.5 rounded-full bg-[var(--acc)] hover:opacity-95 text-white font-semibold text-sm sm:text-base transition shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2">
-                Explore newsfeed <ArrowRight className="w-4 h-4" />
+              <Link to="sports/cricket" className="px-7 py-3.5 rounded-full bg-[var(--acc)] hover:opacity-95 text-white font-semibold text-sm sm:text-base transition shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2">
+                Explore Cricket <ArrowRight className="w-4 h-4" />
               </Link>
             )}
             <Link to="/founders" className="px-7 py-3.5 rounded-full border border-white/20 hover:bg-white/10 text-white font-semibold text-sm sm:text-base backdrop-blur-md transition flex items-center justify-center">
