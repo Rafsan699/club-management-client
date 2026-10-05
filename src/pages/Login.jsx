@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import API from '../services/api';
 import { LogIn, Lock, Mail } from 'lucide-react';
+import PageShell from '../components/PageShell';
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -12,28 +13,27 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      // ব্যাকএন্ডে লগইন রিকোয়েস্ট পাঠানো
+      // Send login request to backend
       const res = await API.post('/api/auth/login', formData);
-      
+
       const userData = res.data.user;
 
-      // 🛑 ফ্রন্টএন্ডে অতিরিক্ত সিকিউরিটি চেক: ইউজার অ্যাডমিন না হলে এবং স্ট্যাটাস approved না হলে ব্লক করবে
+      // Extra frontend security check: block non-admin users who are not approved
       if (userData.role !== 'admin' && userData.status !== 'approved') {
         alert('Your account is pending approval by the admin. Please wait for approval.');
         setLoading(false);
-        return; // এখানেই প্রসেস থামিয়ে দেওয়া হলো, ড্যাশবোর্ডে বা হোমপেজে যাবে না
+        return;
       }
-      
+
       alert(res.data.message || 'Login successful!');
-      
-      // লোকাল স্টোরেজে ইউজার ডাটা সেভ করা
+
+      // Save user data to localStorage
       localStorage.setItem('clubUser', JSON.stringify(userData));
-      
-      // হোম পেজে নিয়ে যাওয়া
+
+      // Go to home page
       navigate('/');
     } catch (err) {
       console.error('Login Error details:', err);
-      // ব্যাকএন্ড থেকে আসা 403 বা অন্য যেকোনো এরর মেসেজ এখানে অ্যালার্টে দেখাবে
       alert(err.response?.data?.message || 'Login failed!');
     } finally {
       setLoading(false);
@@ -41,57 +41,62 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fbf9f5] py-12 px-4 text-slate-800">
-      <form onSubmit={handleSubmit} className="bg-white p-8 sm:p-12 rounded-2xl shadow-xl w-full max-w-lg border border-slate-200 my-8 space-y-8">
-        <div className="text-center space-y-2">
-          <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-purple-600 flex items-center justify-center gap-3">
-            <LogIn className="w-10 h-10" /> Member Login
-          </h2>
-          <p className="text-sm text-slate-500 font-medium">Welcome back! Please enter your credentials to continue.</p>
-        </div>
-
-        <div className="space-y-6">
-          <div>
-            <label className="block text-xs font-bold text-slate-600 mb-2 flex items-center gap-1.5 uppercase tracking-wider">
-              <Mail className="w-4 h-4 text-purple-600"/> Email Address
-            </label>
-            <input 
-              type="email" 
-              required
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-              className="w-full p-3 bg-slate-50 text-slate-800 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-500 text-sm font-medium"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-slate-600 mb-2 flex items-center gap-1.5 uppercase tracking-wider">
-              <Lock className="w-4 h-4 text-purple-600"/> Password
-            </label>
-            <input 
-              type="password" 
-              required
-              placeholder="Enter password"
-              value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
-              className="w-full p-3 bg-slate-50 text-slate-800 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-500 text-sm font-medium"
-            />
-          </div>
-        </div>
-
-        <button 
-          type="submit" 
-          disabled={loading}
-          className="w-full bg-slate-800 hover:bg-slate-900 text-white p-4 rounded-xl font-bold text-sm tracking-wider uppercase transition shadow-lg disabled:opacity-50"
+    <PageShell className="pg-soft">
+      <div className="min-h-screen flex items-center justify-center px-4 pt-[calc(var(--hdr)+2rem)] pb-16">
+        <form
+          onSubmit={handleSubmit}
+          className="pg-card rise w-full max-w-md p-7 sm:p-10 space-y-7 shadow-[0_1px_2px_rgba(15,23,42,.04),0_24px_48px_-32px_rgba(15,23,42,.3)]"
         >
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
+          <div className="text-center space-y-3">
+            <div className="flex justify-center">
+              <span className="pg-iconbox !w-14 !h-14 !rounded-2xl"><LogIn className="w-6 h-6" /></span>
+            </div>
+            <h1 className="fd text-3xl font-extrabold">Member login</h1>
+            <p className="text-sm t-mute">Welcome back! Please enter your credentials to continue.</p>
+          </div>
 
-        <p className="text-center text-slate-500 text-xs">
-          Don't have an account? <Link to="/registration" className="text-purple-600 font-bold hover:underline">Register here</Link>
-        </p>
-      </form>
-    </div>
+          <div className="space-y-5">
+            <div>
+              <label htmlFor="login-email" className="flex items-center gap-2 text-sm font-semibold t-ink mb-2">
+                <Mail className="w-4 h-4 t-acc" /> Email address
+              </label>
+              <input
+                id="login-email"
+                type="email"
+                required
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="pg-input"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="login-password" className="flex items-center gap-2 text-sm font-semibold t-ink mb-2">
+                <Lock className="w-4 h-4 t-acc" /> Password
+              </label>
+              <input
+                id="login-password"
+                type="password"
+                required
+                placeholder="Enter password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="pg-input"
+              />
+            </div>
+          </div>
+
+          <button type="submit" disabled={loading} className="pg-btn pg-btn-primary w-full !min-h-[3rem] !text-base">
+            {loading ? 'Logging in…' : 'Login'}
+          </button>
+
+          <p className="text-center text-sm t-mute">
+            Don't have an account?{' '}
+            <Link to="/registration" className="t-acc font-semibold hover:underline">Register here</Link>
+          </p>
+        </form>
+      </div>
+    </PageShell>
   );
 }

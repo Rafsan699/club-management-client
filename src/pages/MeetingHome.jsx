@@ -2,30 +2,29 @@ import React, { useState, useEffect } from 'react';
 import API from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Search, ArrowRight, Lock, ChevronLeft, ChevronRight } from 'lucide-react';
+import PageShell, { PageHero, Spinner } from '../components/PageShell';
 
 const MeetingHome = () => {
   const [meetings, setMeetings] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Pagination States
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const meetingsPerPage = 12; // প্রতি পেজে ১২টি করে মিটিং দেখাবে
+  const meetingsPerPage = 12;
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    // সঠিক এপিআই পাথ (/api/meetings) দিয়ে কল করা হলো
     API.get('/api/meetings')
       .then(res => {
         const meetingList = Array.isArray(res.data) ? res.data : [];
-        console.log("All meetings from server:", meetingList);
-        
-        // শুধু পাবলিশ হওয়া মিটিংগুলো ফিল্টার করা
-        const published = meetingList.filter(m => 
+
+        // Only published meetings
+        const published = meetingList.filter(m =>
           m.isPublished === true || m.isPublished === "true"
-        ); 
-        
+        );
+
         setMeetings(published);
         setLoading(false);
       })
@@ -35,12 +34,11 @@ const MeetingHome = () => {
       });
   }, []);
 
-  // সার্চ কুয়েরি অনুযায়ী মিটিং ফিল্টার করা
-  const filteredMeetings = meetings.filter(m => 
+  const filteredMeetings = meetings.filter(m =>
     m.meetingDate && m.meetingDate.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // সার্চ করলে প্রথম পেজে রিসেট করার লজিক
+  // Reset to first page on search
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery]);
@@ -54,7 +52,6 @@ const MeetingHome = () => {
     }
   };
 
-  // --- Pagination Logic ---
   const indexOfLastMeeting = currentPage * meetingsPerPage;
   const indexOfFirstMeeting = indexOfLastMeeting - meetingsPerPage;
   const currentMeetings = filteredMeetings.slice(indexOfFirstMeeting, indexOfLastMeeting);
@@ -63,148 +60,128 @@ const MeetingHome = () => {
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // পেজ পরিবর্তন হলে স্ক্রিন উপরে নিয়ে যাবে
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-indigo-50/30 py-16 px-4 sm:px-8 max-w-7xl mx-auto space-y-12 animate-in fade-in duration-500">
-      
-      {/* Hero Header Section */}
-      <div className="text-center space-y-4 max-w-2xl mx-auto pt-6">
-        <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight">
-          Meeting Archive & <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">Schedules</span>
-        </h1>
-        <p className="text-sm text-slate-500 font-medium leading-relaxed">
-          Explore all official club meetings, access session details, and review attendance securely.
-        </p>
-      </div>
-
-      {/* Modern Search Bar */}
-      <div className="max-w-xl mx-auto relative group">
-        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
-        <div className="relative flex items-center">
-          <Search className="absolute left-4 w-5 h-5 text-purple-600" />
-          <input 
-            type="text" 
-            placeholder="Search meeting by date (e.g. August)..." 
-            value={searchQuery} 
-            onChange={(e) => setSearchQuery(e.target.value)} 
-            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/90 backdrop-blur-md border border-purple-100 text-sm font-semibold text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+    <PageShell>
+      <PageHero
+        eyebrow="Meeting archive"
+        title="Meeting archive & schedules"
+        desc="Explore all official club meetings, access session details, and review attendance securely."
+      >
+        <div className="rise relative max-w-xl mt-8" style={{ animationDelay: '.24s' }}>
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 t-acc pointer-events-none" />
+          <input
+            type="text"
+            aria-label="Search meetings"
+            placeholder="Search meeting by date (e.g. August)…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pg-input !pl-12 !min-h-[3.25rem] shadow-sm"
           />
         </div>
-      </div>
+      </PageHero>
 
-      {/* Loading & Empty States */}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-24 space-y-3">
-          <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-slate-500 font-bold text-xs tracking-wide">Loading meetings...</p>
-        </div>
-      ) : filteredMeetings.length === 0 ? (
-        <div className="text-center py-20 bg-white/80 backdrop-blur-md rounded-3xl border border-purple-100 shadow-sm space-y-3 max-w-lg mx-auto p-8">
-          <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl mx-auto flex items-center justify-center">
-            <Calendar className="w-6 h-6" />
+      <main className="max-w-7xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
+        {loading ? (
+          <div className="flex justify-center py-24"><Spinner label="Loading meetings…" /></div>
+        ) : filteredMeetings.length === 0 ? (
+          <div className="pg-card text-center py-16 px-6 max-w-lg mx-auto space-y-3">
+            <div className="flex justify-center"><span className="pg-iconbox"><Calendar className="w-5 h-5" /></span></div>
+            <h3 className="fd text-lg font-extrabold">No meetings found</h3>
+            <p className="text-sm t-mute">No published meetings match your search criteria right now.</p>
           </div>
-          <h3 className="text-slate-800 font-extrabold text-lg">No meetings found!</h3>
-          <p className="text-xs text-slate-400 font-medium">No published meetings match your search criteria right now.</p>
-        </div>
-      ) : (
-        <>
-          {/* World-Class Meetings Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentMeetings.map((m) => (
-              <div 
-                key={m._id} 
-                onClick={() => handleMeetingClick(m._id)}
-                className="group relative bg-white/80 backdrop-blur-xl p-7 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1.5 border border-purple-100/80 hover:border-purple-300 transition-all duration-300 cursor-pointer flex flex-col justify-between overflow-hidden"
-              >
-                {/* Decorative background glow on hover */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100/50 rounded-full blur-2xl group-hover:bg-purple-200/60 transition-all duration-500 pointer-events-none -mr-10 -mt-10"></div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between mb-6">
+              <p className="text-sm t-mute">
+                {filteredMeetings.length} {filteredMeetings.length === 1 ? 'meeting' : 'meetings'}
+              </p>
+            </div>
 
-                <div className="space-y-4 relative z-10">
-                  <div className="flex items-start gap-3.5">
-                    <div className="p-3.5 bg-purple-50 text-purple-600 rounded-2xl border border-purple-100 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300 shadow-sm flex-shrink-0">
-                      <Calendar className="w-5 h-5" />
-                    </div>
-                    <div className="space-y-1.5 w-full">
-                      <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider text-purple-600 bg-purple-50 px-2.5 py-0.5 rounded-md">
-                        Scheduled Date
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {currentMeetings.map((m) => (
+                <div
+                  key={m._id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleMeetingClick(m._id)}
+                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleMeetingClick(m._id)}
+                  className="group pg-card pg-card-hover cursor-pointer p-6 flex flex-col justify-between gap-5"
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3.5">
+                      <span className="pg-iconbox group-hover:bg-[var(--acc)] group-hover:text-white transition-colors">
+                        <Calendar className="w-5 h-5" />
                       </span>
-                      <h3 className="text-base font-extrabold text-slate-900 group-hover:text-purple-700 transition">
-                        {m.meetingDate}
-                      </h3>
+                      <div className="min-w-0">
+                        <span className="pg-badge">Scheduled date</span>
+                        <h3 className="fd text-lg font-extrabold mt-2 group-hover:text-[var(--acc)] transition-colors">
+                          {m.meetingDate}
+                        </h3>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Description Box */}
-                  <div className="w-full">
-                    <p className="text-xs text-slate-600 bg-slate-50/80 backdrop-blur-sm p-3 rounded-2xl border border-slate-100/80 leading-relaxed font-medium line-clamp-3">
-                      {m.description && m.description.trim() !== "" 
-                        ? m.description 
+                    <p className="text-sm leading-relaxed bg-soft border bd-line rounded-xl p-3.5 line-clamp-3">
+                      {m.description && m.description.trim() !== ""
+                        ? m.description
                         : "Click to enter secret code & view comprehensive details of this meeting session."}
                     </p>
                   </div>
-                </div>
 
-                {/* Card Footer Action */}
-                <div className="flex justify-between items-center pt-4 mt-4 border-t border-slate-100 relative z-10 text-xs font-bold text-slate-700 group-hover:text-purple-700 transition-colors">
-                  <span className="flex items-center gap-1.5 text-slate-500 group-hover:text-purple-600 transition-colors">
-                    <Lock className="w-3.5 h-3.5 text-purple-500" /> View Attendance
-                  </span>
-                  <div className="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all duration-300 shadow-sm">
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                  <div className="flex justify-between items-center pt-4 border-t bd-line text-sm font-semibold">
+                    <span className="flex items-center gap-2 t-mute group-hover:text-[var(--acc)] transition-colors">
+                      <Lock className="w-4 h-4 t-acc" /> View attendance
+                    </span>
+                    <span className="w-9 h-9 rounded-full bg-[var(--tint)] text-[var(--acc)] grid place-items-center group-hover:bg-[var(--acc)] group-hover:text-white transition-colors">
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Professional Modern Pagination Bar */}
-          {totalPages > 1 && (
-            <div className="flex flex-wrap justify-center items-center gap-2 pt-8">
-              {/* Previous Button */}
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="px-4 py-2.5 rounded-2xl text-xs font-bold bg-white border border-purple-200 text-purple-700 hover:bg-purple-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 transition shadow-sm"
-              >
-                <ChevronLeft className="w-4 h-4" /> Previous
-              </button>
-
-              {/* Page Number Buttons */}
-              <div className="flex items-center gap-1.5 overflow-x-auto max-w-full py-1">
-                {Array.from({ length: totalPages }, (_, index) => {
-                  const pageNumber = index + 1;
-                  return (
-                    <button
-                      key={pageNumber}
-                      onClick={() => handlePageChange(pageNumber)}
-                      className={`w-10 h-10 rounded-2xl text-xs font-extrabold transition-all duration-200 flex items-center justify-center shadow-sm ${
-                        currentPage === pageNumber
-                          ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-purple-200 scale-105'
-                          : 'bg-white text-slate-700 border border-purple-100 hover:bg-purple-50'
-                      }`}
-                    >
-                      {pageNumber}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Next Button */}
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="px-4 py-2.5 rounded-2xl text-xs font-bold bg-white border border-purple-200 text-purple-700 hover:bg-purple-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 transition shadow-sm"
-              >
-                Next <ChevronRight className="w-4 h-4" />
-              </button>
+              ))}
             </div>
-          )}
-        </>
-      )}
-    </div>
+
+            {totalPages > 1 && (
+              <nav aria-label="Pagination" className="flex flex-wrap justify-center items-center gap-2 pt-12">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="pg-btn"
+                >
+                  <ChevronLeft className="w-4 h-4" /> Previous
+                </button>
+
+                <div className="flex items-center gap-1.5 overflow-x-auto max-w-full py-1 pg-noscroll">
+                  {Array.from({ length: totalPages }, (_, index) => {
+                    const pageNumber = index + 1;
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => handlePageChange(pageNumber)}
+                        aria-current={currentPage === pageNumber ? 'page' : undefined}
+                        className={`pg-btn !px-0 w-10 shrink-0 ${currentPage === pageNumber ? 'pg-btn-primary' : ''}`}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="pg-btn"
+                >
+                  Next <ChevronRight className="w-4 h-4" />
+                </button>
+              </nav>
+            )}
+          </>
+        )}
+      </main>
+    </PageShell>
   );
 };
 

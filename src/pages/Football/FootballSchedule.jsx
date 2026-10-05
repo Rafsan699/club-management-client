@@ -1,80 +1,113 @@
 import React, { useState } from 'react';
 import FAPI, { usePolling } from './footballApi';
 
-/* Palette
-   royal #1f5eff · navy #0a1f5c · mist #eaf1ff · line #dbe6fb · page #f4f8ff
-   dark: page #060d20 · card #0c1a3d                                          */
+/* Design tokens (white theme, same as FootballHome)
+   ink #0f172a · body #475569 · muted #64748b · line #e2e8f0 · soft #f8fafc
+   accent #0f7a4a · accent-dark #0b5d38 · accent-tint #ecfdf3
+   fonts: Manrope (headings) + Inter (body)                                   */
 
-const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1f5eff] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[#060d20]';
+const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0f7a4a] focus-visible:ring-offset-2';
+const fieldCls = `block w-full min-w-0 h-11 rounded-lg border border-slate-300 bg-white text-slate-900 hover:border-slate-400 transition-colors ${focusRing}`;
 
 const STATUS = [['all', 'All'], ['live', 'Live'], ['upcoming', 'Upcoming'], ['completed', 'Results']];
-const EVENT_ICON = { goal: '⚽', yellow: '🟨', red: '🟥', sub: '🔁' };
+
+const FONT_CSS = `
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap');
+.fb-page { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+.fb-page .fb-h { font-family: 'Manrope', 'Inter', ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.02em; }
+.fb-page .fb-num { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { .fb-page * { animation: none !important; transition: none !important; } }
+`;
+
+/* Event icons: goal / yellow card / red card / substitution */
+const EventIcon = ({ type }) => {
+  const base = { viewBox: '0 0 24 24', className: 'w-4 h-4 shrink-0', 'aria-hidden': true };
+  if (type === 'goal') return (
+    <svg {...base} fill="none" stroke="#0f7a4a" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" /><path d="M12 8l3.5 2.5-1.3 4h-4.4l-1.3-4zM12 8V3M15.5 10.5L20 9M14.2 14.5l2.6 3.6M9.8 14.5l-2.6 3.6M8.5 10.5L4 9" />
+    </svg>
+  );
+  if (type === 'yellow') return <svg {...base}><rect x="6" y="3" width="12" height="18" rx="2" fill="#facc15" /></svg>;
+  if (type === 'red') return <svg {...base}><rect x="6" y="3" width="12" height="18" rx="2" fill="#dc2626" /></svg>;
+  if (type === 'sub') return (
+    <svg {...base} fill="none" stroke="#475569" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3" />
+    </svg>
+  );
+  return <span aria-hidden="true" className="text-slate-400">•</span>;
+};
+
+const ClockIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
+);
+const PinIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z" /><circle cx="12" cy="10" r="3" /></svg>
+);
 
 const Crest = ({ t }) => t?.logo
-  ? <img src={t.logo} alt="" className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover bg-white ring-1 ring-[#dbe6fb] dark:ring-white/10 shrink-0" />
-  : <span className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#1f5eff] text-white grid place-items-center text-xs font-bold shrink-0">{(t?.shortName || t?.name || '?').slice(0, 3)}</span>;
+  ? <img src={t.logo} alt="" className="w-11 h-11 sm:w-12 sm:h-12 rounded-full object-cover bg-white ring-1 ring-slate-200 shrink-0" />
+  : <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-100 text-slate-600 ring-1 ring-slate-200 grid place-items-center text-xs font-semibold shrink-0">{(t?.shortName || t?.name || '?').slice(0, 3)}</span>;
 
 const StatusPill = ({ m }) => {
   if (m.status === 'live') {
     return (
-      <span className="inline-flex items-center gap-1.5 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shrink-0">
-        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />LIVE {m.minute}'
+      <span className="inline-flex items-center gap-1.5 bg-red-50 text-red-700 ring-1 ring-red-200 text-xs font-semibold px-2.5 py-1 rounded-full shrink-0">
+        <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />Live {m.minute}'
       </span>
     );
   }
   if (m.status === 'completed') {
-    return <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300 shrink-0">Full time</span>;
+    return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 shrink-0">Full time</span>;
   }
-  return <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#eaf1ff] text-[#1f5eff] dark:bg-[#1f5eff]/20 dark:text-sky-300 shrink-0">Upcoming</span>;
+  return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#ecfdf3] text-[#0b5d38] shrink-0">Upcoming</span>;
 };
 
 // team A sits on the left (name, then crest next to the score); team B mirrors it. Phone: crest above name.
 const Team = ({ t, right }) => (
   <div className={`flex flex-col items-center gap-2 text-center min-w-0 sm:gap-4 ${right ? 'sm:flex-row sm:text-left' : 'sm:flex-row-reverse sm:text-right'}`}>
     <Crest t={t} />
-    <span className="text-sm sm:text-lg font-semibold leading-tight line-clamp-2 break-words text-[#0a1f5c] dark:text-white min-w-0">{t?.name}</span>
+    <span className="text-sm sm:text-base font-semibold leading-tight line-clamp-2 break-words text-slate-900 min-w-0">{t?.name}</span>
   </div>
 );
 
-const MatchCard = ({ m }) => {
-  const footer = [m.time, m.venue].filter(Boolean).join(' · ');
-  return (
-    <article className={`bg-white dark:bg-[#0c1a3d] rounded-2xl border p-4 sm:p-6 shadow-[0_1px_2px_rgba(10,31,92,0.04),0_16px_40px_-26px_rgba(10,31,92,0.3)] ${
-      m.status === 'live' ? 'border-red-500 ring-1 ring-red-500/30' : 'border-[#dbe6fb] dark:border-white/10'}`}>
-      <div className="flex items-center justify-between gap-3 mb-5">
-        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate min-w-0">{m.tournament?.name}{m.round && ` · ${m.round}`}</p>
-        <StatusPill m={m} />
+const MatchCard = ({ m }) => (
+  <article className={`bg-white rounded-xl border p-4 sm:p-5 ${m.status === 'live' ? 'border-red-300 ring-1 ring-red-100' : 'border-slate-200'}`}>
+    <div className="flex items-center justify-between gap-3 mb-5">
+      <p className="text-xs text-slate-500 truncate min-w-0">{m.tournament?.name}{m.round && ` · ${m.round}`}</p>
+      <StatusPill m={m} />
+    </div>
+
+    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-4">
+      <Team t={m.teamA} />
+      <div className="text-center px-1 sm:px-4 min-w-[84px]">
+        <b className="fb-h fb-num block text-3xl sm:text-4xl font-extrabold leading-none text-slate-900 whitespace-nowrap">
+          {m.status === 'upcoming' ? 'vs' : `${m.scoreA} - ${m.scoreB}`}
+        </b>
+        {m.status === 'upcoming' && m.time && <span className="fb-num block mt-1.5 text-xs sm:text-sm font-semibold text-[#0f7a4a]">{m.time}</span>}
       </div>
+      <Team t={m.teamB} right />
+    </div>
 
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-4">
-        <Team t={m.teamA} />
-        <div className="text-center px-1 sm:px-4 min-w-[84px]">
-          <b className="block font-['Barlow_Condensed'] text-4xl sm:text-5xl leading-none text-[#0a1f5c] dark:text-white whitespace-nowrap">
-            {m.status === 'upcoming' ? 'vs' : `${m.scoreA} - ${m.scoreB}`}
-          </b>
-          {m.status === 'upcoming' && m.time && <span className="block mt-1 text-xs sm:text-sm font-semibold text-[#1f5eff] dark:text-sky-300">{m.time}</span>}
-        </div>
-        <Team t={m.teamB} right />
+    {(m.time || m.venue) && (
+      <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-xs sm:text-sm text-slate-500">
+        {m.time && <span className="inline-flex items-center gap-1.5"><ClockIcon />{m.time}</span>}
+        {m.venue && <span className="inline-flex items-center gap-1.5 min-w-0"><PinIcon /><span className="truncate">{m.venue}</span></span>}
       </div>
+    )}
 
-      {footer && (
-        <p className="mt-5 pt-4 border-t border-[#e6eefc] dark:border-white/10 text-xs sm:text-sm text-center text-slate-500 dark:text-slate-400 truncate">{footer}</p>
-      )}
-
-      {m.events?.length > 0 && (
-        <ul className="mt-4 flex flex-wrap gap-2">
-          {m.events.map((ev, i) => (
-            <li key={i} className="inline-flex items-center gap-1.5 rounded-full bg-[#f4f8ff] dark:bg-white/5 border border-[#e6eefc] dark:border-white/10 px-3 py-1 text-xs sm:text-sm text-slate-700 dark:text-slate-200">
-              {ev.minute != null && <b className="text-[#1f5eff] dark:text-sky-300">{ev.minute}'</b>}
-              <span aria-hidden="true">{EVENT_ICON[ev.type] || '•'}</span>
-              <span>{ev.player || (ev.team === 'A' ? m.teamA?.name : m.teamB?.name)}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </article>
-  );
-};
+    {m.events?.length > 0 && (
+      <ul className="mt-4 flex flex-wrap gap-2">
+        {m.events.map((ev, i) => (
+          <li key={i} className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-3 py-1 text-xs sm:text-sm text-slate-700">
+            {ev.minute != null && <b className="fb-num text-slate-900">{ev.minute}'</b>}
+            <EventIcon type={ev.type} />
+            <span>{ev.player || (ev.team === 'A' ? m.teamA?.name : m.teamB?.name)}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+  </article>
+);
 
 const dateKey = (m) => { const d = new Date(m.date); return isNaN(d) ? 'tba' : d.toDateString(); };
 const dayLabel = (k, date) => (k === 'tba'
@@ -83,7 +116,7 @@ const dayLabel = (k, date) => (k === 'tba'
 
 const Skeleton = () => (
   <div className="space-y-4" aria-hidden="true">
-    {[0, 1, 2].map((i) => <div key={i} className="h-44 rounded-2xl bg-white dark:bg-[#0c1a3d] border border-[#dbe6fb] dark:border-white/10 animate-pulse" />)}
+    {[0, 1, 2].map((i) => <div key={i} className="h-40 rounded-xl bg-slate-50 border border-slate-200 animate-pulse" />)}
   </div>
 );
 
@@ -120,67 +153,60 @@ export default function FootballSchedule() {
   const today = new Date().toDateString();
 
   return (
-    <div className="bg-[#f4f8ff] dark:bg-[#060d20] min-h-screen overflow-x-hidden">
+    <div className="fb-page bg-white min-h-screen overflow-x-hidden text-slate-700">
+      <style>{FONT_CSS}</style>
+
       {/* ---------- Page header ---------- */}
-      <div className="relative overflow-hidden border-b border-[#dbe6fb] dark:border-white/10 bg-gradient-to-b from-white via-[#eef4ff] to-[#f4f8ff] dark:from-[#0a1f5c] dark:via-[#12349a] dark:to-[#1f5eff]">
-        <svg className="absolute inset-0 w-full h-full text-[#1f5eff] opacity-[0.09] dark:text-white dark:opacity-[0.13]" preserveAspectRatio="xMidYMid slice" viewBox="0 0 800 300" aria-hidden="true">
-          <g fill="none" stroke="currentColor" strokeWidth="3"><rect x="20" y="20" width="760" height="260" /><line x1="400" y1="20" x2="400" y2="280" />
-            <circle cx="400" cy="150" r="55" /><rect x="20" y="85" width="110" height="130" /><rect x="670" y="85" width="110" height="130" /></g>
-        </svg>
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14 pb-20 sm:pb-24">
-          <h1 className="font-['Barlow_Condensed'] text-5xl sm:text-6xl md:text-7xl font-bold leading-none text-[#0a1f5c] dark:text-white">Schedule and results</h1>
-          <p className="mt-3 text-base sm:text-lg text-slate-600 dark:text-blue-100 max-w-xl">Live scores, upcoming fixtures and final results from every tournament.</p>
+      <div className="border-b border-slate-200 bg-slate-50">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+          <h1 className="fb-h text-4xl sm:text-5xl font-extrabold leading-tight text-slate-900">Schedule and results</h1>
+          <p className="mt-3 text-base text-slate-600 max-w-xl leading-relaxed">Live scores, upcoming fixtures and final results from every tournament.</p>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-14">
-        {/* ---------- Filter panel (overlaps header) ---------- */}
-        <section className="-mt-12 sm:-mt-14 relative z-10 bg-white dark:bg-[#0c1a3d] border border-[#dbe6fb] dark:border-white/10 rounded-2xl p-4 sm:p-6 shadow-[0_16px_40px_-24px_rgba(10,31,92,0.4)]" aria-label="Filters">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,280px)_minmax(0,1fr)] md:items-end">
-            <label className="block min-w-0">
-              <span className="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Tournament</span>
-              <select value={tid} onChange={(e) => setTid(e.target.value)} aria-label="Tournament"
-                className={`block w-full max-w-full min-w-0 h-12 px-3 rounded-xl border border-[#dbe6fb] dark:border-white/15 bg-[#f4f8ff] dark:bg-white/5 text-[#0a1f5c] dark:text-white font-semibold ${focusRing}`}>
-                <option value="">All tournaments</option>
-                {tours.map((t) => <option key={t._id} value={t._id}>{t.name}</option>)}
-              </select>
-            </label>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+        {/* ---------- Filters ---------- */}
+        <section aria-label="Filters">
+          <label className="block min-w-0 md:max-w-xs">
+            <span className="block text-sm font-medium text-slate-700 mb-1.5">Tournament</span>
+            <select value={tid} onChange={(e) => setTid(e.target.value)} aria-label="Tournament" className={`${fieldCls} px-3 font-medium`}>
+              <option value="">All tournaments</option>
+              {tours.map((t) => <option key={t._id} value={t._id}>{t.name}</option>)}
+            </select>
+          </label>
 
-            <div className="min-w-0">
-              <span className="block text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Match status</span>
-              <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1" role="tablist">
-                {STATUS.map(([k, label]) => (
-                  <button key={k} role="tab" aria-selected={st === k} onClick={() => setSt(k)}
-                    className={`shrink-0 inline-flex items-center gap-2 h-12 px-4 rounded-xl text-sm font-semibold transition-colors ${focusRing} ${
-                      st === k ? 'bg-[#1f5eff] text-white shadow-sm' : 'bg-[#eaf1ff] text-[#0a1f5c] hover:bg-[#dbe6fb] dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/15'}`}>
-                    {k === 'live' && count('live') > 0 && <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />}
-                    {label}
-                    <span className={`text-xs px-1.5 rounded-full ${st === k ? 'bg-white/25' : 'bg-white dark:bg-white/10'}`}>{count(k)}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+          <div className="mt-5 flex gap-1 overflow-x-auto border-b border-slate-200" role="tablist" aria-label="Match status">
+            {STATUS.map(([k, label]) => (
+              <button key={k} role="tab" aria-selected={st === k} onClick={() => setSt(k)}
+                className={`relative shrink-0 inline-flex items-center gap-2 px-4 py-3 text-sm font-semibold whitespace-nowrap transition-colors rounded-t-md ${focusRing} ${
+                  st === k ? 'text-[#0f7a4a]' : 'text-slate-500 hover:text-slate-900'}`}>
+                {k === 'live' && count('live') > 0 && <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />}
+                {label}
+                <span className={`fb-num text-xs px-1.5 py-0.5 rounded-full ${st === k ? 'bg-[#ecfdf3] text-[#0b5d38]' : 'bg-slate-100 text-slate-500'}`}>{count(k)}</span>
+                {st === k && <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-[#0f7a4a]" />}
+              </button>
+            ))}
           </div>
         </section>
 
         {/* ---------- Match list ---------- */}
-        <div className="mt-8 sm:mt-10">
+        <div className="mt-8">
           {loading && <Skeleton />}
 
           {!loading && shown.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-[#c9d9f7] dark:border-white/15 bg-white dark:bg-[#0c1a3d] px-6 py-14 text-center">
-              <p className="text-lg font-bold text-[#0a1f5c] dark:text-white">No matches found</p>
-              <p className="text-slate-500 dark:text-slate-400 mt-1">Try another tournament or status.</p>
+            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-6 py-14 text-center">
+              <p className="fb-h text-lg font-bold text-slate-900">No matches found</p>
+              <p className="text-sm text-slate-500 mt-1">Try another tournament or status.</p>
               {(tid || st !== 'all') && (
                 <button onClick={() => { setTid(''); setSt('all'); }}
-                  className={`mt-5 px-5 py-2.5 rounded-xl bg-[#1f5eff] text-white font-bold hover:bg-[#1749d6] transition-colors ${focusRing}`}>Clear filters</button>
+                  className={`mt-5 px-5 py-2.5 rounded-lg bg-[#0f7a4a] text-white text-sm font-semibold hover:bg-[#0b5d38] transition-colors ${focusRing}`}>Clear filters</button>
               )}
             </div>
           )}
 
           {liveNow.length > 0 && (
-            <section className="mb-8 sm:mb-10">
-              <h2 className="flex items-center gap-2 font-['Barlow_Condensed'] text-2xl sm:text-3xl font-bold text-[#0a1f5c] dark:text-white mb-4">
+            <section className="mb-10">
+              <h2 className="fb-h flex items-center gap-2 text-lg sm:text-xl font-bold text-slate-900 mb-4">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />Live now
               </h2>
               <div className="space-y-4">{liveNow.map((m) => <MatchCard key={m._id} m={m} />)}</div>
@@ -188,12 +214,11 @@ export default function FootballSchedule() {
           )}
 
           {groups.map((g) => (
-            <section key={g.k} className="mb-8 sm:mb-10">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="w-1.5 h-7 rounded-full bg-[#1f5eff] shrink-0" />
-                <h2 className="font-['Barlow_Condensed'] text-2xl sm:text-3xl font-bold leading-none text-[#0a1f5c] dark:text-white">{dayLabel(g.k, g.date)}</h2>
-                {g.k === today && <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#1f5eff] text-white">Today</span>}
-                <span className="ml-auto text-sm text-slate-500 dark:text-slate-400 shrink-0">{g.items.length} {g.items.length === 1 ? 'match' : 'matches'}</span>
+            <section key={g.k} className="mb-10">
+              <div className="flex items-center gap-3 mb-4 pb-3 border-b border-slate-200">
+                <h2 className="fb-h text-lg sm:text-xl font-bold leading-tight text-slate-900">{dayLabel(g.k, g.date)}</h2>
+                {g.k === today && <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#0f7a4a] text-white">Today</span>}
+                <span className="fb-num ml-auto text-sm text-slate-500 shrink-0">{g.items.length} {g.items.length === 1 ? 'match' : 'matches'}</span>
               </div>
               <div className="space-y-4">{g.items.map((m) => <MatchCard key={m._id} m={m} />)}</div>
             </section>
