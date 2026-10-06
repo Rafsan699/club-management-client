@@ -3,120 +3,88 @@ import { Link } from 'react-router-dom';
 import FAPI, { usePolling, fmtDate } from './footballApi';
 import StandingsTable, { formatLabel } from './StandingsTable';
 
-/* Design tokens (white theme)
-   ink #0f172a · body #475569 · muted #64748b · line #e2e8f0 · soft #f8fafc
-   accent (pitch green) #0f7a4a · accent-dark #0b5d38 · accent-tint #ecfdf3
-   fonts: Manrope (headings) + Inter (body)                                   */
-
-const FONT_CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap');
-.fb-home { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
-.fb-home .fb-h { font-family: 'Manrope', 'Inter', ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.02em; }
-.fb-home .fb-num { font-variant-numeric: tabular-nums; }
-@media (prefers-reduced-motion: reduce) { .fb-home * { animation: none !important; transition: none !important; } }
-`;
+/* Palette
+   royal #1f5eff · navy #0a1f5c · mist #eaf1ff · line #dbe6fb · page #f4f8ff
+   dark: page #060d20 · card #0c1a3d                                          */
 
 const ICONS = {
-  trophy: 'M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2z',
-  teams: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
+  trophy: 'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3',
+  teams: 'M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM21 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8',
   calendar: 'M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z',
-  tag: 'M12.59 2.59A2 2 0 0 0 11.17 2H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.42l8.7 8.7a2.43 2.43 0 0 0 3.42 0l6.58-6.58a2.43 2.43 0 0 0 0-3.42zM7.5 7.5h.01',
-  chevron: 'M9 18l6-6-6-6',
-  pin: 'M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
-  clock: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2',
-  gavel: 'M14 13l-8.5 8.5a2.12 2.12 0 0 1-3-3L11 10M16 16l6-6M8 8l6-6M9 7l8 8M21 11l-8-8'
+  tag: 'M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8zM7.5 7.5h.01'
 };
-const Icon = ({ name, className = 'w-5 h-5' }) => (
-  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+const Icon = ({ name, className = 'w-6 h-6' }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d={ICONS[name]} />
   </svg>
 );
 
 const Logo = ({ t, size = 'w-12 h-12' }) => t?.logo
-  ? <img src={t.logo} alt="" className={`${size} rounded-full object-cover bg-white ring-1 ring-slate-200 shrink-0`} />
-  : <span className={`${size} rounded-full bg-slate-100 text-slate-600 ring-1 ring-slate-200 grid place-items-center text-xs font-semibold shrink-0`}>{(t?.shortName || t?.name || '?').slice(0, 3)}</span>;
+  ? <img src={t.logo} alt="" className={`${size} rounded-full object-cover bg-white ring-1 ring-[#dbe6fb] dark:ring-white/10 shrink-0`} />
+  : <span className={`${size} rounded-full bg-[#1f5eff] text-white grid place-items-center text-xs font-bold shrink-0`}>{(t?.shortName || t?.name || '?').slice(0, 3)}</span>;
 
-const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0f7a4a] focus-visible:ring-offset-2';
+const focusRing = 'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1f5eff] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[#060d20]';
 
-const SectionHead = ({ title, sub, to, action = 'View all' }) => (
-  <header className="flex items-end justify-between gap-4 mb-5 sm:mb-6">
-    <div className="min-w-0">
-      <h2 className="fb-h text-xl sm:text-2xl font-bold text-slate-900 break-words">{title}</h2>
-      {sub && <p className="text-sm text-slate-500 mt-1 break-words">{sub}</p>}
-    </div>
-    {to && (
-      <Link to={to} className={`shrink-0 inline-flex items-center gap-1 text-sm font-semibold text-[#0f7a4a] hover:text-[#0b5d38] rounded-md ${focusRing}`}>
-        {action}<Icon name="chevron" className="w-4 h-4" />
-      </Link>
-    )}
-  </header>
-);
-
-const Panel = ({ title, sub, to, action, children, className = '' }) => (
-  <section className={`min-w-0 ${className}`}>
-    <SectionHead title={title} sub={sub} to={to} action={action} />
-    {children}
+const Panel = ({ title, sub, to, action = 'View all', children, className = '' }) => (
+  <section className={`bg-white dark:bg-[#0c1a3d] border border-[#dbe6fb] dark:border-white/10 rounded-2xl shadow-[0_1px_2px_rgba(10,31,92,0.04),0_16px_40px_-24px_rgba(10,31,92,0.3)] ${className}`}>
+    <header className="flex items-start justify-between gap-3 px-4 sm:px-7 pt-5 sm:pt-7">
+      <div className="flex items-start gap-3 min-w-0">
+        <span className="w-1.5 self-stretch min-h-[2rem] rounded-full bg-[#1f5eff] shrink-0" />
+        <div className="min-w-0">
+          <h2 className="font-['Barlow_Condensed'] text-[1.75rem] sm:text-4xl font-bold leading-tight text-[#0a1f5c] dark:text-white break-words">{title}</h2>
+          {sub && <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 break-words">{sub}</p>}
+        </div>
+      </div>
+      {to && (
+        <Link to={to} className={`shrink-0 rounded-lg px-3 py-2 text-sm font-semibold text-[#1f5eff] dark:text-sky-300 bg-[#eaf1ff] dark:bg-white/10 hover:bg-[#dbe6fb] dark:hover:bg-white/15 transition-colors ${focusRing}`}>{action}</Link>
+      )}
+    </header>
+    <div className="p-4 sm:p-7 min-w-0">{children}</div>
   </section>
-);
-
-const Box = ({ children, className = '' }) => (
-  <div className={`rounded-xl border border-slate-200 bg-white ${className}`}>{children}</div>
 );
 
 const StatusPill = ({ m }) => {
   if (m.status === 'live') {
     return (
-      <span className="inline-flex items-center gap-1.5 bg-red-50 text-red-700 ring-1 ring-red-200 text-xs font-semibold px-2.5 py-1 rounded-full shrink-0">
-        <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />Live {m.minute}'
+      <span className="inline-flex items-center gap-1.5 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shrink-0">
+        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />LIVE {m.minute}'
       </span>
     );
   }
   if (m.status === 'completed') {
-    return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 shrink-0">Full time</span>;
+    return <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300 shrink-0">Full time</span>;
   }
-  return <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#ecfdf3] text-[#0b5d38] shrink-0">Upcoming</span>;
+  return <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#eaf1ff] text-[#1f5eff] dark:bg-[#1f5eff]/20 dark:text-sky-300 shrink-0">Upcoming</span>;
 };
 
 const Side = ({ t }) => (
   <div className="flex flex-col items-center gap-2 text-center min-w-0">
-    <Logo t={t} size="w-11 h-11 sm:w-12 sm:h-12" />
-    <span className="text-sm font-semibold leading-tight line-clamp-2 break-words w-full text-slate-900">{t?.shortName || t?.name}</span>
+    <Logo t={t} size="w-12 h-12 sm:w-14 sm:h-14" />
+    <span className="text-sm font-semibold leading-tight line-clamp-2 break-words w-full text-[#0a1f5c] dark:text-white">{t?.shortName || t?.name}</span>
   </div>
 );
 
-const Meta = ({ icon, children }) => (
-  <span className="inline-flex items-center gap-1.5 min-w-0">
-    <Icon name={icon} className="w-3.5 h-3.5 shrink-0 text-slate-400" /><span className="truncate">{children}</span>
-  </span>
-);
-
 const MatchCard = ({ m }) => (
-  <article className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 sm:p-5 flex flex-col gap-4 hover:border-slate-300 transition-colors">
+  <article className="min-w-0 rounded-2xl border border-[#dbe6fb] dark:border-white/10 bg-[#fbfdff] dark:bg-white/5 p-4 sm:p-5 flex flex-col gap-4">
     <div className="flex items-center justify-between gap-2">
-      <p className="text-xs text-slate-500 truncate min-w-0">{m.tournament?.name}{m.round && ` · ${m.round}`}</p>
+      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate min-w-0">{m.tournament?.name}{m.round && ` · ${m.round}`}</p>
       <StatusPill m={m} />
     </div>
     <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
       <Side t={m.teamA} />
-      <b className="fb-h fb-num text-2xl sm:text-3xl font-extrabold text-slate-900 px-1 whitespace-nowrap">
+      <b className="font-['Barlow_Condensed'] text-3xl sm:text-4xl text-[#0a1f5c] dark:text-white px-1 whitespace-nowrap">
         {m.status === 'upcoming' ? 'vs' : `${m.scoreA} - ${m.scoreB}`}
       </b>
       <Side t={m.teamB} />
     </div>
-    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-slate-500 border-t border-slate-100 pt-3">
-      <Meta icon="calendar">{fmtDate(m.date)}</Meta>
-      {m.time && <Meta icon="clock">{m.time}</Meta>}
-      {m.venue && <Meta icon="pin">{m.venue}</Meta>}
-    </div>
+    <p className="text-xs sm:text-sm text-center text-slate-500 dark:text-slate-400 border-t border-[#e6eefc] dark:border-white/10 pt-3 truncate">
+      {fmtDate(m.date)}{m.time && ` · ${m.time}`}{m.venue && ` · ${m.venue}`}
+    </p>
   </article>
 );
 
 const Empty = ({ children }) => (
-  <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">{children}</div>
-);
-
-const Badge = ({ children }) => (
-  <span className="inline-block text-xs font-semibold px-2.5 py-1 rounded-full capitalize bg-[#ecfdf3] text-[#0b5d38] shrink-0">{children}</span>
+  <div className="rounded-xl border border-dashed border-[#c9d9f7] dark:border-white/15 bg-[#f4f8ff] dark:bg-white/5 px-4 py-8 text-center text-slate-500 dark:text-slate-400">{children}</div>
 );
 
 const byDate = (a, b) => new Date(a.date) - new Date(b.date);
@@ -155,83 +123,76 @@ export default function FootballHome() {
   ];
 
   return (
-    <div className="fb-home bg-white min-h-screen overflow-x-hidden text-slate-700">
-      <style>{FONT_CSS}</style>
-
+    <div className="bg-[#f4f8ff] dark:bg-[#060d20] min-h-screen overflow-x-hidden">
       {/* ---------- Hero ---------- */}
-      <div className="border-b border-slate-200 bg-slate-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-[#0f7a4a]">Brahmaputra International University</p>
-            <h1 className="fb-h text-5xl sm:text-6xl font-extrabold leading-[1.05] mt-3 text-slate-900">BRIU Football</h1>
-            <p className="mt-4 max-w-md text-base text-slate-600 leading-relaxed">
-              Live scores, fixtures, standings and the player auction for every university tournament.
-            </p>
-            <div className="mt-7 flex flex-col sm:flex-row gap-3">
-              <Link to="/sports/football/schedule" className={`px-5 py-3 rounded-lg bg-[#0f7a4a] text-white text-sm font-semibold text-center hover:bg-[#0b5d38] transition-colors ${focusRing}`}>See full schedule</Link>
-              <Link to="/sports/football/point-table" className={`px-5 py-3 rounded-lg border border-slate-300 bg-white text-slate-800 text-sm font-semibold text-center hover:bg-slate-50 transition-colors ${focusRing}`}>Open point table</Link>
-            </div>
-          </div>
+      <div className="relative overflow-hidden text-[#0a1f5c] dark:text-white border-b border-[#dbe6fb] dark:border-white/10 bg-gradient-to-b from-white via-[#eef4ff] to-[#f4f8ff] dark:from-[#0a1f5c] dark:via-[#12349a] dark:to-[#1f5eff]">
+        <svg className="absolute inset-0 w-full h-full text-[#1f5eff] opacity-[0.09] dark:text-white dark:opacity-[0.13]" preserveAspectRatio="xMidYMid slice" viewBox="0 0 800 300" aria-hidden="true">
+          <g fill="none" stroke="currentColor" strokeWidth="3"><rect x="20" y="20" width="760" height="260" /><line x1="400" y1="20" x2="400" y2="280" />
+            <circle cx="400" cy="150" r="55" /><rect x="20" y="85" width="110" height="130" /><rect x="670" y="85" width="110" height="130" /></g>
+        </svg>
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-24 sm:pb-28 text-center">
+          <p className="text-sm sm:text-base font-medium text-[#1f5eff] dark:text-blue-100">Brahmaputra International University</p>
+          <h1 className="font-['Barlow_Condensed'] text-6xl sm:text-7xl md:text-8xl font-bold leading-none mt-2 text-[#0a1f5c] dark:text-white">BRIU Football</h1>
 
           {hero ? (
-            <div className="w-full min-w-0 bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_40px_-28px_rgba(15,23,42,0.25)]">
-              <div className="flex items-center justify-between gap-3 mb-6">
+            <div className="w-full max-w-2xl mx-auto mt-8 sm:mt-10 bg-white dark:bg-[#0c1a3d] text-[#0a1f5c] dark:text-white border border-[#dbe6fb] dark:border-white/10 rounded-3xl p-5 sm:p-8 shadow-[0_24px_60px_-28px_rgba(10,31,92,0.35)]">
+              <div className="flex justify-center mb-5">
                 {hero.status === 'live'
                   ? <StatusPill m={hero} />
-                  : <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#ecfdf3] text-[#0b5d38]">Next match</span>}
-                <p className="text-xs text-slate-500 truncate">{hero.tournament?.name}{hero.round && ` · ${hero.round}`}</p>
+                  : <span className="bg-[#eaf1ff] dark:bg-[#1f5eff]/20 text-[#1f5eff] dark:text-sky-300 px-3.5 py-1.5 rounded-full text-sm font-bold">Next match · {fmtDate(hero.date)}{hero.time && ` · ${hero.time}`}</span>}
               </div>
-              <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 sm:gap-5">
-                <div className="flex flex-col items-center gap-3 min-w-0 text-center">
-                  <Logo t={hero.teamA} size="w-16 h-16 sm:w-20 sm:h-20" />
-                  <b className="text-sm sm:text-base font-semibold leading-tight line-clamp-2 break-words w-full text-slate-900">{hero.teamA?.name}</b>
+              <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 sm:gap-6">
+                <div className="flex flex-col items-center gap-3 min-w-0">
+                  <Logo t={hero.teamA} size="w-16 h-16 sm:w-24 sm:h-24" />
+                  <b className="text-sm sm:text-lg leading-tight line-clamp-2 break-words w-full">{hero.teamA?.name}</b>
                 </div>
-                <div className="fb-h fb-num text-4xl sm:text-6xl font-extrabold text-slate-900 whitespace-nowrap">
+                <div className="font-['Barlow_Condensed'] text-5xl sm:text-7xl font-bold whitespace-nowrap">
                   {hero.status === 'upcoming' ? 'vs' : `${hero.scoreA} - ${hero.scoreB}`}
                 </div>
-                <div className="flex flex-col items-center gap-3 min-w-0 text-center">
-                  <Logo t={hero.teamB} size="w-16 h-16 sm:w-20 sm:h-20" />
-                  <b className="text-sm sm:text-base font-semibold leading-tight line-clamp-2 break-words w-full text-slate-900">{hero.teamB?.name}</b>
+                <div className="flex flex-col items-center gap-3 min-w-0">
+                  <Logo t={hero.teamB} size="w-16 h-16 sm:w-24 sm:h-24" />
+                  <b className="text-sm sm:text-lg leading-tight line-clamp-2 break-words w-full">{hero.teamB?.name}</b>
                 </div>
               </div>
-              <div className="mt-6 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-xs sm:text-sm text-slate-500">
-                <Meta icon="calendar">{fmtDate(hero.date)}</Meta>
-                {hero.time && <Meta icon="clock">{hero.time}</Meta>}
-                {hero.venue && <Meta icon="pin">{hero.venue}</Meta>}
-              </div>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-5 pt-4 border-t border-[#e6eefc] dark:border-white/10 truncate">
+                {hero.tournament?.name}{hero.round && ` · ${hero.round}`}{hero.venue && ` · ${hero.venue}`}
+              </p>
             </div>
           ) : (
-            <Empty>Fixtures will appear here once the schedule is published.</Empty>
+            <p className="mt-8 text-slate-500 dark:text-blue-100">Fixtures will appear here once the schedule is published.</p>
           )}
+
+          <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center">
+            <Link to="/sports/football/schedule" className={`px-6 py-3 rounded-xl bg-[#1f5eff] text-white font-bold shadow-sm hover:bg-[#1749d6] transition-colors ${focusRing}`}>See full schedule</Link>
+            <Link to="/sports/football/point-table" className={`px-6 py-3 rounded-xl border border-[#1f5eff]/30 bg-white dark:bg-transparent dark:border-white/40 text-[#1f5eff] dark:text-white font-bold hover:bg-[#eaf1ff] dark:hover:bg-white/10 transition-colors ${focusRing}`}>Open point table</Link>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
-        {/* ---------- Stats ---------- */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 rounded-xl border border-slate-200 divide-slate-200 overflow-hidden mb-12 sm:mb-16 bg-white divide-y lg:divide-y-0 lg:divide-x [&>*:nth-child(odd)]:border-r [&>*:nth-child(odd)]:border-slate-200 lg:[&>*:nth-child(odd)]:border-r-0">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-14">
+        {/* ---------- Stats strip (overlaps hero) ---------- */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 -mt-12 sm:-mt-14 relative z-10 mb-8 sm:mb-10">
           {stats.map(([label, value, to, icon]) => (
-            <Link key={label} to={to} className={`group flex items-center gap-4 p-4 sm:p-6 hover:bg-slate-50 transition-colors ${focusRing}`}>
-              <span className="w-10 h-10 shrink-0 rounded-lg grid place-items-center bg-[#ecfdf3] text-[#0f7a4a]"><Icon name={icon} /></span>
-              <span className="min-w-0">
-                <b className="fb-h fb-num block text-2xl sm:text-3xl font-extrabold leading-none text-slate-900">{value}</b>
-                <span className="block text-sm text-slate-500 mt-1 truncate">{label}</span>
-              </span>
+            <Link key={label} to={to}
+              className={`group bg-white dark:bg-[#0c1a3d] border border-[#dbe6fb] dark:border-white/10 rounded-2xl p-4 sm:p-6 shadow-[0_16px_40px_-24px_rgba(10,31,92,0.4)] hover:border-[#1f5eff] transition-colors ${focusRing}`}>
+              <span className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl grid place-items-center bg-[#eaf1ff] dark:bg-[#1f5eff]/20 text-[#1f5eff] dark:text-sky-300 mb-3 sm:mb-4"><Icon name={icon} /></span>
+              <b className="block font-['Barlow_Condensed'] text-4xl sm:text-5xl leading-none text-[#0a1f5c] dark:text-white">{value}</b>
+              <span className="block text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">{label}</span>
             </Link>
           ))}
         </div>
 
-        <div className="flex flex-col gap-12 sm:gap-16">
+        <div className="flex flex-col gap-6 sm:gap-8">
           {/* ---------- Match center ---------- */}
           <Panel title="Fixtures and results" sub="Live scores, upcoming matches and latest results" to="/sports/football/schedule">
-            <div className="flex gap-1 mb-6 border-b border-slate-200 overflow-x-auto" role="tablist">
+            <div className="grid grid-cols-3 gap-2 mb-5 sm:flex sm:overflow-x-auto sm:pb-1" role="tablist">
               {tabs.map(([k, label, list]) => (
                 <button key={k} role="tab" aria-selected={current === k} onClick={() => setTab(k)}
-                  className={`relative inline-flex items-center gap-2 px-4 py-3 text-sm font-semibold whitespace-nowrap transition-colors rounded-t-md ${focusRing} ${
-                    current === k ? 'text-[#0f7a4a]' : 'text-slate-500 hover:text-slate-900'}`}>
+                  className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2.5 rounded-full text-[13px] sm:text-sm font-semibold transition-colors sm:shrink-0 ${focusRing} ${
+                    current === k ? 'bg-[#1f5eff] text-white shadow-sm' : 'bg-[#eaf1ff] text-[#0a1f5c] hover:bg-[#dbe6fb] dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/15'}`}>
                   {k === 'live' && list.length > 0 && <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />}
                   {label}
-                  <span className={`fb-num text-xs px-1.5 py-0.5 rounded-full ${current === k ? 'bg-[#ecfdf3] text-[#0b5d38]' : 'bg-slate-100 text-slate-500'}`}>{list.length}</span>
-                  {current === k && <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-[#0f7a4a]" />}
+                  <span className={`hidden sm:inline text-xs px-1.5 rounded-full ${current === k ? 'bg-white/25' : 'bg-white dark:bg-white/10'}`}>{list.length}</span>
                 </button>
               ))}
             </div>
@@ -241,53 +202,45 @@ export default function FootballHome() {
           </Panel>
 
           {/* ---------- Standings + side column ---------- */}
-          <div className="grid gap-10 lg:gap-8 lg:grid-cols-3 items-start">
-            <Panel className="lg:col-span-2" title="Standings" sub={active?.name} to="/sports/football/point-table" action="Full table">
+          <div className="grid gap-6 sm:gap-8 lg:grid-cols-3 items-start">
+            <Panel className="lg:col-span-2 min-w-0" title="Standings" sub={active?.name} to="/sports/football/point-table" action="Full table">
               {d.table.length > 0
-                ? <Box className="p-2 sm:p-4 overflow-hidden"><StandingsTable rows={d.table} format={active?.format} limit={8} bare /></Box>
+                ? <StandingsTable rows={d.table} format={active?.format} limit={8} bare />
                 : <Empty>Standings will appear after the first completed match.</Empty>}
             </Panel>
 
-            <div className="flex flex-col gap-10 min-w-0">
+            <div className="flex flex-col gap-6 sm:gap-8 min-w-0">
               <Panel title="Tournament in focus">
                 {active ? (
-                  <Box className="p-5">
-                    <div className="flex items-start justify-between gap-3">
-                      <h3 className="fb-h text-lg font-bold text-slate-900 leading-snug">{active.name}</h3>
-                      <Badge>{active.status}</Badge>
-                    </div>
-                    <p className="text-sm text-slate-600 mt-3">{formatLabel(active)}</p>
-                    <div className="mt-3 flex flex-col gap-1.5 text-sm text-slate-500">
-                      <Meta icon="calendar">{fmtDate(active.startDate)}{active.endDate && ` to ${fmtDate(active.endDate)}`}</Meta>
-                      {active.venue && <Meta icon="pin">{active.venue}</Meta>}
-                    </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-[#0a1f5c] dark:text-white leading-snug">{active.name}</h3>
+                    <p className="inline-block mt-2 text-xs font-bold px-2.5 py-1 rounded-full capitalize bg-[#eaf1ff] text-[#1f5eff] dark:bg-[#1f5eff]/20 dark:text-sky-300">{active.status}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-3">{formatLabel(active)}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                      {fmtDate(active.startDate)}{active.endDate && ` to ${fmtDate(active.endDate)}`}{active.venue && ` · ${active.venue}`}
+                    </p>
                     <div className="grid grid-cols-2 gap-3 mt-5">
-                      <Link to="/sports/football/schedule" className={`text-center px-3 py-2.5 rounded-lg bg-[#0f7a4a] text-white text-sm font-semibold hover:bg-[#0b5d38] transition-colors ${focusRing}`}>Fixtures</Link>
-                      <Link to="/sports/football/point-table" className={`text-center px-3 py-2.5 rounded-lg border border-slate-300 text-slate-800 text-sm font-semibold hover:bg-slate-50 transition-colors ${focusRing}`}>Standings</Link>
+                      <Link to="/sports/football/schedule" className={`text-center px-3 py-2.5 rounded-xl bg-[#1f5eff] text-white text-sm font-bold hover:bg-[#1749d6] transition-colors ${focusRing}`}>Fixtures</Link>
+                      <Link to="/sports/football/point-table" className={`text-center px-3 py-2.5 rounded-xl border border-[#1f5eff]/30 text-[#1f5eff] dark:text-sky-300 text-sm font-bold hover:bg-[#eaf1ff] dark:hover:bg-white/10 transition-colors ${focusRing}`}>Standings</Link>
                     </div>
-                  </Box>
+                  </div>
                 ) : <Empty>No tournament yet.</Empty>}
               </Panel>
 
               <Panel title="Player auction" to="/sports/football/auction" action="Open">
-                <Box className="p-5">
-                  {livePlayer ? (
-                    <div>
-                      <span className="inline-flex items-center gap-1.5 bg-red-50 text-red-700 ring-1 ring-red-200 text-xs font-semibold px-2.5 py-1 rounded-full">
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />Live now
-                      </span>
-                      <h3 className="fb-h text-lg font-bold text-slate-900 mt-3">{livePlayer.name} <span className="text-sm font-medium text-slate-500">({livePlayer.position})</span></h3>
-                      <p className="text-sm text-slate-500 mt-1">
-                        Current bid <b className="fb-num text-slate-900">{livePlayer.currentBid}</b>{livePlayer.currentTeam && ` by ${livePlayer.currentTeam.name}`}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="flex items-start gap-3">
-                      <span className="w-10 h-10 shrink-0 rounded-lg grid place-items-center bg-slate-100 text-slate-500"><Icon name="gavel" /></span>
-                      <p className="text-sm text-slate-500">No player on the block right now. <b className="fb-num text-slate-900">{sold.length}</b> players sold so far.</p>
-                    </div>
-                  )}
-                </Box>
+                {livePlayer ? (
+                  <div>
+                    <span className="inline-flex items-center gap-1.5 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />LIVE
+                    </span>
+                    <h3 className="text-lg font-bold text-[#0a1f5c] dark:text-white mt-3">{livePlayer.name} <span className="font-medium text-slate-500 dark:text-slate-400">({livePlayer.position})</span></h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                      Current bid <b className="text-[#0a1f5c] dark:text-white">{livePlayer.currentBid}</b>{livePlayer.currentTeam && ` by ${livePlayer.currentTeam.name}`}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-slate-500 dark:text-slate-400">No player on the block right now. <b className="text-[#0a1f5c] dark:text-white">{sold.length}</b> players sold so far.</p>
+                )}
               </Panel>
             </div>
           </div>
@@ -298,17 +251,17 @@ export default function FootballHome() {
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {d.tournaments.slice(0, 3).map((t) => (
                   <Link key={t._id} to="/sports/football/tournament"
-                    className={`group rounded-xl overflow-hidden border border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm transition ${focusRing}`}>
+                    className={`group rounded-2xl overflow-hidden border border-[#dbe6fb] dark:border-white/10 bg-[#fbfdff] dark:bg-white/5 hover:border-[#1f5eff] transition-colors ${focusRing}`}>
                     {t.banner
                       ? <img src={t.banner} alt="" className="h-40 sm:h-44 w-full object-cover" />
-                      : <div className="h-40 sm:h-44 bg-slate-100 grid place-items-center text-slate-400"><Icon name="trophy" className="w-10 h-10" /></div>}
+                      : <div className="h-40 sm:h-44 bg-gradient-to-br from-[#0a1f5c] to-[#1f5eff] grid place-items-center text-white/80"><Icon name="trophy" className="w-12 h-12" /></div>}
                     <div className="p-4 sm:p-5">
                       <div className="flex items-start justify-between gap-2">
-                        <b className="fb-h text-slate-900 leading-snug">{t.name}</b>
-                        <Badge>{t.status}</Badge>
+                        <b className="text-[#0a1f5c] dark:text-white leading-snug">{t.name}</b>
+                        <span className="text-xs font-bold px-2 py-1 rounded-full capitalize bg-[#eaf1ff] text-[#1f5eff] dark:bg-[#1f5eff]/20 dark:text-sky-300 shrink-0">{t.status}</span>
                       </div>
-                      <p className="text-sm text-slate-500 mt-2 capitalize">{t.category}</p>
-                      <p className="text-sm text-slate-500">{formatLabel(t)}</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 capitalize">{t.category}</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{formatLabel(t)}</p>
                     </div>
                   </Link>
                 ))}
@@ -322,9 +275,9 @@ export default function FootballHome() {
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 sm:gap-4">
                 {d.teams.slice(0, 12).map((t) => (
                   <Link key={t._id} to="/sports/football/team"
-                    className={`flex flex-col items-center gap-2.5 text-center rounded-xl p-3 sm:p-4 bg-white border border-slate-200 hover:border-[#0f7a4a] transition-colors ${focusRing}`}>
+                    className={`flex flex-col items-center gap-2.5 text-center rounded-2xl p-3 sm:p-4 bg-[#f4f8ff] dark:bg-white/5 border border-transparent hover:border-[#1f5eff] transition-colors ${focusRing}`}>
                     <Logo t={t} size="w-14 h-14 sm:w-16 sm:h-16" />
-                    <span className="text-xs sm:text-sm font-semibold leading-tight line-clamp-2 break-words w-full text-slate-900">{t.name}</span>
+                    <span className="text-xs sm:text-sm font-semibold leading-tight line-clamp-2 break-words w-full text-[#0a1f5c] dark:text-slate-100">{t.name}</span>
                   </Link>
                 ))}
               </div>
