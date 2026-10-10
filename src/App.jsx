@@ -49,6 +49,17 @@ import FootballSchedule from './pages/Football/FootballSchedule';
 import FootballAuction from './pages/Football/FootballAuction';
 import FootballPointTable from './pages/Football/PointTable';
 
+// 🏸 Badminton pages
+import BadmintonLayout from './pages/Badminton/BadmintonLayout';
+import BadmintonHome from './pages/Badminton/BadmintonHome';
+import BadmintonTournament from './pages/Badminton/BadmintonTournament';
+import BadmintonTeam from './pages/Badminton/BadmintonTeam';
+import BadmintonPlayers from './pages/Badminton/BadmintonPlayers';
+import BadmintonLive from './pages/Badminton/BadmintonLive';
+import BadmintonSchedule from './pages/Badminton/BadmintonSchedule';
+import BadmintonMatch from './pages/Badminton/BadmintonMatch';
+import BadmintonPointTable from './pages/Badminton/BadmintonPointTable';
+
 // কমন লেআউট কম্পোনেন্ট
 const Layout = ({ darkMode, setDarkMode, user, content, handleLogout }) => {
   return (
@@ -185,6 +196,19 @@ function App() {
           <Route path="/sports/football/schedule" element={<FootballSchedule />} />
           <Route path="/sports/football/point-table" element={<FootballPointTable />} />
           <Route path="/sports/football/auction" element={<FootballAuction />} />
+        </Route>
+
+        {/* 🏸 Badminton: path '/sports/table-tennis' (menu te "Badminton"). shob page BadmintonLayout (header) er vitore */}
+        <Route element={<BadmintonLayout darkMode={darkMode} setDarkMode={setDarkMode} />}>
+          <Route path="/sports/table-tennis" element={<BadmintonHome />} />
+          <Route path="/sports/table-tennis/tournament" element={<BadmintonTournament />} />
+          <Route path="/sports/table-tennis/team" element={<BadmintonTeam />} />
+          <Route path="/sports/table-tennis/players" element={<BadmintonPlayers />} />
+          <Route path="/sports/table-tennis/live" element={<BadmintonLive />} />
+          <Route path="/sports/table-tennis/schedule" element={<BadmintonSchedule />} />
+          <Route path="/sports/table-tennis/schedule/:id" element={<BadmintonSchedule />} />
+          <Route path="/sports/table-tennis/match/:id" element={<BadmintonMatch />} />
+          <Route path="/sports/table-tennis/point-table" element={<BadmintonPointTable />} />
         </Route>
       </Routes>
     </Router>

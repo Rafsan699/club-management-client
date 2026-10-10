@@ -24,7 +24,7 @@ export const exploreMenuTree = [
       { name: 'Cricket', path: '/sports/cricket' },
       { name: 'Football', path: '/sports/football' },
       //{ name: 'Volleyball', path: '/sports/volleyball' },
-     // { name: 'Table Tennis & Badminton', path: '/sports/table-tennis' },
+      { name: 'Badminton', path: '/sports/table-tennis' },
       //{ name: 'Chess & Ludo', path: '/sports/chess' },
      // { name: 'Carrom', path: '/sports/carrom' },
       //{ name: 'Athletics', path: '/sports/athletics' },
