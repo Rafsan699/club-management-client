@@ -97,7 +97,7 @@ const Home = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFC] px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[#EEF4FF] px-4">
         <div className="flex items-center gap-4 text-[#0F172A]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
           <div className="w-9 h-9 border-[3px] border-[#2563EB] border-t-transparent rounded-full animate-spin shrink-0"></div>
           <span className="text-base font-medium">Loading club content…</span>
@@ -108,7 +108,7 @@ const Home = () => {
 
   if (!content) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFC] px-4" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div className="min-h-screen flex items-center justify-center bg-[#EEF4FF] px-4" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
         <div className="bg-white rounded-2xl border border-[#E2E8F0] px-8 py-7 text-center max-w-md w-full shadow-sm">
           <p className="text-[#0F172A] font-bold mb-2 text-xl">Connection error</p>
           <span className="text-sm text-[#64748B]">Content could not be loaded from the server. Check the backend connection and reload.</span>
@@ -542,12 +542,16 @@ const Home = () => {
         body { overflow-x: hidden; }
 
         .briu {
-          --bg: #FAFAFC; --surf: #FFFFFF; --surf2: #F1F5F9;
+          --bg: #EEF4FF; --surf: #FFFFFF; --surf2: #F1F5F9;
           --ink: #0F172A; --mute: #64748B; --line: #E2E8F0;
           --acc: #2563EB; --deep: #0F172A;
           font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-          background: var(--bg); color: var(--ink);
+          color: var(--ink);
           -webkit-font-smoothing: antialiased;
+          background:
+            radial-gradient(900px 500px at 0% 20%, rgba(147,197,253,.45), transparent 60%),
+            radial-gradient(900px 600px at 100% 70%, rgba(199,210,254,.55), transparent 60%),
+            linear-gradient(180deg, #F3F7FF 0%, #E9F1FE 100%);
         }
         .briu .fd { font-family: 'Manrope', 'Inter', system-ui, sans-serif; letter-spacing: -0.02em; }
         .briu .b-surf { background: var(--surf); }

@@ -59,6 +59,7 @@ import BadmintonLive from './pages/Badminton/BadmintonLive';
 import BadmintonSchedule from './pages/Badminton/BadmintonSchedule';
 import BadmintonMatch from './pages/Badminton/BadmintonMatch';
 import BadmintonPointTable from './pages/Badminton/BadmintonPointTable';
+import BadmintonProjector from './pages/Badminton/BadmintonProjector'; // 📽️ projector view
 
 // কমন লেআউট কম্পোনেন্ট
 const Layout = ({ darkMode, setDarkMode, user, content, handleLogout }) => {
@@ -197,6 +198,9 @@ function App() {
           <Route path="/sports/football/point-table" element={<FootballPointTable />} />
           <Route path="/sports/football/auction" element={<FootballAuction />} />
         </Route>
+
+        {/* 📽️ Badminton projector: header chhara fullscreen, tai BadmintonLayout er BAIRE */}
+        <Route path="/sports/table-tennis/projector" element={<BadmintonProjector />} />
 
         {/* 🏸 Badminton: path '/sports/table-tennis' (menu te "Badminton"). shob page BadmintonLayout (header) er vitore */}
         <Route element={<BadmintonLayout darkMode={darkMode} setDarkMode={setDarkMode} />}>
